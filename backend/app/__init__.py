@@ -13,9 +13,9 @@ def create_app():
     # Enable CORS for all routes
     CORS(app)
 
-    from .routes import test_bp
+    from .routes import app_bp
     # Register test blueprint accessed via /api/test
-    app.register_blueprint(test_bp, url_prefix='/api')
+    app.register_blueprint(app_bp, url_prefix='/api')
     return app
 
 
