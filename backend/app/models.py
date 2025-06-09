@@ -6,7 +6,7 @@ from datetime import datetime
 class User(db.Model):
     __tablename__ = 'Users'
 
-    _id = db.Column(db.Integer, primary_key=True, nullable=False)
+    id = db.Column(db.Integer, primary_key=True, nullable=False)
     _secret_answer_hashed = db.Column(db.String(150), nullable=False)
     _password_hashed = db.Column(db.String(128), nullable=False)
     fullname = db.Column(db.String(100), nullable=False)
@@ -15,8 +15,9 @@ class User(db.Model):
     secret_question = db.Column(db.String(150), nullable=False)
     secret_answer_salt = db.Column(db.LargeBinary(16), nullable=False)
 
-    # Establish a one-to-many relationship with MonthlyFinance
-    monthly_finances = db.relationship('MonthlyFinance', back_populates='user', cascade='all, delete-orphan')
+    monthly_finances = db.relationship('MonthlyFinance', back_populates='user', cascade='all, delete-orphan') # Establish 1:M relationship with MonthlyFinances
+    transactions = db.relationship('Transaction', back_populates='user', cascade='all, delete-orphan') # Establish 1:M relationship with Transactions
+    goals = db.relationship('Goal', back_populates='user', cascade='all, delete-orphan') # Establish 1:M relationship with Goals
 
     def __init__(
         self, 
@@ -25,7 +26,7 @@ class User(db.Model):
         raw_password: str, 
         secret_question: str, 
         raw_secret_answer: str
-        ) -> None:
+    ) -> None:
         self.fullname = fullname
         self.username = username
         self.password_hashed = raw_password
@@ -59,7 +60,7 @@ class User(db.Model):
     def to_dict(self) -> dict:
         """ Convert User instance into a dictionary representation """
         return {
-            "user_id": self._id,
+            "id": self.id,
             "username": self.username,
             "fullname": self.fullname,
             "secret_question": self.secret_question
@@ -73,20 +74,19 @@ class User(db.Model):
 class MonthlyFinance(db.Model):
     __tablename__ = "MonthlyFinances"
 
-    _id = db.Column(db.Integer, primary_key=True, nullable=False)
-    _user_id = db.Column(db.Integer, db.ForeignKey('Users._id'), nullable=False)
+    id = db.Column(db.Integer, primary_key=True, nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('Users.id'), nullable=False)
     date = db.Column(db.DateTime, default=datetime.utcnow)
     savings = db.Column(db.Float, default=0.0)
     spendings = db.Column(db.Float, default=0.0)
     allowance = db.Column(db.Float, default=0.0)
 
-    # Establish a many-to-one relationship with Users
-    user = db.relationship('User', back_populates='monthly_finances')
+    user = db.relationship('User', back_populates='monthly_finances') # Establish M:1 relationship with Users
 
     def __repr__(self):
         return f"""
         <
-            UserID: {self._user_id}, 
+            UserID: {self.user_id}, 
             Date: {self.date}, 
             Savings: {self.savings},
             Spendings: {self.spendings},
@@ -96,10 +96,116 @@ class MonthlyFinance(db.Model):
     
     def to_dict(self) -> dict:
         return{
-            "monthly_finance_id": self._id,
-            "user_id": self._user_id,
+            "id": self.id,
+            "user_id": self.user_id,
             "date": f"{self.date.isoformat()}Z",
             "savings": self.savings,
             "spendings": self.spendings,
             "allowance": self.allowance
+        }
+
+
+class Transaction(db.Model):
+    __tablename__ = "Transactions"
+
+    id = db.Column(db.Integer, primary_key=True, nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('Users.id'), nullable=False)
+    category = db.Column(db.String(50), nullable=False)
+    amount = db.Column(db.Float, default=0.0, nullable=False)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
+    method = db.Column(db.String(30), nullable=False)
+    description = db.Column(db.String(100))
+    is_deleted = db.Column(db.Boolean, default=False, nullable=False)
+
+    user = db.relationship('User', back_populates='transactions') # Establish M:1 relationship with User
+
+    def soft_delete(self) -> None:
+        self.is_deleted = True
+
+    def __repr__(self): 
+        return f"""
+        <
+            TransactionID: {self.id},
+            UserID: {self.user_id},
+            Category: {self.category},
+            Amount: {self.amount},
+            CreatedAt: {self.created_at},
+            Method: {self.method},
+            Description {"No Description" if not self.description else self.description}
+        >
+        """
+    
+    def to_dict(self) -> dict:
+        return {
+            "id": self.id,
+            "user_id": self.user_id,
+            "category": self.category,
+            "amount": self.amount,
+            "created_at": f"{self.created_at.isoformat()}Z",
+            "method": self.method,
+            "description": "" if not self.description else self.description
+        }
+
+
+class Goal(db.Model):
+    __tablename__ = "Goals"
+
+    id = db.Column(db.Integer, primary_key=True, nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('Users.id'), nullable=False)
+    title = db.Column(db.String(30), nullable=False)
+    description = db.Column(db.String(100))
+    created_at = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
+    required_amount = db.Column(db.Float, nullable=False)
+    current_amount = db.Column(db.Float, nullable=False)
+    is_deleted = db.Column(db.Boolean, default=False, nullable=False)
+
+    user = db.relationship("User", back_populates='goals') # Establish M:1 relationship with User
+    goal_contributions = db.relationship("GoalContribution", back_populates='goal', cascade="all, delete-orphan")
+
+    def soft_delete(self) -> None:
+        self.is_deleted = True
+    
+    def __repr__(self):
+        return f"""
+        <
+            GoalID: {self.id},
+            UserID: {self.user_id},
+            Title: {self.title},
+            Description: {"No description" if not self.description else self.description},
+            CreatedAt: {self.created_at},
+            RequiredAmount: {self.required_amount},
+            CurrentAmount: {self.current_amount},
+        >
+        """
+
+    def to_dict(self) -> dict:
+        return {
+            "id": self.id,
+            "title": self.title,
+            "description": "" if not self.description else self.description,
+            "created_at": f"{self.created_at.isoformat()}Z",
+            "required_amount": self.required_amount,
+            "current_amount": self.current_amount,
+        }
+
+
+class GoalContribution(db.Model):
+    __tablename__ = "GoalContributions"
+
+    id = db.Column(db.Integer, primary_key=True, nullable=False)
+    goal_id = db.Column(db.Integer, db.ForeignKey('Goals.id'), nullable=False)
+    amount = db.Column(db.Float, nullable=False)
+    added_at = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
+
+    goal = db.relationship("Goal", back_populates="goal_contributions")
+
+    def __repr__(self):
+        return f"<GoalID: {self.goal_id}, Amount: {self.amount}, AddedAt: {self.added_at}>"
+    
+    def to_dict(self) -> dict:
+        return {
+            "id": self.id,
+            "goal_id": self.goal_id,
+            "amount": self.amount,
+            "added_at": self.added_at
         }

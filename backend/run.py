@@ -1,6 +1,9 @@
-from app import create_app
+from app import create_app, db
 
 app = create_app()
 if __name__ == "__main__":
-    # TODO: add db initalization if tables are not created
+    # Initialize DB if tables does not exist
+    with app.app_context():
+        db.create_all()
+        print('DB Created')
     app.run(debug=True)
