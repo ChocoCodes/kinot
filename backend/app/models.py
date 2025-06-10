@@ -1,6 +1,6 @@
 import os
 from app import db
-from utils import generate_salt, generate_hash
+from .utils import generate_salt, generate_hash
 from datetime import datetime
 
 class User(db.Model):
@@ -119,7 +119,7 @@ class Transaction(db.Model):
 
     user = db.relationship('User', back_populates='transactions') # Establish M:1 relationship with User
 
-    def soft_delete(self) -> None:
+    def delete(self) -> None:
         self.is_deleted = True
 
     def __repr__(self): 
@@ -162,7 +162,7 @@ class Goal(db.Model):
     user = db.relationship("User", back_populates='goals') # Establish M:1 relationship with User
     goal_contributions = db.relationship("GoalContribution", back_populates='goal', cascade="all, delete-orphan")
 
-    def soft_delete(self) -> None:
+    def delete(self) -> None:
         self.is_deleted = True
     
     def __repr__(self):

@@ -12,7 +12,10 @@ def create_app():
     db.init_app(app)
     # Enable CORS for all routes
     CORS(app)
-
+    # Import all models and create tables in DB if it does not exist
+    from . import models
+    with app.app_context():
+        db.create_all()
     from .routes import app_bp
     # Register test blueprint accessed via /api/test
     app.register_blueprint(app_bp, url_prefix='/api')
