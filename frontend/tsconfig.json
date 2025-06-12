@@ -1,4 +1,17 @@
 {
+  "compilerOptions": {
+    // Setup aliases for paths
+    "jsx": "preserve",
+    "esModuleInterop": true,
+    "baseUrl": "./",
+    "paths": {
+      "@styles/*": ["src/styles/*"],
+      "@context/*": ["src/context/*"],
+      "@components/*": ["src/components/*"],
+      "@utils/*": ["src/utils/*"],
+    }
+  },
+  "include": ["src"],
   "files": [],
   "references": [
     { "path": "./tsconfig.app.json" },

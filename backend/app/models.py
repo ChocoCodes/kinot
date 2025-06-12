@@ -162,6 +162,9 @@ class Goal(db.Model):
     user = db.relationship("User", back_populates='goals') # Establish M:1 relationship with User
     goal_contributions = db.relationship("GoalContribution", back_populates='goal', cascade="all, delete-orphan")
 
+    def update_current_amount(self, amount: float) -> None:
+        self.current_amount = self.current.amount + amount
+    
     def delete(self) -> None:
         self.is_deleted = True
     
