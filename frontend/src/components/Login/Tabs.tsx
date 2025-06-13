@@ -5,15 +5,15 @@ interface TabProps {
 
 const Tabs = ({ currentTab, onChangeTab }: TabProps) => {
     return (
-        <div className="flex gap-3 font-poppins font-medium text-[32px]">
+        <div className="flex w-[270px] items-left justify-between font-poppins font-medium text-[32px] mb-17">
             <button 
-                className={`${currentTab == 'login' ? 'border-b-3': 'border-0'} px-3 py-2`}
+                className={`${currentTab == 'login' ? 'border-b-3': 'border-0'} py-2 hover:cursor-pointer`}
                 onClick={() => onChangeTab('login')}
             >
                 Login
             </button>
             <button                 
-                className={`${currentTab == 'register' ? 'border-b-3': 'border-0'} px-3 py-2`}
+                className={`${currentTab == 'register' ? 'border-b-3': 'border-0'} py-2 hover:cursor-pointer`}
                 onClick={() => onChangeTab('register')}
             >
                 Register
