@@ -1,7 +1,7 @@
 import { LoginPage } from "./LoginPage"
 import { ForgotPasswordPage } from "./ForgotPasswordPage"
 import { AccountPage } from "./AccountPage"
-import { DashboardPage } from "./DashboardPage"
+import { HomePage } from "./HomePage"
 import { GoalPage } from "./GoalPage"
 import { TransactionPage } from "./TransactionPage"
 
@@ -11,7 +11,7 @@ export {
     LoginPage, 
     ForgotPasswordPage, 
     AccountPage, 
-    DashboardPage, 
+    HomePage, 
     GoalPage, 
     TransactionPage 
 }

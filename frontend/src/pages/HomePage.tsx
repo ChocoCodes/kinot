@@ -1,7 +1,7 @@
-function DashboardPage() {
+function HomePage() {
     return (
         <p>Dashboard Page</p>
     )
 }
 
-export { DashboardPage }
+export { HomePage }

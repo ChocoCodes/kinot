@@ -44,6 +44,8 @@ const LoginForm = () => {
                     value={userCreds.username}
                     placeholder='loren ipsum'
                     onChange={handleInputChange}
+                    autoComplete='off'
+                    required
                 />
             </div>
             <div className='flex flex-col gap-3'>
@@ -56,10 +58,21 @@ const LoginForm = () => {
                     value={userCreds.password}
                     placeholder='●●●●●●●●●'
                     onChange={handleInputChange}
+                    required
                 />
             </div>
-            <button className="self-end hover:cursor-pointer underline mr-14 -mt-4" onClick={() => navigate('/forgot-password')}>Forgot Password?</button>
-            <button className='w-9/10 h-[3rem] p-2 text-lg bg-[#1A1A1A] text-white rounded-md hover:cursor-pointer hover:bg-black mt-4'>Log in</button>
+            <button 
+                className="self-end hover:cursor-pointer underline mr-14 -mt-4"     
+                onClick={() => navigate('/forgot-password')}
+            >
+                Forgot Password?
+            </button>
+            <button     
+                className='w-9/10 h-[3rem] p-2 text-lg bg-[#1A1A1A] text-white rounded-md hover:cursor-pointer hover:bg-black mt-4'
+                onClick={() => navigate('/home')}
+            >
+                Log in
+            </button>
         </form>
     )
 }
