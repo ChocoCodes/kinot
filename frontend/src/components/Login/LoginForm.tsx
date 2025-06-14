@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 
 type UserCreds = {
     username: string;
@@ -12,6 +13,7 @@ const defaultUserCreds: UserCreds = {
 
 const LoginForm = () => {
     const [userCreds, setUserCreds] = useState<UserCreds>(defaultUserCreds)
+    const navigate = useNavigate()
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
@@ -56,7 +58,7 @@ const LoginForm = () => {
                     onChange={handleInputChange}
                 />
             </div>
-            <button className="self-end hover:cursor-pointer underline mr-14 -mt-4">Forgot Password?</button>
+            <button className="self-end hover:cursor-pointer underline mr-14 -mt-4" onClick={() => navigate('/forgot-password')}>Forgot Password?</button>
             <button className='w-9/10 h-[3rem] p-2 text-lg bg-[#1A1A1A] text-white rounded-md hover:cursor-pointer hover:bg-black mt-4'>Log in</button>
         </form>
     )
