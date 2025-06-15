@@ -31,7 +31,7 @@ const RegisterForm = () => {
 
     const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault()
-        console.log(formData)
+        console.log(formData);
     }
 
     return (
@@ -45,7 +45,7 @@ const RegisterForm = () => {
                 <RecoveryForm 
                     onBack={ handleBack }
                     onSubmit={ handleSubmit }
-                    data={ formData }
+                    onUpdate = { data => setFormData(prev => ({...prev, ...data})) }
                 />
             )}
         </>
