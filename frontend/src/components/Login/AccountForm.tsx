@@ -5,12 +5,13 @@ import { BiSolidChevronRightSquare } from "react-icons/bi";
 
 interface AccountProps {
     onNext: (newData: Partial<UserInfo>) => void;
+    data: UserInfo;
 }
 
 // Pass reqs: 1 uppercase, 1 lowercase, 1 digit, 8 min length
 const passRegexp = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d).{8,}$";
 
-export const AccountForm = ({ onNext }: AccountProps) => {
+export const AccountForm = ({ onNext, data }: AccountProps) => {
     const [visible, setVisible] = useState<boolean>(false);
     const [passErr, setPassErr] = useState("");
 
@@ -48,6 +49,7 @@ export const AccountForm = ({ onNext }: AccountProps) => {
                     id='fullname' 
                     name='fullname'
                     placeholder='John Doe'
+                    defaultValue={ data.fullname }
                     autoComplete='off'
                     required
                 />
@@ -60,6 +62,7 @@ export const AccountForm = ({ onNext }: AccountProps) => {
                     id='username' 
                     name='username'
                     placeholder='johndoe123'
+                    defaultValue={ data.username }
                     autoComplete='off'
                     required
                 />
@@ -82,9 +85,10 @@ export const AccountForm = ({ onNext }: AccountProps) => {
                     className='w-9/10 h-9 p-2 text-md placeholder-ph-gray rounded-md bg-bg-input border-0 border-l-5 border-transparent focus:outline-none focus:border-l-black transition-all duration-200 ease-in-out' 
                     id='password' 
                     name='password'
-                    pattern={passRegexp}
+                    pattern={ passRegexp }
                     title="Password must be at least 8 characters and include uppercase, lowercase, and a number."
                     placeholder='●●●●●●●●●'
+                    defaultValue={ data.password }
                     required
                 />
             </div>

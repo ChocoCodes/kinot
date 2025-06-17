@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { AccountForm } from './AccountForm'
 import { RecoveryForm } from './RecoveryForm'
 
@@ -10,28 +11,48 @@ export type UserInfo = {
     answer: string
 }
 
-const defaultUserInfo: UserInfo = {
-    fullname: '',
-    username: '',
-    password: '',
-    question: '',
-    answer: '',
-}
-
 const RegisterForm = () => {
+    const navigate = useNavigate()
     const [step, setStep] = useState(1)
-    const [formData, setFormData] = useState<UserInfo>(defaultUserInfo)
+    const [formData, setFormData] = useState<UserInfo>({
+        fullname: '',
+        username: '',
+        password: '',
+        question: '',
+        answer: '',
+    })
 
-    const handleBack = () => setStep(step - 1)
+    const handleBack = () => {
+        setStep(step - 1)
+        console.log(formData);
+    }
 
     const handleNext = (next: Partial<UserInfo>) => {
         setFormData(prev => ({...prev, ...next}))
         setStep(step => step + 1)
     }
 
-    const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    const handleFullSubmit = async (updatedData: Partial<UserInfo>, e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault()
-        console.log(formData);
+        const final = { ...formData, ...updatedData }
+        // console.log(final);
+        try {
+            const response = await fetch('api/register', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(final)
+            })
+
+            if(!response.ok) alert('Failed to send data.')
+            const result = await response.json()
+            // Set the user log in context
+            console.log('Data from Flask: ', result)
+            navigate('/home')
+        } catch (error: unknown) {
+            console.error('Error: ', (error as Error).message)
+        }
     }
 
     return (
@@ -39,13 +60,13 @@ const RegisterForm = () => {
             { step === 1 && (
                 <AccountForm 
                     onNext={ handleNext } 
+                    data={ formData }
                 />
             )}
             { step === 2 && (
                 <RecoveryForm 
                     onBack={ handleBack }
-                    onSubmit={ handleSubmit }
-                    onUpdate = { data => setFormData(prev => ({...prev, ...data})) }
+                    onSubmit={ handleFullSubmit }
                 />
             )}
         </>

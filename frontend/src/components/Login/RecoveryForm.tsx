@@ -1,11 +1,9 @@
-import { useState } from 'react'
 import type { UserInfo } from './RegisterForm'
 import { BiSolidChevronLeftSquare } from "react-icons/bi";
 
 interface RecoveryProps {
     onBack: () => void;
-    onSubmit: (e: React.FormEvent<HTMLFormElement>) => void;
-    onUpdate: (newData: Partial<UserInfo>) => void;
+    onSubmit: (data: Partial<UserInfo>, e: React.FormEvent<HTMLFormElement>) => void;
 }
 
 const retrieveQuestions = [
@@ -14,24 +12,19 @@ const retrieveQuestions = [
     "What is the name of a teacher you disliked the most?"
 ]
 
-export const RecoveryForm = ({ onBack, onSubmit, onUpdate }: RecoveryProps) => {
-    const [recovery, setRecovery] = useState<Partial<UserInfo>>({
-        question: '',
-        answer: ''
-    })
+export const RecoveryForm = ({ onBack, onSubmit }: RecoveryProps) => {
 
     const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault()
-        onUpdate(recovery)
-        onSubmit(e)
-    }
+        
+        const formData =  new FormData(e.currentTarget)
 
-    const handleChange = (e: React.ChangeEvent<HTMLSelectElement | HTMLInputElement>) => {
-        const { name, value } = e.target
-        setRecovery(prev => ({
-            ...prev,
-            [name]: value
-        }))
+        const recovery: Partial<UserInfo> = {
+            question: formData.get('question') as string,
+            answer: formData.get('answer') as string
+        }
+
+        onSubmit(recovery, e)
     }
 
     return (
@@ -42,8 +35,6 @@ export const RecoveryForm = ({ onBack, onSubmit, onUpdate }: RecoveryProps) => {
         >
             <select 
                 name="question"
-                value={ recovery.question } 
-                onChange={ handleChange }
                 className='h-[3rem] bg-bg-input text-ph-gray px-3 rounded-md'
                 required
             >
@@ -59,10 +50,10 @@ export const RecoveryForm = ({ onBack, onSubmit, onUpdate }: RecoveryProps) => {
             <input 
                 type="text" 
                 name="answer"
-                value={ recovery.answer }
-                onChange={ handleChange }
+                maxLength={ 50 }
                 className='bg-bg-input placeholder-ph-gray h-[3rem] focus:outline-none rounded-md px-3'
                 placeholder='Type your answer here...'
+                autoComplete='off'
                 required
             />
             <div className="flex justify-between items-center">
