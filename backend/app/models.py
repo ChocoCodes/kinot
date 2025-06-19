@@ -14,6 +14,7 @@ class User(db.Model):
     password_salt = db.Column(db.LargeBinary(16), nullable=False)
     secret_question = db.Column(db.String(150), nullable=False)
     secret_answer_salt = db.Column(db.LargeBinary(16), nullable=False)
+    profile_path = db.Column(db.String(255), nullable=False, default='default.jpg')
 
     monthly_finances = db.relationship('MonthlyFinance', back_populates='user', cascade='all, delete-orphan') # Establish 1:M relationship with MonthlyFinances
     transactions = db.relationship('Transaction', back_populates='user', cascade='all, delete-orphan') # Establish 1:M relationship with Transactions
@@ -158,6 +159,7 @@ class Goal(db.Model):
     required_amount = db.Column(db.Float, nullable=False)
     current_amount = db.Column(db.Float, nullable=False)
     is_deleted = db.Column(db.Boolean, default=False, nullable=False)
+    image_path = db.Column(db.String(255), nullable=False, default='default-goal.jpg')
 
     user = db.relationship("User", back_populates='goals') # Establish M:1 relationship with User
     goal_contributions = db.relationship("GoalContribution", back_populates='goal', cascade="all, delete-orphan")

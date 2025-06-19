@@ -11,16 +11,18 @@ export type UserInfo = {
     answer: string
 }
 
+const defaultInfo: UserInfo = {
+    fullname: '',
+    username: '',
+    password: '',
+    question: '',
+    answer: '',
+}
+
 const RegisterForm = () => {
     const navigate = useNavigate()
     const [step, setStep] = useState(1)
-    const [formData, setFormData] = useState<UserInfo>({
-        fullname: '',
-        username: '',
-        password: '',
-        question: '',
-        answer: '',
-    })
+    const [formData, setFormData] = useState<UserInfo>(defaultInfo)
 
     const handleBack = () => {
         setStep(step - 1)
@@ -44,10 +46,25 @@ const RegisterForm = () => {
                 },
                 body: JSON.stringify(final)
             })
+            
+            // Username is already taken when form is submitted
+            if(response.status === 409) {
+                const errorData = await response.json()
+                alert(errorData.error)
+                setFormData(prev => ({
+                    ...prev,
+                    [prev.username]: ''
+                }))
+                return;
+            }
 
-            if(!response.ok) alert('Failed to send data.')
+            if(!response.ok) {
+                alert('Failed to send data.')
+                return;
+            }
+
             const result = await response.json()
-            // Set the user log in context
+            //TODO: Set the user log in context
             console.log('Data from Flask: ', result)
             navigate('/home')
         } catch (error: unknown) {
