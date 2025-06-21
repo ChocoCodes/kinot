@@ -1,7 +1,7 @@
-import { createContext, useContext, useState } from 'react'
+import { createContext, useContext, useState, type ReactNode } from 'react'
 
 interface ChildProps {
-    children: React.ReactNode
+    children: ReactNode
 }
 
 export type User = {
