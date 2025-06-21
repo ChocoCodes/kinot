@@ -49,6 +49,7 @@ def login():
     data = request.get_json()
     username = data['username']
     password = data['password']
+    print(data)
     # Check credentials in DB and return w/ access token
     user = User.query.filter_by(username=username).first()
     if not user:

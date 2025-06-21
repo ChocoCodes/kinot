@@ -1,5 +1,7 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { useAuth, type User } from '@context/AuthContext'
+import { FaEye, FaEyeSlash } from "react-icons/fa6";
 
 type UserCreds = {
     username: string;
@@ -12,8 +14,10 @@ const defaultCreds = {
 }
 
 const LoginForm = () => {
+    const { login } = useAuth()
     const [userCreds, setUserCreds] = useState<UserCreds>(defaultCreds)
     const [error, setError] = useState("")
+    const [visible, setVisible] = useState(false)
     const navigate = useNavigate()
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -37,13 +41,13 @@ const LoginForm = () => {
             
             if(response.status === 404) {
                 const error = await response.json()
-                setError(error)
+                setError(error.error)
                 return;
             }
             
             if(response.status === 401) {
                 const error = await response.json()
-                setError(error)
+                setError(error.error)
                 return;
             }
 
@@ -52,8 +56,9 @@ const LoginForm = () => {
                 return;
             }
 
-            const result = await response.json()
+            const result: User = await response.json()
             console.log('Login Data from Flask: ', result)
+            login(result)
             navigate('/home')
         } catch (error: unknown) {
             console.error('Error: ', (error as Error).message)
@@ -82,23 +87,34 @@ const LoginForm = () => {
             </div>
             <div className='flex flex-col gap-3'>
                 <label htmlFor="password" className='text-2xl font-bold'>Password</label>
-                <input 
-                    type='password' 
-                    className='w-9/10 h-[3rem] p-2 text-lg placeholder-ph-gray rounded-md bg-bg-input border-0 border-l-5 border-transparent focus:outline-none focus:border-l-black transition-all duration-200 ease-in-out' 
-                    id='password' 
-                    name='password'
-                    value={ userCreds.password }
-                    placeholder='●●●●●●●●●'
-                    onChange={ handleInputChange }
-                    required
-                />
+                <div className="relative w-9/10">
+                    <input 
+                        type={ visible ? 'text' : 'password' } 
+                        className='w-full h-[3rem] p-2 text-lg placeholder-ph-gray rounded-md bg-bg-input border-0 border-l-5 border-transparent focus:outline-none focus:border-l-black transition-all duration-200 ease-in-out' 
+                        id='password' 
+                        name='password'
+                        value={ userCreds.password }
+                        placeholder='●●●●●●●●●'
+                        onChange={ handleInputChange }
+                        required
+                    />
+                    <button
+                        type='button'
+                        className='absolute right-4 top-1/2 transform -translate-y-1/2 focus:outline-none text-xl text-ph-gray'
+                        onClick={ () => setVisible(!visible) }
+                    >
+                        { visible ? <FaEyeSlash /> : <FaEye /> }
+                    </button>
+                </div>
             </div>
-            <button 
-                className="self-end hover:cursor-pointer underline mr-14 -mt-4"     
-                onClick={ () => navigate('/forgot-password') }
-            >
-                Forgot Password?
-            </button>
+            <div className="w-9/10 text-right -mt-3">
+                <button 
+                    className=" hover:cursor-pointer underline"     
+                    onClick={ () => navigate('/forgot-password') }
+                >
+                    Forgot Password?
+                </button>
+            </div>
             <button     
                 type='submit'
                 className='w-9/10 h-[3rem] p-2 text-lg bg-[#1A1A1A] text-white rounded-md hover:cursor-pointer hover:bg-black mt-4'
