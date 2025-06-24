@@ -1,6 +1,11 @@
+import { Header } from "@components/layouts/components"
+
 function TransactionPage() {
     return (
-        <p>My Transaction Page</p>
+        <main className='flex flex-col w-screen h-screen'>
+            <Header />
+            <p>Transaction Page</p>
+        </main>
     )
 }
 

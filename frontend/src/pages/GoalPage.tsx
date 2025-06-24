@@ -1,6 +1,11 @@
+import { Header } from "@components/layouts/components"
+
 function GoalPage() {
     return (
-        <p>My Goals Page</p>
+        <main className='flex flex-col w-screen h-screen'>
+            <Header />
+            <p>Goal Page</p>
+        </main>
     )
 }
 

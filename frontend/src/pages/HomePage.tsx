@@ -1,6 +1,11 @@
+import { Header } from '@components/layouts/components'
+
 function HomePage() {
     return (
-        <p>Dashboard Page</p>
+        <main className='flex flex-col w-screen h-screen '>
+            <Header />
+            <p>Dashboard Page</p>
+        </main>
     )
 }
 

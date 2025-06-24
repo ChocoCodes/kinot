@@ -56,9 +56,16 @@ const LoginForm = () => {
                 return;
             }
 
-            const result: User = await response.json()
+            const result = await response.json()
             console.log('Login Data from Flask: ', result)
-            login(result)
+            // Convert to frontend format
+            const user: User = {
+                id: result.id,
+                username: result.user,
+                token: result.token,
+                profilePath: result.profile_path,
+            }
+            login(user)
             navigate('/home')
         } catch (error: unknown) {
             console.error('Error: ', (error as Error).message)

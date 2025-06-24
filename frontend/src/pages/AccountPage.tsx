@@ -1,6 +1,11 @@
+import { Header } from "@components/layouts/components"
+
 function AccountPage() {
     return (
-        <p>My Account Page</p>
+        <main className='flex flex-col w-screen h-screen'>
+            <Header />
+            <p>Account Page</p>
+        </main>
     )
 }
 

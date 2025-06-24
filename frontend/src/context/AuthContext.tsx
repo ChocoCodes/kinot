@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, type ReactNode } from 'react'
+import { createContext, useContext, useEffect, useState, type ReactNode } from 'react'
 
 interface ChildProps {
     children: ReactNode
@@ -8,6 +8,7 @@ export type User = {
     id: number;
     token: string;
     username: string;
+    profilePath: string;
 }
 
 type AuthContextType = {
@@ -26,8 +27,22 @@ export const useAuth = () => {
 
 export function AuthProvider({ children }: ChildProps) {
     const [user, setUser] = useState<User | null>(null)
-
+    
+    useEffect(() => {
+        const cachedUser = localStorage.getItem('user')
+        if(cachedUser) {
+            try {
+                const parsed = JSON.parse(cachedUser)
+                setUser(parsed)
+            } catch (err) {
+                console.error('CacheError: ', err)
+                localStorage.removeItem('user')
+            }
+        }
+    }, [])
+    
     const login = (user: User) => {
+        console.log(user)
         setUser(user)
         localStorage.setItem('user', JSON.stringify(user))
     }

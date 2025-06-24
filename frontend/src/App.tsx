@@ -1,5 +1,12 @@
 import { Routes, Route } from 'react-router-dom'
-import { LoginPage, ForgotPasswordPage, HomePage } from '@pages/pages'
+import { 
+  LoginPage, 
+  ForgotPasswordPage, 
+  HomePage, 
+  GoalPage, 
+  TransactionPage, 
+  AccountPage 
+} from '@pages/pages'
 import { ProtectedRoute } from '@components/layouts/components'
 
 function App() {
@@ -10,6 +17,9 @@ function App() {
       {/* Protected Routes */}
       <Route element={ <ProtectedRoute /> }>
         <Route path='/home' element={ <HomePage />} />
+        <Route path='/goals' element={ <GoalPage />} />
+        <Route path='/transactions' element={ <TransactionPage />} />
+        <Route path='/account' element={ <AccountPage />} />
       </Route>
     </Routes>
   )

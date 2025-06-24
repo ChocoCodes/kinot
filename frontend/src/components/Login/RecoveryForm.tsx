@@ -51,7 +51,7 @@ export const RecoveryForm = ({ onBack, onSubmit }: RecoveryProps) => {
                 type="text" 
                 name="answer"
                 maxLength={ 50 }
-                className='bg-bg-input placeholder-ph-gray h-[3rem] focus:outline-none rounded-md px-3'
+                className='bg-bg-input placeholder-ph-gray h-[3rem] focus:outline-none rounded-md px-3 border-0 border-l-5 border-transparent focus:border-l-black transition-all duration-200 ease-in-out'
                 placeholder='Type your answer here...'
                 autoComplete='off'
                 required
