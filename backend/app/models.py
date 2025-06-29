@@ -1,7 +1,7 @@
 import os
 from app import db
-from .utils import generate_salt, generate_hash
-from datetime import datetime
+from .utils import generate_salt, generate_hash, isoformat_utc
+from datetime import datetime, timezone
 
 class User(db.Model):
     __tablename__ = 'Users'
@@ -77,12 +77,24 @@ class MonthlyFinance(db.Model):
 
     id = db.Column(db.Integer, primary_key=True, nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey('Users.id'), nullable=False)
-    date = db.Column(db.DateTime, default=datetime.utcnow)
+    date = db.Column(db.DateTime, default=datetime.now(timezone.utc), nullable=False)
+    year = db.Column(db.Integer, nullable=False)
+    month = db.Column(db.Integer, nullable=False)
     savings = db.Column(db.Float, default=0.0)
     spendings = db.Column(db.Float, default=0.0)
     allowance = db.Column(db.Float, default=0.0)
 
+    __table_args__ = (
+        db.UniqueConstraint('user_id', 'year', 'month', name='unique_user_month'),
+    )
+
     user = db.relationship('User', back_populates='monthly_finances') # Establish M:1 relationship with Users
+
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        if self.date:
+            self.year = self.date.year
+            self.month = self.date.month
 
     def __repr__(self):
         return f"""
@@ -91,7 +103,9 @@ class MonthlyFinance(db.Model):
             Date: {self.date}, 
             Savings: {self.savings},
             Spendings: {self.spendings},
-            Allowance: {self.allowance}
+            Year: {self.year},
+            Month: {self.month},
+            Allowance: {self.allowance},
         >
         """
     
@@ -99,8 +113,10 @@ class MonthlyFinance(db.Model):
         return{
             "id": self.id,
             "user_id": self.user_id,
-            "date": f"{self.date.isoformat()}Z",
+            "date": isoformat_utc(self.date),
             "savings": self.savings,
+            "year": self.year,
+            "month": self.month,
             "spendings": self.spendings,
             "allowance": self.allowance
         }
@@ -113,7 +129,7 @@ class Transaction(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('Users.id'), nullable=False)
     category = db.Column(db.String(50), nullable=False)
     amount = db.Column(db.Float, default=0.0, nullable=False)
-    created_at = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
+    created_at = db.Column(db.DateTime, default=datetime.now(timezone.utc), nullable=False)
     method = db.Column(db.String(30), nullable=False)
     description = db.Column(db.String(100))
     is_deleted = db.Column(db.Boolean, default=False, nullable=False)
@@ -155,7 +171,7 @@ class Goal(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('Users.id'), nullable=False)
     title = db.Column(db.String(30), nullable=False)
     description = db.Column(db.String(100))
-    created_at = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
+    created_at = db.Column(db.DateTime, default=datetime.now(timezone.utc), nullable=False)
     required_amount = db.Column(db.Float, nullable=False)
     current_amount = db.Column(db.Float, nullable=False)
     is_deleted = db.Column(db.Boolean, default=False, nullable=False)
@@ -200,7 +216,7 @@ class GoalContribution(db.Model):
     id = db.Column(db.Integer, primary_key=True, nullable=False)
     goal_id = db.Column(db.Integer, db.ForeignKey('Goals.id'), nullable=False)
     amount = db.Column(db.Float, nullable=False)
-    added_at = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
+    added_at = db.Column(db.DateTime, default=datetime.now(timezone.utc), nullable=False)
 
     goal = db.relationship("Goal", back_populates="goal_contributions")
 

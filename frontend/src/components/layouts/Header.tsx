@@ -34,7 +34,7 @@ const Header = () => {
                     <Link 
                         key={key} 
                         to={value}
-                        className={`${ location.pathname === value ? 'border-b-black border-b-2': ''} h-full py-2 transform transition-transform duration-300 hover:-translate-y-[2px]`}
+                        className={`${ location.pathname === value ? 'border-b-black border-b-2': 'hover:-translate-y-[2px]'} h-full py-2 transform transition-transform duration-300 `}
                     >
                         { toUpper(key) }
                     </Link>

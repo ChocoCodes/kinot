@@ -1,3 +1,4 @@
+import { Loading } from '@components/layouts/components';
 import { createContext, useContext, useEffect, useState, type ReactNode } from 'react'
 
 interface ChildProps {
@@ -27,7 +28,8 @@ export const useAuth = () => {
 
 export function AuthProvider({ children }: ChildProps) {
     const [user, setUser] = useState<User | null>(null)
-    
+    const [loading, setLoading] = useState(true)
+
     useEffect(() => {
         const cachedUser = localStorage.getItem('user')
         if(cachedUser) {
@@ -39,6 +41,7 @@ export function AuthProvider({ children }: ChildProps) {
                 localStorage.removeItem('user')
             }
         }
+        setLoading(false)
     }, [])
     
     const login = (user: User) => {
@@ -52,6 +55,8 @@ export function AuthProvider({ children }: ChildProps) {
         localStorage.removeItem('user')
     }
 
+    if (loading) return <Loading />
+    
     return (
         <AuthContext.Provider value={{ user, login, logout }}>
             { children }

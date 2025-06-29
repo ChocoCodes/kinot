@@ -4,6 +4,12 @@
 @theme {
   --color-ph-gray: #716F6F;
   --color-bg-input: #E0E0E0;
+  --color-fill-green: #D4F5E6;
+  --color-outl-green: #8ED1B2;
+  --color-fill-red: #FADBD8;
+  --color-outl-red: #F5B7B1;
+  --color-fill-blue: #D6EAF8;
+  --color-outl-blue: #5499C7;
 }
 
 .spinner {

@@ -1,5 +1,6 @@
 from flask import Blueprint, jsonify, request
 from flask_jwt_extended import create_access_token
+from .utils import format_image_path
 from .models import User
 from app import db
 
@@ -41,7 +42,8 @@ def register():
     return jsonify({
         'id': user.id,
         'user': user.username,
-        'token': create_access_token(identity=user.id)
+        'token': create_access_token(identity=user.id),
+        'profile_path': format_image_path(user.profile_path, 'profiles')
     }), 200
 
 @app_bp.route('/login', methods=['POST'])
@@ -59,5 +61,12 @@ def login():
     return jsonify({
         'id': user.id,
         'user': user.username,
-        'token': create_access_token(identity=user.id)
+        'token': create_access_token(identity=user.id),
+        'profile_path': format_image_path(user.profile_path, 'profiles')
+    }), 200
+
+@app_bp.route('/finances', methods=['GET'])
+def get_finances():
+    return jsonify({
+
     }), 200
