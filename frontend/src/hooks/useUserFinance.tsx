@@ -1,15 +1,15 @@
 import { useEffect, useState } from 'react'
 import { useAuth } from '@context/AuthContext'
 
-type UserFinanceData = {
+export type UserFinanceData = {
     id: number;
     userId: number;
     date: Date;
     savings: number;
-    spendings: number;
+    expenses: number;
     allowance: number;
     savingsPCT: number;
-    spendingsPCT: number;
+    expensesPCT: number;
     allowancePCT: number;
 }
 
@@ -34,6 +34,7 @@ export const useUserFinance = () => {
                 }
 
                 const data: UserFinanceData = await response.json()
+                console.log(data)
                 setUserData(data)
             } catch (err) {
                 console.error('[InternalError]: ', err)
