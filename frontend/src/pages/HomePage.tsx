@@ -1,8 +1,8 @@
 import { useState } from 'react'
 import { Header } from '@components/layouts/components'
-import { useUserFinance } from '@hooks/useUserFinance'
-import { FinanceCard } from '@components/homepage/components'
-import { type UserFinanceData } from '@hooks/useUserFinance' 
+import { useUserFinance, type UserFinanceData } from '@hooks/useUserFinance'
+import { useAuth } from '@context/AuthContext'
+import { FinanceCard, Form } from '@components/homepage/components'
 import { IoIosAdd } from "react-icons/io"
 import { MdEdit } from "react-icons/md"
 import { FaArrowTrendUp, FaArrowTrendDown } from "react-icons/fa6";
@@ -31,7 +31,34 @@ export const financeMeta = {
 
 function HomePage() {
     const [activeForm, setActiveForm] = useState<keyof typeof financeMeta | null>(null)
+    const [isVisible, setIsVisible] = useState<boolean>(false)
     const { userData } = useUserFinance()
+    const { user } = useAuth() 
+
+    const handleClose = () => setIsVisible(!isVisible)
+    const handleSubmit = async <T,>(route: string, payload: T): Promise<T> => {
+        try {
+            const response = await fetch(route, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${user?.token}`
+                },
+                body: JSON.stringify(payload),
+            })
+
+            if(!response.ok) {
+                console.error('ResponseNotOkError[HOME]: ', response.status, await response.text())
+                throw new Error(`Request failed with status ${response.status}`);
+            }
+
+            const result = await response.json()
+            return result
+        } catch (error) {
+            console.error("PostRequestError[HOME]: ", error)
+            throw error
+        }
+    }
 
     return (
         <main className='flex flex-col w-screen h-screen mx-auto font-poppins'>
@@ -50,7 +77,10 @@ function HomePage() {
                             icon={ cfg.icon }
                             bgColor={ cfg.bgColor }
                             borderColor={ cfg.borderColor }
-                            onIconClick={ () => setActiveForm(cardKey) }
+                            onIconClick={ () => {
+                                setActiveForm(cardKey)
+                                setIsVisible(true)
+                            }}
                             percentage={ percentage }
                             currentAmount={ currentAmount }
                             previousAmount={ previousAmount }
@@ -66,9 +96,26 @@ function HomePage() {
                     <p>No Data Found.</p>
                 )}
             </section>
-            { activeForm === 'allowance' && <p>allowanceform</p> }
-            { activeForm === 'expenses' && <p>expensesform</p> }
-            { activeForm === 'savings' && <p>savingsform</p> }
+            { (activeForm === 'allowance' && isVisible) && 
+                <Form 
+                    formTitle={ activeForm } 
+                    handleOnClose={ handleClose } 
+                    handleSubmit={ handleSubmit }
+                /> 
+            }
+            { (activeForm === 'expenses' && isVisible) && 
+                <Form 
+                    formTitle={ activeForm } 
+                    handleOnClose={ handleClose }
+                    handleSubmit={ handleSubmit }
+                /> }
+            { (activeForm === 'savings' && isVisible) && 
+                <Form 
+                    formTitle={ activeForm } 
+                    handleOnClose={ handleClose } 
+                    handleSubmit={ handleSubmit }
+                /> 
+            }
         </main>
     )
 }
