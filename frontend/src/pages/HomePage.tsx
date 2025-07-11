@@ -3,10 +3,17 @@ import { Header } from '@components/layouts/components'
 import { useUserFinance, type UserFinanceData } from '@hooks/useUserFinance'
 import { useAuth } from '@context/AuthContext'
 import { FinanceCard, Form } from '@components/homepage/components'
-import { IoIosAdd } from "react-icons/io"
+import { IoIosAdd }  from "react-icons/io"
 import { MdEdit } from "react-icons/md"
 import { FaArrowTrendUp, FaArrowTrendDown } from "react-icons/fa6";
 import { BsDashLg } from "react-icons/bs";
+
+export interface Payload {
+    title: string;
+    amount: number;
+    year: number;
+    month: number;
+}
 
 export const financeMeta = {
     savings: {
@@ -36,9 +43,11 @@ function HomePage() {
     const { user } = useAuth() 
 
     const handleClose = () => setIsVisible(!isVisible)
-    const handleSubmit = async <T,>(route: string, payload: T): Promise<T> => {
+    const handleSubmit = async (payload: Payload): Promise<void> => {
+        console.log("Json payload: " + JSON.stringify(payload))
+        console.log(user?.token)
         try {
-            const response = await fetch(route, {
+            const response = await fetch('api/finance-update', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -53,7 +62,9 @@ function HomePage() {
             }
 
             const result = await response.json()
-            return result
+            console.log(result)
+            // Set later using setters
+            // return result
         } catch (error) {
             console.error("PostRequestError[HOME]: ", error)
             throw error
@@ -96,25 +107,12 @@ function HomePage() {
                     <p>No Data Found.</p>
                 )}
             </section>
-            { (activeForm === 'allowance' && isVisible) && 
+            {(activeForm && isVisible) && 
                 <Form 
                     formTitle={ activeForm } 
                     handleOnClose={ handleClose } 
                     handleSubmit={ handleSubmit }
-                /> 
-            }
-            { (activeForm === 'expenses' && isVisible) && 
-                <Form 
-                    formTitle={ activeForm } 
-                    handleOnClose={ handleClose }
-                    handleSubmit={ handleSubmit }
-                /> }
-            { (activeForm === 'savings' && isVisible) && 
-                <Form 
-                    formTitle={ activeForm } 
-                    handleOnClose={ handleClose } 
-                    handleSubmit={ handleSubmit }
-                /> 
+                />
             }
         </main>
     )

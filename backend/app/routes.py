@@ -1,7 +1,7 @@
 from flask import Blueprint, jsonify, request
-from flask_jwt_extended import create_access_token
+from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity
 from .utils import format_image_path
-from .models import User
+from .models import User, MonthlyFinance
 from app import db
 
 app_bp = Blueprint('test', __name__)
@@ -42,7 +42,7 @@ def register():
     return jsonify({
         'id': user.id,
         'user': user.username,
-        'token': create_access_token(identity=user.id),
+        'token': create_access_token(identity=str(user.id)),
         'profile_path': format_image_path(user.profile_path, 'profiles')
     }), 200
 
@@ -61,12 +61,22 @@ def login():
     return jsonify({
         'id': user.id,
         'user': user.username,
-        'token': create_access_token(identity=user.id),
+        'token': create_access_token(identity=str(user.id)),
         'profile_path': format_image_path(user.profile_path, 'profiles')
     }), 200
 
 @app_bp.route('/finances', methods=['GET'])
+@jwt_required(locations=['headers'])
 def get_finances():
     return jsonify({
+        'msg': 'backend route /finances pinged!'
+    }), 200
 
+@app_bp.route('/finance-update', methods=['POST'])
+@jwt_required(locations=['headers'])
+def update_finance():
+    data = request.get_json()
+    print(data)
+    return jsonify({
+        'msg': 'backend route pinged!'
     }), 200
