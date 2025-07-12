@@ -1,6 +1,6 @@
 from flask import Blueprint, jsonify, request
 from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity
-from .utils import format_image_path
+from .utils import format_image_path, calculate_percentage
 from .models import User, MonthlyFinance
 from app import db
 
@@ -68,9 +68,27 @@ def login():
 @app_bp.route('/finances', methods=['GET'])
 @jwt_required(locations=['headers'])
 def get_finances():
-    return jsonify({
-        'msg': 'backend route /finances pinged!'
-    }), 200
+    user_id = int(get_jwt_identity())
+    user = User.query.get(user_id)
+    len_record = len(user.monthly_finances)
+
+    current = user.monthly_finances[-1].to_dict() if len_record >= 1 else None
+    previous = user.monthly_finances[-2].to_dict() if len_record >= 2 else None
+
+    savings_pct = spendings_pct = 0
+    if current and previous:
+        savings_pct = calculate_percentage(previous['savings'], current['savings'])
+        spendings_pct = calculate_percentage(previous['spendings'], current['spendings'])
+
+    response = {
+        'current': current,
+        'previous': previous,
+        'savings_pct': savings_pct,
+        'spendings_pct': spendings_pct
+    }
+
+    print(response)
+    return jsonify(response), 200
 
 @app_bp.route('/finance-update', methods=['POST'])
 @jwt_required(locations=['headers'])
@@ -78,5 +96,5 @@ def update_finance():
     data = request.get_json()
     print(data)
     return jsonify({
-        'msg': 'backend route pinged!'
+        'msg': 'backend route /finance-update pinged!'
     }), 200

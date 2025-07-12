@@ -91,6 +91,9 @@ class MonthlyFinance(db.Model):
     user = db.relationship('User', back_populates='monthly_finances') # Establish M:1 relationship with Users
 
     def __init__(self, **kwargs):
+        # Set the date before extracting the month and year
+        if 'date' not in kwargs or kwargs['date'] is None:
+            kwargs['date'] = datetime.now(timezone.utc)
         super().__init__(**kwargs)
         if self.date:
             self.year = self.date.year

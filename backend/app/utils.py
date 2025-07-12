@@ -18,3 +18,11 @@ def format_image_path(filename: str, folder: str) -> str:
 
 def isoformat_utc(dt: datetime) -> str:
     return dt.astimezone(timezone.utc).isoformat().replace("+00:00", "Z")
+
+def calculate_percentage(previous: float, current: float) -> float: 
+    if previous == 0.0:
+        if current == 0.0:
+            return 0.0
+        return 100.0
+    change = (current - previous) / abs(previous) * 100
+    return round(change, 2)
