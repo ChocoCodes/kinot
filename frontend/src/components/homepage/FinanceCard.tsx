@@ -38,10 +38,10 @@ const FinanceCard = ({
             <p>vs last month</p>
             <div className="flex gap-2 items-center text-xl">
                 <h1 className="font-bold">₱ { previousAmount.toLocaleString() }</h1>
-                <p className={`${percentage > 0.0 ? 'text-green-400' : 'text-red-400'}`}> 
+                <p className={`${percentage > 0.0 ? 'text-green-400' : 'text-red-400'} flex items-center gap-1 text-sm`}> 
                     { percentage !== 0 && 
                         <>
-                            { percentageIcon } { percentage }%  
+                            { percentageIcon } { percentage.toFixed(2) }%  
                         </>
                     }
                 </p>

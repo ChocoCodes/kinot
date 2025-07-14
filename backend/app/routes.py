@@ -80,6 +80,7 @@ def get_finances():
         savings_pct = calculate_percentage(previous['savings'], current['savings'])
         spendings_pct = calculate_percentage(previous['spendings'], current['spendings'])
 
+    print(f"Savings Percentage: {savings_pct}%\nSpendings Percentage: {spendings_pct}")
     response = {
         'current': current,
         'previous': previous,

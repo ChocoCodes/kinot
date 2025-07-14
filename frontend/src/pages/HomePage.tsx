@@ -1,19 +1,12 @@
 import { useState } from 'react'
 import { Header } from '@components/layouts/components'
-import { useUserFinance, type UserFinanceData } from '@hooks/useUserFinance'
-import { useAuth } from '@context/AuthContext'
+import { useUserFinance } from '@hooks/useUserFinance'
 import { FinanceCard, Form } from '@components/homepage/components'
 import { IoIosAdd }  from "react-icons/io"
 import { MdEdit } from "react-icons/md"
 import { FaArrowTrendUp, FaArrowTrendDown } from "react-icons/fa6";
 import { BsDashLg } from "react-icons/bs";
-
-export interface Payload {
-    title: string;
-    amount: number;
-    year: number;
-    month: number;
-}
+import { useUpdateFinance } from '@hooks/useUpdateFinance'
 
 export const financeMeta = {
     savings: {
@@ -40,78 +33,54 @@ function HomePage() {
     const [activeForm, setActiveForm] = useState<keyof typeof financeMeta | null>(null)
     const [isVisible, setIsVisible] = useState<boolean>(false)
     const { userData } = useUserFinance()
-    const { user } = useAuth() 
-
+    const { updateFinance } = useUpdateFinance()
     const handleClose = () => setIsVisible(!isVisible)
-    const handleSubmit = async (payload: Payload): Promise<void> => {
-        console.log("Json payload: " + JSON.stringify(payload))
-        console.log(user?.token)
-        try {
-            const response = await fetch('api/finance-update', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${user?.token}`
-                },
-                body: JSON.stringify(payload),
-            })
-
-            if(!response.ok) {
-                console.error('ResponseNotOkError[HOME]: ', response.status, await response.text())
-                throw new Error(`Request failed with status ${response.status}`);
-            }
-
-            const result = await response.json()
-            console.log(result)
-            // Set later using setters
-            // return result
-        } catch (error) {
-            console.error("PostRequestError[HOME]: ", error)
-            throw error
-        }
-    }
 
     return (
         <main className='flex flex-col w-screen h-screen mx-auto font-poppins'>
             <Header />
             <section className='w-7/10 mx-auto flex justify-between py-4'>
-                { userData ? Object.entries(financeMeta).map(([key, cfg]) => {
-                    const cardKey = key as keyof typeof financeMeta;
-                    const percentage = userData[`${cardKey}PCT` as keyof UserFinanceData] as number ?? 0.0;
-                    const currentAmount = userData[cardKey as keyof UserFinanceData] as number ?? 0.0;
-                    const previousAmount = Math.round(currentAmount / (1 + percentage / 100)) ?? 0.0;
+                {Object.entries(financeMeta).map(([key, config]) => {
+                    const cardKey = key as keyof typeof financeMeta
+                    const current = userData?.current
+                    const previous = userData?.previous
+
+                    const currentAmount = current?.[cardKey] ?? 0.0
+                    const previousAmount = previous?.[cardKey] ?? 0.0
+
+                    const percentageIcon = currentAmount > previousAmount ? <FaArrowTrendUp /> : 
+                                           currentAmount < previousAmount ? <FaArrowTrendDown /> : <BsDashLg /> 
+
+                    const percentage = (() => {
+                        if (cardKey === 'savings') return userData?.savings_pct ?? 0.0
+                        if (cardKey === 'expenses') return userData?.spendings_pct ?? 0.0
+                        return 0.0;
+                    })()
 
                     return (
-                        <FinanceCard
+                        <FinanceCard 
                             key={ key }
-                            cardTitle={ cfg.title }
-                            icon={ cfg.icon }
-                            bgColor={ cfg.bgColor }
-                            borderColor={ cfg.borderColor }
-                            onIconClick={ () => {
+                            cardTitle={ config.title }
+                            icon={ config.icon }
+                            bgColor={ config.bgColor }
+                            borderColor={ config.borderColor }
+                            onIconClick={() => {
                                 setActiveForm(cardKey)
                                 setIsVisible(true)
                             }}
                             percentage={ percentage }
                             currentAmount={ currentAmount }
                             previousAmount={ previousAmount }
-                            percentageIcon={ 
-                                currentAmount > previousAmount ? 
-                                    <FaArrowTrendUp /> : 
-                                currentAmount < previousAmount ? 
-                                    <FaArrowTrendDown /> : <BsDashLg /> 
-                            }
+                            percentageIcon={ percentageIcon }
                         />
-                    )}
-                ) : (
-                    <p>No Data Found.</p>
-                )}
+                    )
+                })}
             </section>
             {(activeForm && isVisible) && 
                 <Form 
                     formTitle={ activeForm } 
                     handleOnClose={ handleClose } 
-                    handleSubmit={ handleSubmit }
+                    handleSubmit={ updateFinance }
                 />
             }
         </main>
