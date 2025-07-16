@@ -7,6 +7,7 @@ import { MdEdit } from "react-icons/md"
 import { FaArrowTrendUp, FaArrowTrendDown } from "react-icons/fa6";
 import { BsDashLg } from "react-icons/bs";
 import { useUpdateFinance } from '@hooks/useUpdateFinance'
+import { Link } from 'react-router-dom'
 
 export const financeMeta = {
     savings: {
@@ -37,7 +38,7 @@ function HomePage() {
     const handleClose = () => setIsVisible(!isVisible)
 
     return (
-        <main className='flex flex-col w-screen h-screen mx-auto font-poppins'>
+        <main className='flex flex-col w-screen h-screen mx-auto font-poppins gap-3'>
             <Header />
             <section className='w-7/10 mx-auto flex justify-between py-4'>
                 {Object.entries(financeMeta).map(([key, config]) => {
@@ -75,6 +76,12 @@ function HomePage() {
                         />
                     )
                 })}
+            </section>
+            <section className="w-7/10 py-4 mx-auto bg-red-300 text-black">
+                <div className="w-full flex justify-between items-center">
+                    <p className="font-bold text-3xl">Recent Transactions</p>
+                    <Link to="/transactions" className='text-xl'>View All</Link>
+                </div>
             </section>
             {(activeForm && isVisible) && 
                 <Form 

@@ -17,8 +17,8 @@ class User(db.Model):
     profile_path = db.Column(db.String(255), nullable=False, default='default.jpg')
 
     monthly_finances = db.relationship('MonthlyFinance', back_populates='user', cascade='all, delete-orphan') # Establish 1:M relationship with MonthlyFinances
-    transactions = db.relationship('Transaction', back_populates='user', cascade='all, delete-orphan') # Establish 1:M relationship with Transactions
-    goals = db.relationship('Goal', back_populates='user', cascade='all, delete-orphan') # Establish 1:M relationship with Goals
+    transactions = db.relationship('Transaction', back_populates='user', cascade='all, delete-orphan', lazy='dynamic') # Establish 1:M relationship with Transactions
+    goals = db.relationship('Goal', back_populates='user', cascade='all, delete-orphan', lazy='dynamic') # Establish 1:M relationship with Goals
 
     def __init__(
         self, 

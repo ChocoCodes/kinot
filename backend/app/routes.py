@@ -1,10 +1,13 @@
 from flask import Blueprint, jsonify, request
 from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity
 from .utils import format_image_path, calculate_percentage
-from .models import User, MonthlyFinance
+from .models import User, Transaction
 from app import db
 
 app_bp = Blueprint('test', __name__)
+
+def query_user(id: int) -> User:
+    return User.query.get(id)
 
 @app_bp.route('/test')
 def test_route():
@@ -69,7 +72,7 @@ def login():
 @jwt_required(locations=['headers'])
 def get_finances():
     user_id = int(get_jwt_identity())
-    user = User.query.get(user_id)
+    user = query_user(user_id)
     len_record = len(user.monthly_finances)
 
     current = user.monthly_finances[-1].to_dict() if len_record >= 1 else None
@@ -94,8 +97,24 @@ def get_finances():
 @app_bp.route('/finance-update', methods=['POST'])
 @jwt_required(locations=['headers'])
 def update_finance():
+    # Parse Data (Finance and Transaction Log)
     data = request.get_json()
     print(data)
     return jsonify({
         'msg': 'backend route /finance-update pinged!'
     }), 200
+
+@app_bp.route('/recent-transactions', methods=['GET'])
+@jwt_required(locations=['headers'])
+def get_recent_transactions():
+    user_id = int(get_jwt_identity())
+    user = query_user(user_id)
+    sorted_transactions = (
+        user.transactions
+        .order_by(Transaction.created_at.desc())
+        .limit(5)
+        .all()
+    )
+    transaction_records = [transaction.to_dict() for transaction in sorted_transactions]
+    print(transaction_records)
+    return jsonify(transaction_records), 200
