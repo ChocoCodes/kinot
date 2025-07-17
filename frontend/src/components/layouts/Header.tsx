@@ -23,8 +23,8 @@ const Header = () => {
         <header className='flex w-7/10 h-15 justify-between items-center py-10 px-3 mx-auto text-lg'>
             <div className="flex">
                 <Link to='/account'>
-                    <div className="flex gap-2 justify-center hover:underline">
-                        <img src={ user?.profilePath } alt={ `Image of ${ user?.username }` } className='w-8 h-8' />
+                    <div className="flex gap-3 justify-center hover:underline items-center">
+                        <img src={ user?.profilePath } alt={ `Image of ${ user?.username }` } className='w-11 h-11 rounded-full object-cover' />
                         <p className=''>{ user?.username }</p>
                     </div>
                 </Link>

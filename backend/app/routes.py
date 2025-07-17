@@ -1,4 +1,4 @@
-from flask import Blueprint, jsonify, request
+from flask import Blueprint, jsonify, request, url_for
 from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity
 from .utils import format_image_path, calculate_percentage
 from .models import User, Transaction
@@ -11,10 +11,8 @@ def query_user(id: int) -> User:
 
 @app_bp.route('/test')
 def test_route():
-    return jsonify({
-        "message": "Hello from test route flask backend!",
-        "status": "success"
-    }), 200
+    image_url = url_for('static', filename='uploads/profiles/default.jpg')
+    return jsonify(image_url), 200
 
 @app_bp.route('/register', methods=['POST'])
 def register():

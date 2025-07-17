@@ -8,7 +8,7 @@ jwt = JWTManager()
 
 # Initialize Flask app to its config
 def create_app():
-    app = Flask(__name__)
+    app = Flask(__name__, static_folder='../static')
     # Get config from instance/config.py
     app.config.from_object('instance.config.Config')
     db.init_app(app)
