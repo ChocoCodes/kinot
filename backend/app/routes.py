@@ -1,18 +1,19 @@
 from flask import Blueprint, jsonify, request, url_for
 from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity
-from .utils import format_image_path, calculate_percentage
-from .models import User, Transaction
+from .utils import format_image_path
+from http import HTTPStatus
+from .models import User
 from app import db
+from .services.user_query_service import query_user
+from .services.user_finance_service import get_user_finances
+from .services.user_transaction_service import get_recent_transactions
 
 app_bp = Blueprint('test', __name__)
-
-def query_user(id: int) -> User:
-    return User.query.get(id)
 
 @app_bp.route('/test')
 def test_route():
     image_url = url_for('static', filename='uploads/profiles/default.jpg')
-    return jsonify(image_url), 200
+    return jsonify(image_url), HTTPStatus.OK
 
 @app_bp.route('/register', methods=['POST'])
 def register():
@@ -45,7 +46,7 @@ def register():
         'user': user.username,
         'token': create_access_token(identity=str(user.id)),
         'profile_path': format_image_path(user.profile_path, 'profiles')
-    }), 200
+    }), HTTPStatus.OK
 
 @app_bp.route('/login', methods=['POST'])
 def login():
@@ -56,41 +57,33 @@ def login():
     # Check credentials in DB and return w/ access token
     user = User.query.filter_by(username=username).first()
     if not user:
-        return jsonify({'error': 'No username found.'}), 404
+        return jsonify({'error': 'No username found.'}), HTTPStatus.NOT_FOUND
     if not user.validate_password(password):
-        return jsonify({'error': 'Incorrect password'}), 401
+        return jsonify({'error': 'Incorrect password'}), HTTPStatus.UNAUTHORIZED
     return jsonify({
         'id': user.id,
         'user': user.username,
         'token': create_access_token(identity=str(user.id)),
         'profile_path': format_image_path(user.profile_path, 'profiles')
-    }), 200
+    }), HTTPStatus.OK
 
 @app_bp.route('/finances', methods=['GET'])
 @jwt_required(locations=['headers'])
 def get_finances():
     user_id = int(get_jwt_identity())
     user = query_user(user_id)
-    len_record = len(user.monthly_finances)
-
-    current = user.monthly_finances[-1].to_dict() if len_record >= 1 else None
-    previous = user.monthly_finances[-2].to_dict() if len_record >= 2 else None
-
-    savings_pct = spendings_pct = 0
-    if current and previous:
-        savings_pct = calculate_percentage(previous['savings'], current['savings'])
-        spendings_pct = calculate_percentage(previous['spendings'], current['spendings'])
-
-    print(f"Savings Percentage: {savings_pct}%\nSpendings Percentage: {spendings_pct}")
-    response = {
-        'current': current,
-        'previous': previous,
-        'savings_pct': savings_pct,
-        'spendings_pct': spendings_pct
-    }
-
+    response = get_user_finances(user)
     print(response)
-    return jsonify(response), 200
+    return jsonify(response), HTTPStatus.OK
+
+@app_bp.route('/recent-transactions', methods=['GET'])
+@jwt_required(locations=['headers'])
+def fetch_recent_transactions():
+    user_id = int(get_jwt_identity())
+    user = query_user(user_id)
+    transaction_records = get_recent_transactions(user)
+    print(transaction_records)
+    return jsonify(transaction_records), HTTPStatus.OK
 
 @app_bp.route('/finance-update', methods=['POST'])
 @jwt_required(locations=['headers'])
@@ -100,19 +93,17 @@ def update_finance():
     print(data)
     return jsonify({
         'msg': 'backend route /finance-update pinged!'
-    }), 200
+    }), HTTPStatus.OK
 
-@app_bp.route('/recent-transactions', methods=['GET'])
+@app_bp.route('/home', methods=['GET'])
 @jwt_required(locations=['headers'])
-def get_recent_transactions():
+def get_homepage_data():
     user_id = int(get_jwt_identity())
     user = query_user(user_id)
-    sorted_transactions = (
-        user.transactions
-        .order_by(Transaction.created_at.desc())
-        .limit(5)
-        .all()
-    )
-    transaction_records = [transaction.to_dict() for transaction in sorted_transactions]
-    print(transaction_records)
-    return jsonify(transaction_records), 200
+    finances = get_user_finances(user)
+    transactions = get_recent_transactions(user)
+    response = {
+        'finances': finances,
+        'transactions': transactions
+    }
+    return jsonify(response), HTTPStatus.OK
