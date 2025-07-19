@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useAuth } from '@context/AuthContext'
 
-type FinanceRecord = {
+type FinanceSnapshot = {
     id: number;
     user_id: number;
     date: string;
@@ -12,19 +12,35 @@ type FinanceRecord = {
     allowance: number;
 }
 
-export type UserFinanceData = {
-    current: FinanceRecord;
-    previous: FinanceRecord;
+export type FinanceData = {
+    current: FinanceSnapshot;
+    previous: FinanceSnapshot;
     savings_pct: number;
     spendings_pct: number;
 }
 
-export const useUserFinance = () => {
+type TransactionData = {
+    id: number;
+    user_id: number;
+    category: string;
+    amount: number;
+    created_at: string;
+    method: string;
+    description: string;
+}
+
+type DashboardData = {
+    finance: FinanceData;
+    transaction: TransactionData[];
+}
+
+export const useUserDashboard = () => {
     const { user } = useAuth()
-    const [userData, setUserData] = useState<UserFinanceData | null>(null);
-    const fetchFinances = async () => {
+    const [userData, setUserData] = useState<DashboardData | null>(null);
+
+    const fetchData = async () => {
         try {
-            const response = await fetch('api/finances', {
+            const response = await fetch('api/home', {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
@@ -33,22 +49,22 @@ export const useUserFinance = () => {
             })
 
             if(!response.ok) {
-                console.error('[ResponseNotOK]: Failed to fetch finance')
+                console.error('[ResponseNotOK]: Failed to fetch homepage data')
                 setUserData(null)
             }
 
             const data = await response.json()
             console.log(data)
             setUserData(data)
-        } catch (err) {
+        } catch (err: any) {
             console.error('[InternalError]: ', err)
             setUserData(null)
         }
     }
 
     useEffect(() => {
-        fetchFinances()
+        fetchData()
     }, [])
 
-    return { userData, fetchFinances }
+    return { userData, fetchData }
 }

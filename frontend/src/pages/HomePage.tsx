@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { Header } from '@components/layouts/components'
-import { useUserFinance } from '@hooks/useUserFinance'
-import { FinanceCard, Form } from '@components/homepage/components'
+import { useUserDashboard } from '@hooks/useUserDashboard'
+import { FinanceCard, Form, TransactionTable } from '@components/homepage/components'
 import { IoIosAdd }  from "react-icons/io"
 import { MdEdit } from "react-icons/md"
 import { FaArrowTrendUp, FaArrowTrendDown } from "react-icons/fa6";
@@ -33,9 +33,26 @@ export const financeMeta = {
 function HomePage() {
     const [activeForm, setActiveForm] = useState<keyof typeof financeMeta | null>(null)
     const [isVisible, setIsVisible] = useState<boolean>(false)
-    const { userData } = useUserFinance()
+    const { userData } = useUserDashboard()
     const { updateFinance } = useUpdateFinance()
-    const handleClose = () => setIsVisible(!isVisible)
+    
+    const finances = userData?.finance
+    const transactions = userData?.transaction || []
+
+    const transactionTableCols = [
+        { header: "ID" },
+        { header: "Description" },
+        { header: "Category" },
+        { header: "Amount" },
+        { header: "Method" },
+        { header: "Date" },
+    ];
+
+
+
+    const handleClose = () => {
+        setIsVisible(!isVisible)
+    }
 
     return (
         <main className='flex flex-col w-screen h-screen mx-auto font-poppins gap-3'>
@@ -43,8 +60,8 @@ function HomePage() {
             <section className='w-7/10 mx-auto flex justify-between py-4'>
                 {Object.entries(financeMeta).map(([key, config]) => {
                     const cardKey = key as keyof typeof financeMeta
-                    const current = userData?.current
-                    const previous = userData?.previous
+                    const current = finances?.current
+                    const previous = finances?.previous
 
                     const currentAmount = current?.[cardKey] ?? 0.0
                     const previousAmount = previous?.[cardKey] ?? 0.0
@@ -53,8 +70,8 @@ function HomePage() {
                                            currentAmount < previousAmount ? <FaArrowTrendDown /> : <BsDashLg /> 
 
                     const percentage = (() => {
-                        if (cardKey === 'savings') return userData?.savings_pct ?? 0.0
-                        if (cardKey === 'expenses') return userData?.spendings_pct ?? 0.0
+                        if (cardKey === 'savings') return finances?.savings_pct ?? 0.0
+                        if (cardKey === 'expenses') return finances?.spendings_pct ?? 0.0
                         return 0.0;
                     })()
 
@@ -77,7 +94,7 @@ function HomePage() {
                     )
                 })}
             </section>
-            <section className="w-7/10 py-4 mx-auto bg-red-300 text-black">
+            <section className="w-7/10 mx-auto flex flex-col gap-4 text-black">
                 <div className="w-full flex justify-between items-center">
                     <p className="font-bold text-3xl">Recent Transactions</p>
                     <Link to="/transactions" className='text-xl'>View All</Link>
@@ -90,6 +107,7 @@ function HomePage() {
                     handleSubmit={ updateFinance }
                 />
             }
+            <TransactionTable columns={ transactionTableCols } data={ transactions } />
         </main>
     )
 }

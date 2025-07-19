@@ -1,5 +1,5 @@
 import { useAuth } from "@context/AuthContext"
-import type { UserFinanceData } from "./useUserFinance"
+import type { FinanceData } from "./useUserDashboard"
 
 export interface Payload {
     title: string;
@@ -10,7 +10,7 @@ export interface Payload {
 
 export const useUpdateFinance = () => {
     const { user } = useAuth() 
-    const updateFinance =  async (payload: Payload): Promise<UserFinanceData> => {
+    const updateFinance =  async (payload: Payload): Promise<FinanceData> => {
         // console.log("Json payload: " + JSON.stringify(payload))
         // console.log(user?.token)
         try {
@@ -28,7 +28,7 @@ export const useUpdateFinance = () => {
                 throw new Error(`Request failed with status ${response.status}`);
             }
 
-            const result: UserFinanceData = await response.json()
+            const result: FinanceData = await response.json()
             console.log(result)
             return result
         } catch (error) {
