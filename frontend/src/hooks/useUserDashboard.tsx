@@ -1,38 +1,6 @@
 import { useEffect, useState } from 'react'
 import { useAuth } from '@context/AuthContext'
-
-type FinanceSnapshot = {
-    id: number;
-    user_id: number;
-    date: string;
-    savings: number;
-    year: number;
-    month: number;
-    expenses: number;
-    allowance: number;
-}
-
-export type FinanceData = {
-    current: FinanceSnapshot;
-    previous: FinanceSnapshot;
-    savings_pct: number;
-    spendings_pct: number;
-}
-
-type TransactionData = {
-    id: number;
-    user_id: number;
-    category: string;
-    amount: number;
-    created_at: string;
-    method: string;
-    description: string;
-}
-
-type DashboardData = {
-    finance: FinanceData;
-    transaction: TransactionData[];
-}
+import type { DashboardData } from '@type/types';
 
 export const useUserDashboard = () => {
     const { user } = useAuth()
@@ -54,7 +22,6 @@ export const useUserDashboard = () => {
             }
 
             const data = await response.json()
-            console.log(data)
             setUserData(data)
         } catch (err: any) {
             console.error('[InternalError]: ', err)
@@ -64,7 +31,7 @@ export const useUserDashboard = () => {
 
     useEffect(() => {
         fetchData()
+        console.log('hook called! ', userData)
     }, [])
-
     return { userData, fetchData }
 }

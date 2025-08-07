@@ -1,34 +1,66 @@
-interface Column {
-    header: string;
+import { toUpper, formatDate } from '@utils/helpers'
+import { CategoryTag } from '@components/homepage/components'
+import { financeMeta } from '@pages/HomePage';
+import type { TransactionData, Transaction } from '@type/types'
+import type React from 'react';
+
+interface TransactionTableProps {
+  data: TransactionData[];
 }
 
-interface TransactionTableProps<T> {
-  columns: Column[];
-  data: Record<string, T>[];
-}
+const COLUMNS = [
+    'id',
+    'category',
+    'amount',
+    'method',
+    'description',
+    'date',
+]
 
-const TransactionTable = <T,> ({ columns, data }: TransactionTableProps<T | undefined>) => {
+const TransactionTable = ({ data }: TransactionTableProps) => {
+    const transactions: Transaction[] = data.map(({ user_id, ...rest }) => rest) 
+
+    const getCellComponent = (col: string, row: Transaction): React.ReactNode => {
+        if (col === 'date') {
+            return formatDate(row.created_at)
+        }
+        if (col === 'category') {
+            return (
+                <CategoryTag 
+                    category={ row.category }
+                    tagKey={ row.category.toLowerCase() as keyof typeof financeMeta }
+                />
+            )
+        }
+        return row[col as keyof Transaction] as React.ReactNode;
+    }
+
+    console.log(transactions)
     return (
-        <table className="w-7/10 mx-auto text-center text-xl font-poppins bg-red-200 rounded-lg border-collapse">
+        <table className="w-7/10 mx-auto text-center text-xl font-poppins rounded-lg border-collapse">
             <thead>
                 <tr>
-                    {columns.map(col => (
-                        <th key={col.header} className="font-normal py-2">{col.header}</th>
+                    {COLUMNS.map(col => (
+                        <th 
+                            key={ col } 
+                            className={`font-normal py-2 ${col === 'id' ? 'w-[90px]' : 'w-[150px]'} text-xl py-2`}>
+                                { toUpper(col) }
+                        </th>
                     ))}
                 </tr>
             </thead>
             <tbody>
-                { data.length > 0 ? data.map((row, index) => (
+                { transactions.length > 0 ? transactions.map((row, index) => (
                     <tr key={index}>
-                        {columns.map(col => (
-                            <td key="col.header">
-                                { row[col.header] as React.ReactNode }
+                        {COLUMNS.map(col => (
+                            <td key={col} className={`${col === 'id' ? 'w-[90px]' : ''} truncate text-ellipsis py-3 text-xl`}>
+                                {getCellComponent(col, row)}
                             </td>
                         ))}
                     </tr>
                 )) : (                    
                     <tr>
-                        <td colSpan={ columns.length }>No data available.</td>
+                        <td colSpan={ COLUMNS.length }>No transactions available.</td>
                     </tr>
                 )}
             </tbody>

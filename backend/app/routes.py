@@ -106,4 +106,5 @@ def get_homepage_data():
         'finances': finances,
         'transactions': transactions
     }
+    print(response)
     return jsonify(response), HTTPStatus.OK

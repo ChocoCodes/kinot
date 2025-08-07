@@ -35,20 +35,13 @@ function HomePage() {
     const [isVisible, setIsVisible] = useState<boolean>(false)
     const { userData } = useUserDashboard()
     const { updateFinance } = useUpdateFinance()
-    
-    const finances = userData?.finance
-    const transactions = userData?.transaction || []
 
-    const transactionTableCols = [
-        { header: "ID" },
-        { header: "Description" },
-        { header: "Category" },
-        { header: "Amount" },
-        { header: "Method" },
-        { header: "Date" },
-    ];
+    const finances = userData?.finances
+    const transactions = userData?.transactions || []
 
-
+    console.log(finances);
+    console.log(transactions);
+    console.log(userData?.transactions[0].created_at)
 
     const handleClose = () => {
         setIsVisible(!isVisible)
@@ -107,7 +100,7 @@ function HomePage() {
                     handleSubmit={ updateFinance }
                 />
             }
-            <TransactionTable columns={ transactionTableCols } data={ transactions } />
+            <TransactionTable data={ transactions } />
         </main>
     )
 }
