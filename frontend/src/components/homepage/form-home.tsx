@@ -1,12 +1,12 @@
-import type { UserFinanceData } from '@hooks/useUserDashboard';
-import type { Payload } from '@hooks/useUpdateFinance';
+import type { FinanceData } from '@type/types'
+import type { Payload } from '@hooks/use-update-finance';
 import { useState } from 'react'
 import { IoIosClose } from "react-icons/io";
 
 interface FormProps {
     handleOnClose: () => void
     formTitle: string
-    handleSubmit: (payload: Payload) => Promise<UserFinanceData>
+    handleSubmit: (payload: Payload) => Promise<FinanceData>
 }
 
 const Form = ({ handleOnClose, formTitle, handleSubmit }: FormProps ) => {

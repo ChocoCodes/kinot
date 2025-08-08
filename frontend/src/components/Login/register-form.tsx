@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { AccountForm } from './AccountForm'
-import { RecoveryForm } from './RecoveryForm'
+import { AccountForm } from './account-form'
+import { RecoveryForm } from './recovery-form'
 import { useAuth, type User } from '@context/AuthContext'
 
 export type UserInfo = {

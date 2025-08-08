@@ -1,4 +1,4 @@
-import { financeMeta } from "@pages/HomePage"
+import { financeMeta } from "@pages/home-page"
 
 type CategoryTagProps = {
     category: string;

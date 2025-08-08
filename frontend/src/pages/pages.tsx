@@ -1,9 +1,9 @@
-import { LoginPage } from "./LoginPage"
-import { ForgotPasswordPage } from "./ForgotPasswordPage"
-import { AccountPage } from "./AccountPage"
-import { HomePage } from "./HomePage"
-import { GoalPage } from "./GoalPage"
-import { TransactionPage } from "./TransactionPage"
+import { LoginPage } from "./login-page"
+import { ForgotPasswordPage } from "./forgot-password-page"
+import { AccountPage } from "./account-page"
+import { HomePage } from "./home-page"
+import { GoalPage } from "./goal-page"
+import { TransactionPage } from "./transaction-page"
 
 
 

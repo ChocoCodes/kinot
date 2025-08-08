@@ -1,6 +1,6 @@
 import { toUpper, formatDate } from '@utils/helpers'
 import { CategoryTag } from '@components/homepage/components'
-import { financeMeta } from '@pages/HomePage';
+import { financeMeta } from '@pages/home-page';
 import type { TransactionData, Transaction } from '@type/types'
 import type React from 'react';
 
@@ -37,7 +37,7 @@ const TransactionTable = ({ data }: TransactionTableProps) => {
 
     console.log(transactions)
     return (
-        <table className="w-7/10 mx-auto text-center text-xl font-poppins rounded-lg border-collapse">
+        <table className="w-7/10 mx-auto text-center text-xl font-poppins rounded-lg border-collapse bg-light-gray">
             <thead>
                 <tr>
                     {COLUMNS.map(col => (
@@ -49,7 +49,7 @@ const TransactionTable = ({ data }: TransactionTableProps) => {
                     ))}
                 </tr>
             </thead>
-            <tbody>
+            <tbody className='divide-x divide-dark-gray'>
                 { transactions.length > 0 ? transactions.map((row, index) => (
                     <tr key={index}>
                         {COLUMNS.map(col => (

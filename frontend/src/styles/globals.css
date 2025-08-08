@@ -10,6 +10,8 @@
   --color-outl-red: #F5B7B1;
   --color-fill-blue: #D6EAF8;
   --color-outl-blue: #5499C7;
+  --color-light-gray: #F9F9F9;
+  --color-dark-gray: #E0E0E0;
 }
 
 .spinner {

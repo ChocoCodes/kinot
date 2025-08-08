@@ -1,5 +1,5 @@
-import LoginForm from './LoginForm'
-import RegisterForm from './RegisterForm'
-import Tabs from './Tabs'
+import LoginForm from './login-form'
+import RegisterForm from './register-form'
+import Tabs from './tabs-login'
 
 export { LoginForm, RegisterForm, Tabs };

@@ -1,6 +1,6 @@
-import FinanceCard from './FinanceCard'
-import Form from './Form'
-import TransactionTable from './TransactionTable'
-import CategoryTag from './CategoryTag'
+import FinanceCard from './finance-card'
+import Form from './form-home'
+import TransactionTable from './transaction-table'
+import CategoryTag from './category-tag'
 
 export { FinanceCard, Form, TransactionTable, CategoryTag }

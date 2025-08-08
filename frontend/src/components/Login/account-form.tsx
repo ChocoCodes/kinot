@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import type { UserInfo } from './RegisterForm'
+import type { UserInfo } from './register-form'
 import { FaEye, FaEyeSlash } from "react-icons/fa6";
 import { BiSolidChevronRightSquare } from "react-icons/bi";
 

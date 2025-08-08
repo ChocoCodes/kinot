@@ -1,5 +1,5 @@
 import { useAuth } from "@context/AuthContext"
-import type { FinanceData } from "./useUserDashboard"
+import type { FinanceData } from "@type/types"
 
 export interface Payload {
     title: string;

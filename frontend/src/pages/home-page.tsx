@@ -1,12 +1,12 @@
 import { useState } from 'react'
 import { Header } from '@components/layouts/components'
-import { useUserDashboard } from '@hooks/useUserDashboard'
+import { useUserDashboard } from '@hooks/use-user-dashboard'
 import { FinanceCard, Form, TransactionTable } from '@components/homepage/components'
 import { IoIosAdd }  from "react-icons/io"
 import { MdEdit } from "react-icons/md"
 import { FaArrowTrendUp, FaArrowTrendDown } from "react-icons/fa6";
 import { BsDashLg } from "react-icons/bs";
-import { useUpdateFinance } from '@hooks/useUpdateFinance'
+import { useUpdateFinance } from '@hooks/use-update-finance'
 import { Link } from 'react-router-dom'
 
 export const financeMeta = {
@@ -87,11 +87,18 @@ function HomePage() {
                     )
                 })}
             </section>
-            <section className="w-7/10 mx-auto flex flex-col gap-4 text-black">
-                <div className="w-full flex justify-between items-center">
+            <section className="w-full mx-auto flex flex-col gap-4 text-black">
+                <div className="w-7/10 flex justify-between items-center mx-auto">
                     <p className="font-bold text-3xl">Recent Transactions</p>
                     <Link to="/transactions" className='text-xl'>View All</Link>
                 </div>
+                <TransactionTable data={ transactions } />
+            </section>
+            <section className="w-full mx-auto flex flex-col gap-4 text-black">
+                <div className="w-7/10 flex justify-between items-center mx-auto">
+                    <p className="font-bold text-3xl">My Goals</p>
+                    <Link to="/transactions" className='text-xl'>View All</Link>
+                </div>                
             </section>
             {(activeForm && isVisible) && 
                 <Form 
@@ -100,7 +107,6 @@ function HomePage() {
                     handleSubmit={ updateFinance }
                 />
             }
-            <TransactionTable data={ transactions } />
         </main>
     )
 }

@@ -1,6 +1,6 @@
-import Footer from "./Footer";
-import Loading from "./Loading";
-import ProtectedRoute from "./ProtectedRoute";
-import Header from "./Header";
+import Footer from "./footer-layout";
+import Loading from "./loading-layout";
+import ProtectedRoute from "./protected-route";
+import Header from "./header-layout";
 
 export { Footer, Loading, ProtectedRoute, Header };

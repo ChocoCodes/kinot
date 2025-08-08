@@ -1,5 +1,4 @@
-import { useUserDashboard, type TransactionData }  from './useUserDashboard'
-import { useUpdateFinance } from './useUpdateFinance'
+import { useUserDashboard }  from './use-user-dashboard'
+import { useUpdateFinance } from './use-update-finance'
 
-
-export { useUserDashboard, useUpdateFinance, type TransactionData }
+export { useUserDashboard, useUpdateFinance }

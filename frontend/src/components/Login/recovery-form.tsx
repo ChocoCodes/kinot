@@ -1,4 +1,4 @@
-import type { UserInfo } from './RegisterForm'
+import type { UserInfo } from './register-form'
 import { BiSolidChevronLeftSquare } from "react-icons/bi";
 
 interface RecoveryProps {
