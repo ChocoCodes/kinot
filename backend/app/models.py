@@ -176,7 +176,7 @@ class Goal(db.Model):
     description = db.Column(db.String(100))
     created_at = db.Column(db.DateTime, default=datetime.now(timezone.utc), nullable=False)
     required_amount = db.Column(db.Float, nullable=False)
-    current_amount = db.Column(db.Float, nullable=False)
+    current_amount = db.Column(db.Float, nullable=False, default=0.0)
     is_deleted = db.Column(db.Boolean, default=False, nullable=False)
     image_path = db.Column(db.String(255), nullable=False, default='default-goal.jpg')
 

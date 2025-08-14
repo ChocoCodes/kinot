@@ -1,4 +1,4 @@
-import { useAuth } from '@context/AuthContext'
+import { useAuth } from '@context/auth-context'
 import { Link, useNavigate, useLocation } from 'react-router-dom'
 
 const NAV_ITEMS = {

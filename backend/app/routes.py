@@ -7,13 +7,17 @@ from app import db
 from .services.user_query_service import query_user
 from .services.user_finance_service import get_user_finances
 from .services.user_transaction_service import get_recent_transactions
+from .services.user_goal_service import get_goals, get_active_goals
 
 app_bp = Blueprint('test', __name__)
 
 @app_bp.route('/test')
 def test_route():
-    image_url = url_for('static', filename='uploads/profiles/default.jpg')
-    return jsonify(image_url), HTTPStatus.OK
+    user = query_user(1)
+    goals_db = get_active_goals(user)
+    print(goals_db)
+    goals_parsed = [goal.to_dict() for goal in goals_db] if goals_db else []
+    return jsonify(goals_parsed), HTTPStatus.OK
 
 @app_bp.route('/register', methods=['POST'])
 def register():
@@ -102,9 +106,10 @@ def get_homepage_data():
     user = query_user(user_id)
     finances = get_user_finances(user)
     transactions = get_recent_transactions(user)
+    goals = get_active_goals(user)
     response = {
         'finances': finances,
-        'transactions': transactions
+        'transactions': transactions,
+        'goals': goals
     }
-    print(response)
     return jsonify(response), HTTPStatus.OK
