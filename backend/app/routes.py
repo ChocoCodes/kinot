@@ -1,13 +1,17 @@
-from flask import Blueprint, jsonify, request, url_for
+from flask import Blueprint, jsonify, request
 from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity
 from .utils import format_image_path
 from http import HTTPStatus
 from .models import User
 from app import db
-from .services.user_query_service import query_user
-from .services.user_finance_service import get_user_finances
-from .services.user_transaction_service import get_recent_transactions
-from .services.user_goal_service import get_goals, get_active_goals
+from .services import (
+    query_user,
+    get_user_finances,
+    get_recent_transactions,
+    # get_goals,
+    get_active_goals,
+    ActiveGoalDTO
+)
 
 app_bp = Blueprint('test', __name__)
 
@@ -15,8 +19,10 @@ app_bp = Blueprint('test', __name__)
 def test_route():
     user = query_user(1)
     goals_db = get_active_goals(user)
-    print(goals_db)
-    goals_parsed = [goal.to_dict() for goal in goals_db] if goals_db else []
+    print(f"DB Data: {goals_db}")
+    goals_dto = [ActiveGoalDTO(goals) for goals in goals_db] if goals_db else []
+    print(f"DTO Data: {goals_dto}")
+    goals_parsed = [goal.__dict__ for goal in goals_dto] if goals_dto else []
     return jsonify(goals_parsed), HTTPStatus.OK
 
 @app_bp.route('/register', methods=['POST'])
@@ -33,7 +39,7 @@ def register():
     if existing_user:
         return jsonify({
             'error': 'Username already taken!'
-        }), 409
+        }), HTTPStatus.CONFLICT
     user = User(
         fullname=fullname,
         username=username,
@@ -92,7 +98,7 @@ def fetch_recent_transactions():
 @app_bp.route('/finance-update', methods=['POST'])
 @jwt_required(locations=['headers'])
 def update_finance():
-    # Parse Data (Finance and Transaction Log)
+    # TODO: Parse Data (Finance and Transaction Log)
     data = request.get_json()
     print(data)
     return jsonify({
@@ -106,10 +112,12 @@ def get_homepage_data():
     user = query_user(user_id)
     finances = get_user_finances(user)
     transactions = get_recent_transactions(user)
-    goals = get_active_goals(user)
+    goals_raw = get_active_goals(user)
+    goals = [ActiveGoalDTO(goal) for goal in goals_raw] if goals_raw else []
+    print(goals)
     response = {
         'finances': finances,
         'transactions': transactions,
-        'goals': goals
+        'goals': [goal.__dict__ for goal in goals]
     }
     return jsonify(response), HTTPStatus.OK

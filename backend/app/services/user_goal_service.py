@@ -8,11 +8,9 @@ def get_goals(user: User):
 def get_active_goals(user: User):
     active_goals_db = (
         user.goals
-        .join(GoalContribution)
+        .outerjoin(GoalContribution)
         .group_by(Goal.id)
-        .order_by(desc(func.count(GoalContribution.id)))
+        .order_by(desc(func.count(GoalContribution.id)), desc(Goal.created_at))
         .all()
     )
-
-    active_goals = [goal.to_dict() for goal in active_goals_db] if active_goals_db else []
-    return active_goals
+    return active_goals_db
