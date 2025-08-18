@@ -26,9 +26,19 @@ export type TransactionData = {
     description: string;
 }
 
+export type GoalData = {
+    id: number;
+    required_amount: number;
+    current_amount: number;
+    description: string;
+    created_at: string;
+    title: string;
+}
+
 export type Transaction = Omit<TransactionData, 'user_id'>
 
 export type DashboardData = {
     finances: FinanceData;
     transactions: TransactionData[];
+    goals: GoalData[];
 }

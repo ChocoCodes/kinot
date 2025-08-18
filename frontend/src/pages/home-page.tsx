@@ -1,13 +1,13 @@
 import { useState } from 'react'
 import { Header } from '@components/layouts/components'
 import { useUserDashboard } from '@hooks/use-user-dashboard'
-import { FinanceCard, Form, TransactionTable } from '@components/homepage/components'
+import { FinanceCard, Form, TransactionTable, Section } from '@components/homepage/components'
 import { IoIosAdd }  from "react-icons/io"
 import { MdEdit } from "react-icons/md"
 import { FaArrowTrendUp, FaArrowTrendDown } from "react-icons/fa6";
 import { BsDashLg } from "react-icons/bs";
 import { useUpdateFinance } from '@hooks/use-update-finance'
-import { Link } from 'react-router-dom'
+
 
 export const financeMeta = {
     savings: {
@@ -38,7 +38,8 @@ function HomePage() {
 
     const finances = userData?.finances
     const transactions = userData?.transactions || []
-
+//    const goals = userData?.goals || []
+    
     console.log(finances);
     console.log(transactions);
     console.log(userData?.transactions[0].created_at)
@@ -87,19 +88,19 @@ function HomePage() {
                     )
                 })}
             </section>
-            <section className="w-full mx-auto flex flex-col gap-4 text-black">
-                <div className="w-7/10 flex justify-between items-center mx-auto">
-                    <p className="font-bold text-3xl">Recent Transactions</p>
-                    <Link to="/transactions" className='text-xl'>View All</Link>
-                </div>
+            <Section
+                title={ "Recent Transactions" } 
+                route={ "/transactions" } 
+            >
                 <TransactionTable data={ transactions } />
-            </section>
-            <section className="w-full mx-auto flex flex-col gap-4 text-black">
-                <div className="w-7/10 flex justify-between items-center mx-auto">
-                    <p className="font-bold text-3xl">My Goals</p>
-                    <Link to="/transactions" className='text-xl'>View All</Link>
-                </div>                
-            </section>
+            </Section>
+            {/* TODO: Add Goal Cards */}
+            <Section
+                title={ "My Goals" } 
+                route={ "/transactions" } 
+            >
+                <TransactionTable data={ transactions } />
+            </Section> 
             {(activeForm && isVisible) && 
                 <Form 
                     formTitle={ activeForm } 
