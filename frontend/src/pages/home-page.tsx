@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { Header } from '@components/layouts/components'
 import { useUserDashboard } from '@hooks/use-user-dashboard'
-import { FinanceCard, Form, TransactionTable, Section } from '@components/homepage/components'
+import { FinanceCard, Form, TransactionTable, Section } from '@components/home-page/components'
 import { IoIosAdd }  from "react-icons/io"
 import { MdEdit } from "react-icons/md"
 import { FaArrowTrendUp, FaArrowTrendDown } from "react-icons/fa6";
@@ -38,11 +38,12 @@ function HomePage() {
 
     const finances = userData?.finances
     const transactions = userData?.transactions || []
-//    const goals = userData?.goals || []
+    const goals = userData?.goals || []
     
-    console.log(finances);
-    console.log(transactions);
-    console.log(userData?.transactions[0].created_at)
+    console.log("Goals: ", goals)
+    //console.log(finances);
+    //console.log(transactions);
+    //console.log(userData?.transactions[0].created_at)
 
     const handleClose = () => {
         setIsVisible(!isVisible)
