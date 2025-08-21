@@ -1,3 +1,5 @@
+import { financeMeta } from "@pages/home-page";
+
 type FinanceSnapshot = {
     id: number;
     user_id: number;
@@ -33,12 +35,16 @@ export type GoalData = {
     description: string;
     created_at: string;
     title: string;
+    image_path: string;
 }
 
-export type Transaction = Omit<TransactionData, 'user_id'>
 
 export type DashboardData = {
     finances: FinanceData;
     transactions: TransactionData[];
     goals: GoalData[];
 }
+
+export type Transaction = Omit<TransactionData, 'user_id'>
+
+export type FinanceMeta = keyof typeof financeMeta

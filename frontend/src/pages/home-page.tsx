@@ -1,13 +1,19 @@
 import { useState } from 'react'
 import { Header } from '@components/layouts/components'
 import { useUserDashboard } from '@hooks/use-user-dashboard'
-import { FinanceCard, Form, TransactionTable, Section } from '@components/home-page/components'
 import { IoIosAdd }  from "react-icons/io"
 import { MdEdit } from "react-icons/md"
 import { FaArrowTrendUp, FaArrowTrendDown } from "react-icons/fa6";
 import { BsDashLg } from "react-icons/bs";
 import { useUpdateFinance } from '@hooks/use-update-finance'
-
+import { type FinanceMeta } from '@type/types'
+import { 
+    FinanceCard, 
+    Form, 
+    TransactionTable, 
+    Section, 
+    GoalCard 
+} from '@components/home-page/components'
 
 export const financeMeta = {
     savings: {
@@ -31,7 +37,7 @@ export const financeMeta = {
 } as const;
 
 function HomePage() {
-    const [activeForm, setActiveForm] = useState<keyof typeof financeMeta | null>(null)
+    const [activeForm, setActiveForm] = useState<FinanceMeta | null>(null)
     const [isVisible, setIsVisible] = useState<boolean>(false)
     const { userData } = useUserDashboard()
     const { updateFinance } = useUpdateFinance()
@@ -40,7 +46,7 @@ function HomePage() {
     const transactions = userData?.transactions || []
     const goals = userData?.goals || []
     
-    console.log("Goals: ", goals)
+    //console.log("Goals: ", goals)
     //console.log(finances);
     //console.log(transactions);
     //console.log(userData?.transactions[0].created_at)
@@ -50,57 +56,64 @@ function HomePage() {
     }
 
     return (
-        <main className='flex flex-col w-screen h-screen mx-auto font-poppins gap-3'>
+        <main className='flex flex-col w-full h-screen mx-auto font-poppins gap-3'>
             <Header />
-            <section className='w-7/10 mx-auto flex justify-between py-4'>
-                {Object.entries(financeMeta).map(([key, config]) => {
-                    const cardKey = key as keyof typeof financeMeta
-                    const current = finances?.current
-                    const previous = finances?.previous
+            <Section>
+                <div className="flex justify-between">
+                    {Object.entries(financeMeta).map(([key, config]) => {
+                        const cardKey = key as FinanceMeta
+                        const current = finances?.current
+                        const previous = finances?.previous
 
-                    const currentAmount = current?.[cardKey] ?? 0.0
-                    const previousAmount = previous?.[cardKey] ?? 0.0
+                        const currentAmount = current?.[cardKey] ?? 0.0
+                        const previousAmount = previous?.[cardKey] ?? 0.0
 
-                    const percentageIcon = currentAmount > previousAmount ? <FaArrowTrendUp /> : 
-                                           currentAmount < previousAmount ? <FaArrowTrendDown /> : <BsDashLg /> 
+                        const percentageIcon = currentAmount > previousAmount ? <FaArrowTrendUp /> : 
+                                            currentAmount < previousAmount ? <FaArrowTrendDown /> : <BsDashLg /> 
 
-                    const percentage = (() => {
-                        if (cardKey === 'savings') return finances?.savings_pct ?? 0.0
-                        if (cardKey === 'expenses') return finances?.spendings_pct ?? 0.0
-                        return 0.0;
-                    })()
+                        const percentage = (() => {
+                            if (cardKey === 'savings') return finances?.savings_pct ?? 0.0
+                            if (cardKey === 'expenses') return finances?.spendings_pct ?? 0.0
+                            return 0.0;
+                        })()
 
-                    return (
-                        <FinanceCard 
-                            key={ key }
-                            cardTitle={ config.title }
-                            icon={ config.icon }
-                            bgColor={ config.bgColor }
-                            borderColor={ config.borderColor }
-                            onIconClick={() => {
-                                setActiveForm(cardKey)
-                                setIsVisible(true)
-                            }}
-                            percentage={ percentage }
-                            currentAmount={ currentAmount }
-                            previousAmount={ previousAmount }
-                            percentageIcon={ percentageIcon }
-                        />
-                    )
-                })}
-            </section>
+                        return (
+                            <FinanceCard 
+                                key={ key }
+                                cardTitle={ config.title }
+                                icon={ config.icon }
+                                bgColor={ config.bgColor }
+                                borderColor={ config.borderColor }
+                                onIconClick={() => {
+                                    setActiveForm(cardKey)
+                                    setIsVisible(true)
+                                }}
+                                percentage={ percentage }
+                                currentAmount={ currentAmount }
+                                previousAmount={ previousAmount }
+                                percentageIcon={ percentageIcon }
+                            />
+                        )
+                    })}
+                </div>
+            </Section>
             <Section
                 title={ "Recent Transactions" } 
                 route={ "/transactions" } 
             >
                 <TransactionTable data={ transactions } />
             </Section>
-            {/* TODO: Add Goal Cards */}
             <Section
                 title={ "My Goals" } 
                 route={ "/transactions" } 
             >
-                <TransactionTable data={ transactions } />
+                {!goals ? (
+                    <p>No Goals Found. Add your first goal!</p>
+                ) : (
+                    goals.map(goal => {
+                        return <GoalCard key={goal.id} {...goal} />
+                    })
+                )}
             </Section> 
             {(activeForm && isVisible) && 
                 <Form 
