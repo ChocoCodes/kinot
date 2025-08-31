@@ -1,6 +1,6 @@
 from flask import Blueprint, jsonify, request
-from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity
-from .utils import format_image_path
+from flask_jwt_extended import create_access_token
+from .utils import format_image_path, user_required
 from http import HTTPStatus
 from .models import User
 from app import db
@@ -78,26 +78,22 @@ def login():
     }), HTTPStatus.OK
 
 @app_bp.route('/finances', methods=['GET'])
-@jwt_required(locations=['headers'])
-def get_finances():
-    user_id = int(get_jwt_identity())
-    user = query_user(user_id)
+@user_required
+def get_finances(user: User):
     response = get_user_finances(user)
     print(response)
     return jsonify(response), HTTPStatus.OK
 
 @app_bp.route('/recent-transactions', methods=['GET'])
-@jwt_required(locations=['headers'])
-def fetch_recent_transactions():
-    user_id = int(get_jwt_identity())
-    user = query_user(user_id)
+@user_required
+def fetch_recent_transactions(user: User):
     transaction_records = get_recent_transactions(user)
     print(transaction_records)
     return jsonify(transaction_records), HTTPStatus.OK
 
 @app_bp.route('/finance-update', methods=['POST'])
-@jwt_required(locations=['headers'])
-def update_finance():
+@user_required
+def update_finance(user: User):
     # TODO: Parse Data (Finance and Transaction Log)
     data = request.get_json()
     print(data)
@@ -106,10 +102,8 @@ def update_finance():
     }), HTTPStatus.OK
 
 @app_bp.route('/home', methods=['GET'])
-@jwt_required(locations=['headers'])
-def get_homepage_data():
-    user_id = int(get_jwt_identity())
-    user = query_user(user_id)
+@user_required
+def get_homepage_data(user: User):
     finances = get_user_finances(user)
     transactions = get_recent_transactions(user)
     goals_raw = get_active_goals(user)
@@ -121,3 +115,16 @@ def get_homepage_data():
         'goals': [goal.__dict__ for goal in goals]
     }
     return jsonify(response), HTTPStatus.OK
+
+@app_bp.route('/update-goal/<int:goal_id>', methods=['POST'])
+@user_required
+def update_goal_contribution(user: User, goal_id: int):
+    goal_update_info = request.get_json()
+    print(f"{user} | {goal_id}, {goal_update_info}")
+    pass
+
+
+@app_bp.route('/delete-goal/<int:id>', methods=['POST'])
+@user_required
+def delete_goal(id: int):
+    pass
