@@ -1,12 +1,5 @@
 import { useAuth } from "@context/auth-context"
-import type { FinanceData } from "@type/types"
-
-export interface Payload {
-    title: string;
-    amount: number;
-    year: number;
-    month: number;
-}
+import type { FinanceData, Payload } from "@type/types"
 
 export const useUpdateFinance = () => {
     const { user } = useAuth() 

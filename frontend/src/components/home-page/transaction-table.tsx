@@ -37,7 +37,7 @@ const TransactionTable = ({ data }: TransactionTableProps) => {
 
     console.log(transactions)
     return (
-        <table className="w-7/10 mx-auto text-center text-xl font-poppins rounded-lg border-collapse bg-light-gray">
+        <table className="w-full mx-auto text-center text-xl font-poppins rounded-xl border-separate bg-light-gray border-2 border-dark-gray drop-shadow-md">
             <thead>
                 <tr>
                     {COLUMNS.map(col => (
@@ -60,7 +60,7 @@ const TransactionTable = ({ data }: TransactionTableProps) => {
                     </tr>
                 )) : (                    
                     <tr>
-                        <td colSpan={ COLUMNS.length }>No transactions available.</td>
+                        <td colSpan={ COLUMNS.length } className='py-2'>No transactions available.</td>
                     </tr>
                 )}
             </tbody>

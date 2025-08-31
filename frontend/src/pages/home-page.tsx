@@ -1,11 +1,10 @@
 import { useState } from 'react'
 import { Header } from '@components/layouts/components'
-import { useUserDashboard } from '@hooks/use-user-dashboard'
+import { useUserDashboard, useUpdateFinance } from '@hooks/hooks'
 import { IoIosAdd }  from "react-icons/io"
 import { MdEdit } from "react-icons/md"
-import { FaArrowTrendUp, FaArrowTrendDown } from "react-icons/fa6";
+import { FaArrowTrendUp, FaArrowTrendDown } from "react-icons/fa6"
 import { BsDashLg } from "react-icons/bs";
-import { useUpdateFinance } from '@hooks/use-update-finance'
 import { type FinanceMeta } from '@type/types'
 import { 
     FinanceCard, 
@@ -21,18 +20,21 @@ export const financeMeta = {
         icon: <IoIosAdd />,
         bgColor: 'bg-fill-green',
         borderColor: 'border-2 border-outl-green',
+        percentageKey: 'savings_pct',
     },
     allowance: {
         title: "Allowance",
         icon: <MdEdit />,
         bgColor: 'bg-fill-blue',
         borderColor: 'border-2 border-outl-blue',
+        percentageKey: null,
     },
     expenses: {
         title: "Expenses",
         icon: <IoIosAdd />,
         bgColor: 'bg-fill-red',
         borderColor: 'border-2 border-outl-red',
+        percentageKey: 'spendings_pct',
     },
 } as const;
 
@@ -42,18 +44,14 @@ function HomePage() {
     const { userData } = useUserDashboard()
     const { updateFinance } = useUpdateFinance()
 
-    const finances = userData?.finances
-    const transactions = userData?.transactions || []
-    const goals = userData?.goals || []
+    const { finances, transactions = [], goals = [] } = userData || {}
     
     //console.log("Goals: ", goals)
     //console.log(finances);
     //console.log(transactions);
     //console.log(userData?.transactions[0].created_at)
 
-    const handleClose = () => {
-        setIsVisible(!isVisible)
-    }
+    const handleClose = () => setIsVisible(false)
 
     return (
         <main className='flex flex-col w-full h-screen mx-auto font-poppins gap-3'>
@@ -71,11 +69,7 @@ function HomePage() {
                         const percentageIcon = currentAmount > previousAmount ? <FaArrowTrendUp /> : 
                                             currentAmount < previousAmount ? <FaArrowTrendDown /> : <BsDashLg /> 
 
-                        const percentage = (() => {
-                            if (cardKey === 'savings') return finances?.savings_pct ?? 0.0
-                            if (cardKey === 'expenses') return finances?.spendings_pct ?? 0.0
-                            return 0.0;
-                        })()
+                        const percentage = (config.percentageKey && finances) ? finances[config.percentageKey] ?? 0.0 : 0.0
 
                         return (
                             <FinanceCard 
@@ -107,8 +101,8 @@ function HomePage() {
                 title={ "My Goals" } 
                 route={ "/transactions" } 
             >
-                {!goals ? (
-                    <p>No Goals Found. Add your first goal!</p>
+                {goals.length === 0 ? (
+                    <p className="text-2xl">No Goals Found. Add your first goal!</p>
                 ) : (
                     goals.map(goal => {
                         return <GoalCard key={goal.id} {...goal} />

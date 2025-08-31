@@ -38,11 +38,17 @@ export type GoalData = {
     image_path: string;
 }
 
-
 export type DashboardData = {
     finances: FinanceData;
     transactions: TransactionData[];
     goals: GoalData[];
+}
+
+export interface Payload {
+    title: string;
+    amount: number;
+    year: number;
+    month: number;
 }
 
 export type Transaction = Omit<TransactionData, 'user_id'>

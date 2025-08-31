@@ -1,5 +1,5 @@
 import type { FinanceData } from '@type/types'
-import type { Payload } from '@hooks/use-update-finance';
+import { type Payload } from '@type/types';
 import { useState } from 'react'
 import { IoIosClose } from "react-icons/io";
 

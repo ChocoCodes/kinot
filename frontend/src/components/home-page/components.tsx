@@ -4,6 +4,8 @@ import TransactionTable from './transaction-table'
 import CategoryTag from './category-tag'
 import Section from './section'
 import GoalCard from './goal-card'
+import TopUp from './top-up'
+import DeleteDialog from './delete-dialog'
 
 export { 
     FinanceCard, 
@@ -11,5 +13,7 @@ export {
     TransactionTable, 
     CategoryTag, 
     Section,
-    GoalCard
+    GoalCard,
+    TopUp,
+    DeleteDialog
 }
