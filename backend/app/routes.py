@@ -2,7 +2,7 @@ from flask import Blueprint, jsonify, request
 from flask_jwt_extended import create_access_token
 from .utils import format_image_path, user_required
 from http import HTTPStatus
-from .models import User
+from .models import User, GoalContribution
 from app import db
 from .services import (
     query_user,
@@ -119,9 +119,22 @@ def get_homepage_data(user: User):
 @app_bp.route('/update-goal/<int:goal_id>', methods=['POST'])
 @user_required
 def update_goal_contribution(user: User, goal_id: int):
-    goal_update_info = request.get_json()
-    print(f"{user} | {goal_id}, {goal_update_info}")
-    pass
+    print(f"{user} | {goal_id}, {req}")
+    goal = user.goals.filter_by(id=goal_id).first()
+    if goal is None:
+        return jsonify({
+            "error": "You are not authorized to update this goal."
+        }), HTTPStatus.NOT_FOUND
+    # Add log to the user's GoalContribution
+    req = request.get_json()
+    amount = float(req['amount'])
+    goal_contribution = GoalContribution(goal_id=goal_id, amount=amount)
+    db.session.add(goal_contribution)
+    # Update Goals
+    goal.update_current_amount(amount)
+    db.session.commit()
+    # Return updated Goal
+    return jsonify(goal), HTTPStatus.OK
 
 
 @app_bp.route('/delete-goal/<int:id>', methods=['POST'])

@@ -9,8 +9,15 @@ def get_active_goals(user: User):
     active_goals_db = (
         user.goals
         .outerjoin(GoalContribution)
+        .filter(
+            Goal.current_amount < Goal.required_amount, 
+            Goal.is_deleted == False
+        )
         .group_by(Goal.id)
-        .order_by(desc(func.count(GoalContribution.id)), desc(Goal.created_at))
+        .order_by(
+            desc(func.count(GoalContribution.id)), 
+            desc(Goal.created_at)
+        )
         .all()
     )
     return active_goals_db
