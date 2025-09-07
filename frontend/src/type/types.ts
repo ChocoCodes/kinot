@@ -66,4 +66,5 @@ export type UserCredentials = {
 export type NewPassword = {
     password: string;
     confirmedPassword: string;
+    token: string;
 }

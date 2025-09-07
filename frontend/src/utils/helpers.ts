@@ -7,3 +7,6 @@ export const formatDate = (rawDate: string) => {
     const formattedDate = `${date.getMonth()}/${date.getDate()}/${date.getFullYear()}`
     return formattedDate
 }
+
+// Pass reqs: 1 uppercase, 1 lowercase, 1 digit, 8 min length
+export const passRegexp = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d).{8,}$";

@@ -1,11 +1,12 @@
 import { useState } from 'react'
 import { Footer } from "@components/layouts/_components"
-import { StepOneCredentials } from '@components/forgot-password/_components'
+import { StepOneCredentials, StepTwoNewPassword } from '@components/forgot-password/_components'
 import type { UserCredentials, NewPassword } from '@type/types'
 
 const defaultNewPass: NewPassword = {
     password: "",
-    confirmedPassword: ""
+    confirmedPassword: "",
+    token: ""
 }
 
 const defaultUserCreds : UserCredentials = {
@@ -40,7 +41,13 @@ function ForgotPasswordPage() {
 
     const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault()
-        console.log(userCredential)
+        if(step == 1) {
+            console.log(userCredential)
+            setStep(2)
+        }
+        if(step == 2) {
+            console.log(newPassword)
+        }
     }
 
     return (
@@ -52,7 +59,7 @@ function ForgotPasswordPage() {
                     <span className="absolute top-1/2 left-1/2 w-full border-t-2 border-black -z-0"></span>
                 </li>
                 <li className="relative flex-1 flex justify-center">
-                    <span className={`${step == 2 ? 'bg-black text-white' : 'border-2 border-black'} px-3 py-1 rounded-sm bg-white z-10`}>2</span>
+                    <span className={`${step == 2 ? 'bg-black text-white' : 'border-2 border-black bg-white'} px-3 py-1 rounded-sm z-10`}>2</span>
                 </li>
             </ul>
             <form
@@ -61,11 +68,12 @@ function ForgotPasswordPage() {
                 onSubmit={ handleSubmit }
             >
                 { step == 1 && <StepOneCredentials data={ userCredential } handleChange={ handleChange }/> }
+                { step == 2 && <StepTwoNewPassword data={ newPassword } handleChange={ handleChange }/> }
                 <button 
                     type='submit'
-                    className='px-3 py-2 bg-black text-white w-50 text-2xl text-center rounded-md mx-auto hover:cursor-pointer'
+                    className='p-2 bg-black text-white w-50 text-2xl text-center rounded-md mx-auto hover:cursor-pointer'
                 >
-                    Submit
+                    { step == 1 ? "Next" : "Submit" }
                 </button>
             </form>
             <Footer />

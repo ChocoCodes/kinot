@@ -2,14 +2,13 @@ import { useState } from 'react'
 import type { UserInfo } from './register-form'
 import { FaEye, FaEyeSlash } from "react-icons/fa6";
 import { BiSolidChevronRightSquare } from "react-icons/bi";
+import { passRegexp } from '@utils/helpers';
 
 interface AccountProps {
     onNext: (newData: Partial<UserInfo>) => void;
     data: UserInfo;
 }
 
-// Pass reqs: 1 uppercase, 1 lowercase, 1 digit, 8 min length
-const passRegexp = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d).{8,}$";
 
 export const AccountForm = ({ onNext, data }: AccountProps) => {
     const [visible, setVisible] = useState<boolean>(false);
