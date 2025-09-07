@@ -2,8 +2,13 @@ from flask import Blueprint, jsonify, request
 from flask_jwt_extended import create_access_token
 from .utils import format_image_path, user_required
 from http import HTTPStatus
-from .models import User, GoalContribution
 from app import db
+from .models import (
+    User, 
+    GoalContribution, 
+    MonthlyFinance, 
+    Transaction
+)
 from .services import (
     query_user,
     get_user_finances,
@@ -97,8 +102,51 @@ def update_finance(user: User):
     # TODO: Parse Data (Finance and Transaction Log)
     data = request.get_json()
     print(data)
+    
+    field = 'spendings' if data['field'] == 'expenses' else data['field']
+    method = data['method']
+    amount = float(data['amount'])
+    year = int(data['year'])
+    month = int(data['month'])
+    description = data['description']
+    # TODO: Update MonthlyFinances
+    monthly_finance = MonthlyFinance.query.filter_by(
+        user_id=user.id,
+        year=year,
+        month=month
+    ).first()
+
+    if not monthly_finance:
+        monthly_finance = MonthlyFinance(
+            user_id=user.id,
+            year=year,
+            month=month
+        )
+        db.session.add(monthly_finance)
+    # Check if the field sent is an attribute of the model, extract the previous amount and update with the new amount
+    if hasattr(monthly_finance, field):
+        prev = getattr(monthly_finance, field) or 0.0
+        setattr(monthly_finance, field, prev + amount)
+    else:
+        return jsonify({"error": f"Invalid field: {field}"}), HTTPStatus.BAD_REQUEST
+    # TODO: Update Transactions
+    transaction_log = Transaction(
+        category=field,
+        amount=amount,
+        method=method,
+        description=description
+    )
+    user.transactions.append(transaction_log)
+
+    #db.session.commit()
+    # TODO: Query updated finances & transaction log
+    updated_transactions = get_recent_transactions(user)
+    updated_finances = get_user_finances(user)
+
+    # TODO: return updated as JSON 
     return jsonify({
-        'msg': 'backend route /finance-update pinged!'
+        "finances": updated_finances,
+        "transactions": updated_transactions
     }), HTTPStatus.OK
 
 @app_bp.route('/home', methods=['GET'])
@@ -119,7 +167,6 @@ def get_homepage_data(user: User):
 @app_bp.route('/update-goal/<int:goal_id>', methods=['POST'])
 @user_required
 def update_goal_contribution(user: User, goal_id: int):
-    print(f"{user} | {goal_id}, {req}")
     goal = user.goals.filter_by(id=goal_id).first()
     if goal is None:
         return jsonify({
@@ -127,17 +174,32 @@ def update_goal_contribution(user: User, goal_id: int):
         }), HTTPStatus.NOT_FOUND
     # Add log to the user's GoalContribution
     req = request.get_json()
+    print(f"{user} | {goal_id}, {req}")
     amount = float(req['amount'])
-    goal_contribution = GoalContribution(goal_id=goal_id, amount=amount)
+    goal_contribution = GoalContribution(
+        goal_id=goal_id, 
+        amount=amount
+    )
+    print(goal_contribution)
     db.session.add(goal_contribution)
     # Update Goals
     goal.update_current_amount(amount)
+    print(goal)
     db.session.commit()
     # Return updated Goal
-    return jsonify(goal), HTTPStatus.OK
+    return jsonify(goal.to_dict()), HTTPStatus.OK
 
-
-@app_bp.route('/delete-goal/<int:id>', methods=['POST'])
+@app_bp.route('/delete-goal/<int:goal_id>', methods=['POST'])
 @user_required
-def delete_goal(id: int):
-    pass
+def delete_goal(user: User, goal_id: int):
+    goal = user.goals.filter_by(id=goal_id).first()
+    if goal is None: 
+        return jsonify({
+            "error": "Goal not found."
+        }), HTTPStatus.NOT_FOUND
+    
+    # TODO: Set is_deleted = True, commit db
+    goal.is_deleted = True
+    #db.session.commit()
+    updated_goals = get_active_goals(user)
+    return jsonify([goal.to_dict() for goal in updated_goals]), HTTPStatus.OK
