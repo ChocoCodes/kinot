@@ -1,6 +1,6 @@
 import { useState } from 'react'
-import { Header } from '@components/layouts/components'
-import { useUserDashboard, useUpdateFinance } from '@hooks/hooks'
+import { Header } from '@components/layouts/_components'
+import { useUserDashboard, useUpdateFinance } from '@hooks/_hooks'
 import { IoIosAdd }  from "react-icons/io"
 import { MdEdit } from "react-icons/md"
 import { FaArrowTrendUp, FaArrowTrendDown } from "react-icons/fa6"
@@ -12,7 +12,7 @@ import {
     TransactionTable, 
     Section, 
     GoalCard 
-} from '@components/home-page/components'
+} from '@components/home-page/_components'
 
 export const financeMeta = {
     savings: {

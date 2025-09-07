@@ -33,5 +33,5 @@ export const useUserDashboard = () => {
         fetchData()
         console.log('hook called! ', userData)
     }, [])
-    return { userData, fetchData }
+    return { userData, fetchData, setUserData }
 }

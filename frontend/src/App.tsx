@@ -6,8 +6,8 @@ import {
   GoalPage, 
   TransactionPage, 
   AccountPage 
-} from '@pages/pages'
-import { ProtectedRoute } from '@components/layouts/components'
+} from '@pages/_pages'
+import { ProtectedRoute } from '@components/layouts/_components'
 
 function App() {
   return (

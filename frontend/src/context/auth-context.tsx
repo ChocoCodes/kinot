@@ -1,4 +1,4 @@
-import { Loading } from '@components/layouts/components';
+import { Loading } from '@components/layouts/_components';
 import { createContext, useContext, useEffect, useState, type ReactNode } from 'react'
 
 interface ChildProps {

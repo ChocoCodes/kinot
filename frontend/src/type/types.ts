@@ -45,12 +45,25 @@ export type DashboardData = {
 }
 
 export interface Payload {
-    title: string;
+    field: string;
     amount: number;
+    method: string;
     year: number;
     month: number;
+    description: string;
 }
 
 export type Transaction = Omit<TransactionData, 'user_id'>
 
 export type FinanceMeta = keyof typeof financeMeta
+
+export type UserCredentials = {
+    username: string;
+    question: string;
+    answer: string;
+}
+
+export type NewPassword = {
+    password: string;
+    confirmedPassword: string;
+}

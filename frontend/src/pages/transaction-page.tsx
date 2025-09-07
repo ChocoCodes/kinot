@@ -1,4 +1,4 @@
-import { Header } from "@components/layouts/components"
+import { Header } from "@components/layouts/_components"
 
 function TransactionPage() {
     return (

@@ -1,4 +1,3 @@
-import type { FinanceData } from '@type/types'
 import { type Payload } from '@type/types';
 import { useState } from 'react'
 import { IoIosClose } from "react-icons/io";
@@ -6,11 +5,13 @@ import { IoIosClose } from "react-icons/io";
 interface FormProps {
     handleOnClose: () => void
     formTitle: string
-    handleSubmit: (payload: Payload) => Promise<FinanceData>
+    handleSubmit: (payload: Payload) => Promise<void>
 }
 
 const Form = ({ handleOnClose, formTitle, handleSubmit }: FormProps ) => {
-    const [amount, setAmount] = useState<string>("")
+    const [amount, setAmount] = useState("")
+    const [method, setMethod] = useState("")
+    const [description, setDescription] = useState("")
 
     const onSubmit = async (e: React.FormEvent) => {
         e.preventDefault()
@@ -23,10 +24,12 @@ const Form = ({ handleOnClose, formTitle, handleSubmit }: FormProps ) => {
 
         const now = new Date()
         const payload: Payload = {
-            title: formTitle,
+            field: formTitle,
             amount: parseFloat(amount),
+            method,
             year: now.getUTCFullYear(),
             month: now.getUTCMonth() + 1,
+            description
         }
         
         try {
@@ -43,7 +46,7 @@ const Form = ({ handleOnClose, formTitle, handleSubmit }: FormProps ) => {
             <form 
                 action="submit"
                 onSubmit={ onSubmit }
-                className="w-[500px] h-[250px] p-6 bg-white/90 rounded-md flex flex-col gap-6"
+                className="w-[500px] p-6 bg-white/90 rounded-md flex flex-col gap-6"
             >
                 <div className="flex w-9/10 justify-between mx-auto items-center text-xl font-semibold pb-4 border-b-2 border-gray-400">
                     <p>{ formTitle.charAt(0).toUpperCase() + formTitle.slice(1) }</p>
@@ -56,14 +59,28 @@ const Form = ({ handleOnClose, formTitle, handleSubmit }: FormProps ) => {
                         type="text" 
                         className="no-spinner w-full mx-auto h-14 px-4 text-xl border-1 border-gray-400 focus:border-black rounded-lg" 
                         placeholder={`Enter ${ formTitle } amount`} 
-                        value={amount}
+                        value={ amount }
                         onChange={(e) => setAmount(e.target.value)}
+                    />
+                    <input 
+                        type="text" 
+                        className="no-spinner w-full mx-auto h-14 px-4 text-xl border-1 border-gray-400 focus:border-black rounded-lg" 
+                        placeholder={`Enter method`} 
+                        value={ method }
+                        onChange={(e) => setMethod(e.target.value)}
+                    />
+                    <input 
+                        type="text" 
+                        className="no-spinner w-full mx-auto h-14 px-4 text-xl border-1 border-gray-400 focus:border-black rounded-lg" 
+                        placeholder={`Enter top-up description`} 
+                        value={ description }
+                        onChange={(e) => setDescription(e.target.value)}
                     />
                     <button 
                         type="submit"
                         className='h-12 text-lg text-white rounded-md bg-black py-2 px-4 self-end hover:cursor-pointer'
                     >
-                        Submit
+                        Add
                     </button>
                 </div>
             </form>

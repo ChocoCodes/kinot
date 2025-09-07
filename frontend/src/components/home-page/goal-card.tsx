@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { TopUp, DeleteDialog } from '@components/home-page/components'
+import { TopUp, DeleteDialog } from '@components/home-page/_components'
 
 interface GoalCardProps {
     id: number;

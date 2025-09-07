@@ -1,9 +1,12 @@
 import { useAuth } from "@context/auth-context"
+import { useUserDashboard } from './use-user-dashboard'
 import type { FinanceData, Payload } from "@type/types"
 
 export const useUpdateFinance = () => {
     const { user } = useAuth() 
-    const updateFinance =  async (payload: Payload): Promise<FinanceData> => {
+    const { userData, setUserData } = useUserDashboard()
+
+    const updateFinance =  async (payload: Payload): Promise<void> => {
         // console.log("Json payload: " + JSON.stringify(payload))
         // console.log(user?.token)
         try {
@@ -23,7 +26,14 @@ export const useUpdateFinance = () => {
 
             const result: FinanceData = await response.json()
             console.log(result)
-            return result
+
+            if(userData) {
+                setUserData(prev => ({
+                    ...prev!,
+                    finances: result,
+                }))
+            }
+
         } catch (error) {
             console.error("PostRequestError[HOME]: ", error)
             throw error

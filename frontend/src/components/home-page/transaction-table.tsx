@@ -1,5 +1,5 @@
 import { toUpper, formatDate } from '@utils/helpers'
-import { CategoryTag } from '@components/home-page/components'
+import { CategoryTag } from '@components/home-page/_components'
 import { financeMeta } from '@pages/home-page';
 import type { TransactionData, Transaction } from '@type/types'
 import type React from 'react';

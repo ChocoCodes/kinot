@@ -1,6 +1,6 @@
 import { useState } from 'react'
-import { Tabs, LoginForm, RegisterForm } from '@components/login/components'
-import { Footer } from '@components/layouts/components'
+import { Tabs, LoginForm, RegisterForm } from '@components/login/_components'
+import { Footer } from '@components/layouts/_components'
 
 function LoginPage() {
   const [formDisplayed, setFormDisplayed] = useState<'login' | 'register'>('login');

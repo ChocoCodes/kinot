@@ -1,61 +1,74 @@
-const retrieveQuestions = [
-    "What was your favorite cartoon or TV show growing up?",
-    "What is the name of your first pet?",
-    "What is the name of a teacher you disliked the most?"
-]
+import { useState } from 'react'
+import { Footer } from "@components/layouts/_components"
+import { StepOneCredentials } from '@components/forgot-password/_components'
+import type { UserCredentials, NewPassword } from '@type/types'
+
+const defaultNewPass: NewPassword = {
+    password: "",
+    confirmedPassword: ""
+}
+
+const defaultUserCreds : UserCredentials = {
+    username: "",
+    question: "",
+    answer: ""
+}
 
 function ForgotPasswordPage() {
+    const [step, setStep] = useState<1 | 2>(1)
+    const [newPassword, setNewPassword] = useState<NewPassword>(defaultNewPass)
+    const [userCredential, setUserCredential] = useState<UserCredentials>(defaultUserCreds)
+
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+        const { name, value } = e.target
+        if (step == 1) {
+            setUserCredential(
+                prev => ({
+                    ...prev,
+                    [name]: value
+                })
+            )
+        } else {
+            setNewPassword(
+                prev => ({
+                    ...prev,
+                    [name]: value
+                })
+            )
+        }
+    }
+
     const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault()
-        console.log('Submit pressed')
+        console.log(userCredential)
     }
 
     return (
-        <div className='flex items-center justify-center w-screen h-screen'>
+        <div className='flex flex-col gap-5 items-center justify-center w-screen h-screen py-10'>
+            <h1 className="text-start text-4xl font-semibold">Forgot Password</h1>
+            <ul className='flex justify-between w-60'>
+                <li className="relative flex-1 flex justify-center">
+                    <span className="bg-black text-white px-3 py-1 rounded-sm z-10">1</span>
+                    <span className="absolute top-1/2 left-1/2 w-full border-t-2 border-black -z-0"></span>
+                </li>
+                <li className="relative flex-1 flex justify-center">
+                    <span className={`${step == 2 ? 'bg-black text-white' : 'border-2 border-black'} px-3 py-1 rounded-sm bg-white z-10`}>2</span>
+                </li>
+            </ul>
             <form
-                className='w-2/5 h-4/5 gap-6 py-3 flex flex-col'
+                className='w-2/5 h-3/5 gap-7 flex flex-col'
                 action='submit'
-                onClick={ handleSubmit }
+                onSubmit={ handleSubmit }
             >
-                <input 
-                    type="text" 
-                    name="username"
-                    maxLength={ 50 }
-                    className='bg-bg-input placeholder-ph-gray h-[3rem] rounded-md px-3 border-0 border-l-5 border-transparent focus:outline-none focus:border-l-black transition-all duration-200 ease-in-out'
-                    placeholder='Username'
-                    autoComplete='off'
-                    required
-                />                
-                <select 
-                    name="question"
-                    className='h-[3rem] bg-bg-input text-ph-gray px-3 rounded-md'
-                    required
-                >
-                    <option value="">Select your recovery question</option>
-                    {
-                        retrieveQuestions.map((question, index) => {
-                            return (
-                                <option key={index} value={question}>{ question }</option>
-                            )
-                        })
-                    }
-                </select>
-                <input 
-                    type="text" 
-                    name="answer"
-                    maxLength={ 50 }
-                    className='bg-bg-input placeholder-ph-gray h-[3rem] rounded-md px-3 border-0 border-l-5 border-transparent focus:outline-none focus:border-l-black transition-all duration-200 ease-in-out'
-                    placeholder='Type your answer here...'
-                    autoComplete='off'
-                    required
-                />
+                { step == 1 && <StepOneCredentials data={ userCredential } handleChange={ handleChange }/> }
                 <button 
                     type='submit'
-                    className='px-3 py-2 bg-black text-white w-25 rounded-md mx-auto hover:cursor-pointer'
+                    className='px-3 py-2 bg-black text-white w-50 text-2xl text-center rounded-md mx-auto hover:cursor-pointer'
                 >
                     Submit
                 </button>
             </form>
+            <Footer />
         </div>
     )
 }
