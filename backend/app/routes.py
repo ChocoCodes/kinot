@@ -1,8 +1,14 @@
 from flask import Blueprint, jsonify, request
-from flask_jwt_extended import create_access_token
 from .utils import format_image_path, user_required
 from http import HTTPStatus
 from app import db
+from datetime import timedelta
+from flask_jwt_extended import (
+    create_access_token, 
+    jwt_required, 
+    get_jwt,
+    get_jwt_identity
+)
 from .models import (
     User, 
     GoalContribution, 
@@ -89,6 +95,61 @@ def get_finances(user: User):
     print(response)
     return jsonify(response), HTTPStatus.OK
 
+@app_bp.route('/forgot/validate',  methods=['POST'])
+def validate_user_credentials():
+    req = request.get_json()
+    username = req['username']
+    question = req['question']
+    answer = req['answer']
+    user_check = User.query.filter_by(username=username).first()
+    # TODO: check if user exists
+    if user_check is None:
+        return jsonify({
+            "error": "Username not found."
+        }), HTTPStatus.BAD_REQUEST
+    # TODO: check if secret question is correct
+    if user_check.secret_question != question:
+        return jsonify({
+            "error": "Secret question does not match."
+        }), HTTPStatus.BAD_REQUEST 
+    # TODO: check if hashed_answer is correct
+    if not user_check.validate_secret_answer(answer):
+        return jsonify({
+            "error": "Secret answer does not match."    
+        }), HTTPStatus.BAD_REQUEST
+    # TODO: return token, status ok
+    reset_token = create_access_token(
+        identity=str(user_check.id),
+        additional_claims={"purpose": "password_reset"},
+        expires_delta=timedelta(minutes=15)
+    )
+    
+    return jsonify({
+        "reset_token": reset_token
+    }), HTTPStatus.OK
+
+@app_bp.route('/forgot/reset-password', methods=['POST'])
+@jwt_required()
+def change_password():
+    data = request.get_json()
+    raw_new_password = data['new_password']
+
+    # TODO: Check if token purpose is 'password_reset'
+    claims = get_jwt()
+    if claims.get("purpose") != "password_reset":
+        return jsonify({
+            "error": "Invalid token purpose"
+        }), HTTPStatus.BAD_REQUEST
+
+    user_id = int(get_jwt_identity())
+    user = query_user(user_id)
+
+    user.password_hashed = raw_new_password
+    # db.session.commit()
+    return jsonify({
+        "user": user.to_dict()
+    }), HTTPStatus.OK
+
 @app_bp.route('/recent-transactions', methods=['GET'])
 @user_required
 def fetch_recent_transactions(user: User):
@@ -171,7 +232,7 @@ def update_goal_contribution(user: User, goal_id: int):
     if goal is None:
         return jsonify({
             "error": "You are not authorized to update this goal."
-        }), HTTPStatus.NOT_FOUND
+        }), HTTPStatus.BAD_REQUEST
     # Add log to the user's GoalContribution
     req = request.get_json()
     print(f"{user} | {goal_id}, {req}")
@@ -196,7 +257,7 @@ def delete_goal(user: User, goal_id: int):
     if goal is None: 
         return jsonify({
             "error": "Goal not found."
-        }), HTTPStatus.NOT_FOUND
+        }), HTTPStatus.BAD_REQUEST
     
     # TODO: Set is_deleted = True, commit db
     goal.is_deleted = True

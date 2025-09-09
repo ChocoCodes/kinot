@@ -50,5 +50,3 @@ def calculate_percentage(previous: float, current: float) -> float:
         return 100.0
     change = (current - previous) / abs(previous) * 100
     return round(change, 2)
-
-

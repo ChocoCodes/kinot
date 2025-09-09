@@ -70,6 +70,10 @@ class User(db.Model):
     def validate_password(self, input_pass: str) -> bool:
         hashed_input = generate_hash(input_pass, self.password_salt)
         return hashed_input == self._password_hashed
+    
+    def validate_secret_answer(self, input_answer: str) -> bool:
+        hashed_answer = generate_hash(input_answer, self.secret_answer_salt)
+        return hashed_answer == self._secret_answer_hashed
 
 
 class MonthlyFinance(db.Model):
