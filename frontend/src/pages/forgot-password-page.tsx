@@ -1,54 +1,9 @@
-import { useState } from 'react'
 import { Footer } from "@components/layouts/_components"
 import { StepOneCredentials, StepTwoNewPassword } from '@components/forgot-password/_components'
-import type { UserCredentials, NewPassword } from '@type/types'
-
-const defaultNewPass: NewPassword = {
-    password: "",
-    confirmedPassword: "",
-    token: ""
-}
-
-const defaultUserCreds : UserCredentials = {
-    username: "",
-    question: "",
-    answer: ""
-}
+import { useForgotPassword } from "@hooks/_hooks"
 
 function ForgotPasswordPage() {
-    const [step, setStep] = useState<1 | 2>(1)
-    const [newPassword, setNewPassword] = useState<NewPassword>(defaultNewPass)
-    const [userCredential, setUserCredential] = useState<UserCredentials>(defaultUserCreds)
-
-    const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-        const { name, value } = e.target
-        if (step == 1) {
-            setUserCredential(
-                prev => ({
-                    ...prev,
-                    [name]: value
-                })
-            )
-        } else {
-            setNewPassword(
-                prev => ({
-                    ...prev,
-                    [name]: value
-                })
-            )
-        }
-    }
-
-    const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-        e.preventDefault()
-        if(step == 1) {
-            console.log(userCredential)
-            setStep(2)
-        }
-        if(step == 2) {
-            console.log(newPassword)
-        }
-    }
+    const { step, userCredential, newPassword, handleChange, handleSubmit } = useForgotPassword()
 
     return (
         <div className='flex flex-col gap-5 items-center justify-center w-screen h-screen py-10'>
@@ -67,8 +22,8 @@ function ForgotPasswordPage() {
                 action='submit'
                 onSubmit={ handleSubmit }
             >
-                { step == 1 && <StepOneCredentials data={ userCredential } handleChange={ handleChange }/> }
-                { step == 2 && <StepTwoNewPassword data={ newPassword } handleChange={ handleChange }/> }
+                { step === 1 && <StepOneCredentials data={ userCredential } handleChange={ handleChange }/> }
+                { step === 2 && <StepTwoNewPassword data={ newPassword } handleChange={ handleChange }/> }
                 <button 
                     type='submit'
                     className='p-2 bg-black text-white w-50 text-2xl text-center rounded-md mx-auto hover:cursor-pointer'
