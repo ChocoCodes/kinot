@@ -19,7 +19,8 @@ from .services import (
     query_user,
     get_user_finances,
     get_recent_transactions,
-    # get_goals,
+    get_all_transactions,
+    get_goals,
     get_active_goals,
     ActiveGoalDTO
 )
@@ -147,7 +148,7 @@ def change_password():
     user.password_hashed = raw_new_password
     # db.session.commit()
     return jsonify({
-        "user": user.to_dict()
+        "message": "Password successfully changed."
     }), HTTPStatus.OK
 
 @app_bp.route('/recent-transactions', methods=['GET'])
@@ -264,3 +265,15 @@ def delete_goal(user: User, goal_id: int):
     #db.session.commit()
     updated_goals = get_active_goals(user)
     return jsonify([goal.to_dict() for goal in updated_goals]), HTTPStatus.OK
+
+@app_bp.route('/goals', methods=['GET'])
+@user_required
+def fetch_all_goals(user: User):
+    all_goals = get_goals(user)
+    return jsonify(all_goals), HTTPStatus.OK
+
+@app_bp.route('/transactions', methods=['GET'])
+@user_required
+def fetch_all_transactions(user: User):
+    transactions = get_all_transactions(user)
+    return jsonify(transactions), HTTPStatus.OK
