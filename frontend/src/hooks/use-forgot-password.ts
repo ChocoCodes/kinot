@@ -1,9 +1,11 @@
 import { useState } from 'react'
 import type { UserCredentials, NewPassword } from '@type/types'
+import { useNavigate } from 'react-router-dom'
+import { useToast } from '@context/toast-context'
 
 const defaultNewPass: NewPassword = {
     password: "",
-    confirmedPassword: "",
+    confirm: "",
     token: ""
 }
 
@@ -17,6 +19,8 @@ export const useForgotPassword = () => {
     const [step, setStep] = useState<1 | 2>(1)
     const [userCredential, setUserCredential] = useState<UserCredentials>(defaultUserCreds)
     const [newPassword, setNewPassword] = useState<NewPassword>(defaultNewPass)
+    const { addToast } = useToast()
+    const navigate = useNavigate()
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
         const { name, value } = e.target
@@ -47,15 +51,18 @@ export const useForgotPassword = () => {
                 }
 
                 const data = await response.json()
-                const token = data.token
-                
+                const token = data.reset_token
+                console.log(data)
                 setNewPassword(prev => ({ ...prev, token }))
                 setStep(2)
+                addToast('Account validation is completed.')
             } catch(err: any) {
                 console.error('[ForgotPasswordSubmitError | Step 1]: ', err)
                 setUserCredential(defaultUserCreds)
+                addToast('An error occured. Failed to update password.')
             }
         }
+
         if(step === 2) {
             console.log(newPassword)
             try {
@@ -65,7 +72,7 @@ export const useForgotPassword = () => {
                         'Authorization': `Bearer ${ newPassword.token }`,
                         'Content-Type': 'application/json'
                     },
-                    body: JSON.stringify(userCredential)
+                    body: JSON.stringify({ "new_password": newPassword.password })
                 })
                 
                 if (!response.ok) {
@@ -73,6 +80,9 @@ export const useForgotPassword = () => {
                     setNewPassword(defaultNewPass)   
                     return
                 }
+
+                // Redirect to login page
+                navigate('/', { replace: true })
             } catch(err: any) {
                 console.error('[ForgotPasswordSubmitError | Step 2]: ', err)
                 setNewPassword(defaultNewPass)   

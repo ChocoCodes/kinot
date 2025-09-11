@@ -1,16 +1,11 @@
-import { Loading } from '@components/layouts/_components';
-import { createContext, useContext, useEffect, useState, type ReactNode } from 'react'
-
-interface ChildProps {
-    children: ReactNode
-}
-
-export type User = {
-    id: number;
-    token: string;
-    username: string;
-    profilePath: string;
-}
+import { Loading } from '@components/layouts/_components'
+import type { ChildProps, User } from '@type/types'
+import { 
+    createContext, 
+    useContext, 
+    useEffect, 
+    useState, 
+} from 'react'
 
 type AuthContextType = {
     user: User | null;

@@ -65,6 +65,17 @@ export type UserCredentials = {
 
 export type NewPassword = {
     password: string;
-    confirmedPassword: string;
+    confirm: string;
     token: string;
+}
+
+export interface ChildProps {
+    children: React.ReactNode;
+}
+
+export type User = {
+    id: number;
+    token: string;
+    username: string;
+    profilePath: string;
 }
