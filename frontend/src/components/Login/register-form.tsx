@@ -2,7 +2,8 @@ import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { AccountForm } from './account-form'
 import { RecoveryForm } from './recovery-form'
-import { useAuth, type User } from '@context/auth-context'
+import { useAuth } from '@context/auth-context'
+import type { User } from '@type/types'
 
 export type UserInfo = {
     fullname: string,
