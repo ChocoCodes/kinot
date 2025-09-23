@@ -148,7 +148,8 @@ def change_password():
     user.password_hashed = raw_new_password
     # db.session.commit()
     return jsonify({
-        "message": "Password successfully changed."
+        "message": "Password successfully changed.",
+        "user": user.to_dict()
     }), HTTPStatus.OK
 
 @app_bp.route('/recent-transactions', methods=['GET'])
@@ -199,8 +200,8 @@ def update_finance(user: User):
         description=description
     )
     user.transactions.append(transaction_log)
-
     #db.session.commit()
+    
     # TODO: Query updated finances & transaction log
     updated_transactions = get_recent_transactions(user)
     updated_finances = get_user_finances(user)
