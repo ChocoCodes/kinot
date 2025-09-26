@@ -59,12 +59,13 @@ class User(db.Model):
         self._secret_answer_hashed = generate_hash(raw_secret_answer, self.secret_answer_salt)
     
     def to_dict(self) -> dict:
+        from .utils import format_image_path
         """ Convert User instance into a dictionary representation """
         return {
             "id": self.id,
             "username": self.username,
             "fullname": self.fullname,
-            "secret_question": self.secret_question
+            "profile_path": format_image_path(self.profile_path, 'profiles')
         }
     
     def validate_password(self, input_pass: str) -> bool:

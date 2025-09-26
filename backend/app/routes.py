@@ -1,5 +1,7 @@
+import os
 from flask import Blueprint, jsonify, request
 from .utils import format_image_path, user_required
+from werkzeug.utils import secure_filename
 from http import HTTPStatus
 from app import db
 from datetime import timedelta
@@ -278,3 +280,36 @@ def fetch_all_goals(user: User):
 def fetch_all_transactions(user: User):
     transactions = get_all_transactions(user)
     return jsonify(transactions), HTTPStatus.OK
+
+@app_bp.route('/account', methods=['GET'])
+@user_required
+def fetch_profile_information(user: User):
+    return jsonify(user.to_dict()), HTTPStatus.OK
+
+@app_bp.route('/account', methods=['DELETE'])
+@user_required
+def delete_profile(user: User):
+    db.session.delete(user)
+    db.session.commit()
+    return jsonify({"message": "Account deleted successfully."}), HTTPStatus.OK
+
+@app_bp.route('/account', methods=['PUT'])
+@user_required
+def update_profile(user: User):
+    data = request.get_json()
+    user.username = data.get('username', user.username)
+    user.fullname = data.get('fullname', user.fullname)
+
+    file = request.files.get('image')
+    if file:
+        filename = secure_filename(file.filename)
+
+        file_path = os.path.join("static/uploads/profiles", filename)
+        file.save(file_path)
+
+        user.profile_path = filename
+
+    print(user)
+    db.session.commit()
+
+    return jsonify(user.to_dict()), HTTPStatus.OK
