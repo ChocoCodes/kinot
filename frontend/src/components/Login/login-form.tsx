@@ -1,7 +1,8 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { useAuth, type User } from '@context/auth-context'
-import { FaEye, FaEyeSlash } from "react-icons/fa6";
+import { useAuth } from '@context/auth-context'
+import type { User } from '@type/types'
+import { FaEye, FaEyeSlash } from "react-icons/fa6"
 
 type UserCreds = {
     username: string;

@@ -1,16 +1,49 @@
 import { useState } from 'react'
 import { Header } from "@components/layouts/_components"
+import { useUpdateAccount } from '@hooks/use-update-account'
+import { FormInput, ActionButton } from '@components/account-page/_components'
+
+type AccountInfo = {
+    username: string;
+    fullname: string;
+    imgPath: string;
+}
+
+type PasswordInfo = {
+    current: string;
+    new: string;
+    confirm: string;
+}
+
+type AccountData = AccountInfo & PasswordInfo;
+
+const defaultAccountData: AccountData = {
+    username: "",
+    fullname: "",
+    imgPath: "",
+    current: "",
+    new: "",
+    confirm: ""
+}
 
 function AccountPage() {
     const [isPasswordVisible, setIsPasswordVisible] = useState<boolean>(false)
+    const [visible, setVisible] = useState<boolean>(false)
+    const [formData, setFormData] = useState<AccountData>(defaultAccountData)
+    const { handleDelete } = useUpdateAccount()
+    
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+       const { name, value } = e.target
+       setFormData(prev => ({ ...prev, [name]: value }))
+    }
 
     return (
         <main className='flex flex-col gap-2 w-screen h-screen font-poppins overflow-x-hidden'>
             <Header />
             <section className="flex flex-col w-7/10 mx-auto gap-6 py-3">
                 <h1 className='text-4xl font-bold'>Account Management</h1>
-                <div className='flex flex-col gap-6'>
-                    {/* Personal Information */}
+                {/* Personal Information */}
+                <form className='flex flex-col gap-6'>
                     <div className="flex gap-6">
                         <img src="" alt="" className="rounded-md bg-red-300 w-48 h-48" />
                         <div className='flex flex-col gap-3'>
@@ -18,88 +51,57 @@ function AccountPage() {
                             <button className='px-4 py-2 text-lg bg-black text-white rounded-sm'>Change Image</button>
                         </div>
                     </div>
-                    <div className='flex flex-col gap-1 w-1/2'>
-                        <label htmlFor="username" className="text-2xl font-semibold">Username</label>
-                        <input 
-                            type="text" 
-                            name="username" 
-                            id="username" 
-                            className="h-10 px-2 border-1 border-gray-400 focus:border-black rounded-md placeholder-ph-gray"
-                            value={"Username"}
-                            placeholder={"Sample Value"}
-                        />
-                    </div>
-                    <div className='flex flex-col gap-1 w-1/2'>
-                        <label htmlFor="fullname" className="text-2xl font-semibold">Full Name</label>
-                        <input 
-                            type="text" 
-                            name="fullname" 
-                            id="fullname" 
-                            className="h-10 px-2 border-1 border-gray-400 focus:border-black rounded-md placeholder-ph-gray" 
-                            value={"Full Name"}
-                            placeholder={"Sample Value"}    
-                        />
-                    </div>
+                    <FormInput id={"username"} label={"Username"} value={ formData.username } placeholder={ formData.username } onChange={ handleChange }/>
+                    <FormInput id={"fullname"} label={"Full Name"} value={ formData.fullname } placeholder={ formData.fullname } onChange={ handleChange }/>
                     <div>
-                        <button className='px-4 py-2 bg-black text-white rounded-sm w-1/10'>Save</button>
+                        <ActionButton onClick={() => {}} className={'w-1/10'} >
+                            Save
+                        </ActionButton>
                     </div>
-                </div>
+                </form>
                 {/* Change Password */}
                 <div className='flex flex-col gap-3'>
                     <p className="text-4xl font-semibold">Password</p>
-                    <button 
-                        className='px-4 py-2 bg-black text-white rounded-sm w-1/10'
+                    <ActionButton 
+                        className='w-1/10'
                         onClick={ () => setIsPasswordVisible(!isPasswordVisible) }
                     >
                         { isPasswordVisible ? "Hide" : "Change" }
-                    </button>
+                    </ActionButton>
                     { isPasswordVisible && (
-                        <div className="flex w-4/5 gap-5 justify-center items-end">
-                            <div className="flex flex-col gap-1 w-1/2">
-                                <label htmlFor="current" className="text-xl">Current</label>
-                                <input 
-                                    type="password" 
-                                    name="current" 
-                                    id="current" 
-                                    className="h-10 p-2 border border-gray-400 focus:border-black rounded-md placeholder-ph-gray" 
-                                    placeholder="********"    
-                                />
-                            </div>
-                            <div className="flex flex-col gap-1 w-1/2">
-                                <label htmlFor="new" className="text-xl">Enter New</label>
-                                <input 
-                                    type="password" 
-                                    name="new" 
-                                    id="new" 
-                                    className="h-10 p-2 border border-gray-400 focus:border-black rounded-md placeholder-ph-gray" 
-                                    placeholder="********"    
-                                />
-                            </div>
-                            <div className="flex flex-col gap-1 w-1/2">
-                                <label htmlFor="confirm" className="text-xl">Confirm New</label>
-                                <input 
-                                    type="password" 
-                                    name="confirm" 
-                                    id="confirm" 
-                                    className="h-10 p-2 border border-gray-400 focus:border-black rounded-md placeholder-ph-gray" 
-                                    placeholder="********"    
-                                />
-                            </div>
-                            <button className='px-4 py-2 bg-black text-white rounded-sm w-1/3 h-10'>Save</button>
-                        </div>
+                        <form 
+                            className="flex w-4/5 gap-5 justify-center items-end"
+                        >
+                            <FormInput id={"current"} label={"Current"} type={"password"} placeholder={'********'} onChange={ handleChange } />
+                            <FormInput id={"new"} label={"Enter New"} type={"password"} placeholder={'********'} onChange={ handleChange } />
+                            <FormInput id={"confirm"} label={"Confirm New"} type={"password"} placeholder={'********'} onChange={ handleChange } />
+                            <ActionButton 
+                                type="submit" 
+                                className='w-1/3 h-10'
+                                onClick={() => {}}
+                            >
+                                Save
+                            </ActionButton>
+                        </form> 
                     )}
                 </div>
                 {/* Divider */}
                 <div className='w-full h-2 bg-dark-gray rounded-full my-3'></div>
                 {/* Delete Account */}
-                <div className="flex flex-col gap-3 items-start">
+                <div className="flex flex-col gap-4 items-start">
                     <h1 className='font-semibold text-4xl'>Delete Account</h1>
                     <div className='text-xl'>
                         <p>Would you like to delete your account?</p>
                         <p>All data linked to this account will be permanently deleted.</p>
                         <p className='font-semibold'>This is an irreversible action!</p>
                     </div>
-                    <button className='py-3 bg-[#D66A6A] text-[#FBF5F5] rounded-sm text-lg w-1/10'>Yes, Delete</button>
+                    <ActionButton 
+                        variant="danger"
+                        className='py-3 text-lg w-3/25'
+                        onClick={ handleDelete }
+                    >
+                        Yes, Delete
+                    </ActionButton>
                 </div>
             </section>
         </main>
