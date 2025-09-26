@@ -79,3 +79,17 @@ export type User = {
     username: string;
     profilePath: string;
 }
+
+export type AccountInfo = {
+    username: string;
+    fullname: string;
+    imgPath: string;
+}
+
+export type PasswordInfo = {
+    current: string;
+    new: string;
+    confirm: string;
+}
+
+export type AccountData = AccountInfo & PasswordInfo;

@@ -1,21 +1,8 @@
 import { useState } from 'react'
 import { Header } from "@components/layouts/_components"
 import { useUpdateAccount } from '@hooks/use-update-account'
-import { FormInput, ActionButton } from '@components/account-page/_components'
-
-type AccountInfo = {
-    username: string;
-    fullname: string;
-    imgPath: string;
-}
-
-type PasswordInfo = {
-    current: string;
-    new: string;
-    confirm: string;
-}
-
-type AccountData = AccountInfo & PasswordInfo;
+import { FormInput, ActionButton, ConfirmDelete } from '@components/account-page/_components'
+import type { AccountData } from '@type/types'
 
 const defaultAccountData: AccountData = {
     username: "",
@@ -27,8 +14,7 @@ const defaultAccountData: AccountData = {
 }
 
 function AccountPage() {
-    const [isPasswordVisible, setIsPasswordVisible] = useState<boolean>(false)
-    const [visible, setVisible] = useState<boolean>(false)
+    const [isVisible, setIsVisible] = useState<"passwordChange" | "deleteModal" | null>(null)
     const [formData, setFormData] = useState<AccountData>(defaultAccountData)
     const { handleDelete } = useUpdateAccount()
     
@@ -64,11 +50,13 @@ function AccountPage() {
                     <p className="text-4xl font-semibold">Password</p>
                     <ActionButton 
                         className='w-1/10'
-                        onClick={ () => setIsPasswordVisible(!isPasswordVisible) }
+                        onClick={ 
+                            () => setIsVisible(prev => prev === "passwordChange" ? null : "passwordChange") 
+                        }
                     >
-                        { isPasswordVisible ? "Hide" : "Change" }
+                        { isVisible === "passwordChange" ? "Hide" : "Change" }
                     </ActionButton>
-                    { isPasswordVisible && (
+                    { isVisible === "passwordChange" && (
                         <form 
                             className="flex w-4/5 gap-5 justify-center items-end"
                         >
@@ -98,10 +86,20 @@ function AccountPage() {
                     <ActionButton 
                         variant="danger"
                         className='py-3 text-lg w-3/25'
-                        onClick={ handleDelete }
+                        onClick={
+                            () => setIsVisible(prev => prev === "deleteModal" ? null : "deleteModal")
+                         }
                     >
                         Yes, Delete
                     </ActionButton>
+                    { isVisible === "deleteModal" && (
+                        <ConfirmDelete 
+                            onClose={
+                                () => setIsVisible(null)
+                            } 
+                            onSubmit={ handleDelete }
+                        />
+                    )}
                 </div>
             </section>
         </main>

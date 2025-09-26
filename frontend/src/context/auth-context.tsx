@@ -1,5 +1,6 @@
 import { Loading } from '@components/layouts/_components'
 import type { ChildProps, User } from '@type/types'
+import { useNavigate } from 'react-router-dom';
 import { 
     createContext, 
     useContext, 
@@ -24,7 +25,8 @@ export const useAuth = () => {
 export function AuthProvider({ children }: ChildProps) {
     const [user, setUser] = useState<User | null>(null)
     const [loading, setLoading] = useState(true)
-
+    const navigate = useNavigate()
+    
     useEffect(() => {
         const cachedUser = localStorage.getItem('user')
         if(cachedUser) {
@@ -48,6 +50,7 @@ export function AuthProvider({ children }: ChildProps) {
     const logout = () => {
         setUser(null)
         localStorage.removeItem('user')
+        navigate('/login', { replace: true })
     }
 
     if (loading) return <Loading />

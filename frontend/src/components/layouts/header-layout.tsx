@@ -1,5 +1,5 @@
 import { useAuth } from '@context/auth-context'
-import { Link, useNavigate, useLocation } from 'react-router-dom'
+import { Link, useLocation } from 'react-router-dom'
 
 const NAV_ITEMS = {
     home: '/home',
@@ -9,15 +9,9 @@ const NAV_ITEMS = {
 
 const Header = () => {
     const { user, logout } = useAuth()
-    const navigate = useNavigate()
     const location = useLocation()
 
     const toUpper = (word: string) => word.charAt(0).toUpperCase() + word.slice(1)
-
-    const handleSignOut = () => {
-        logout()
-        navigate('/')
-    }
 
     return (
         <header className='flex w-7/10 h-15 justify-between items-center py-10 px-3 mx-auto text-lg'>
@@ -42,7 +36,7 @@ const Header = () => {
             </div>
             <button 
                 className='w-30 py-2 bg-[#1A1A1A] text-white rounded-md hover:cursor-pointer hover:bg-black'
-                onClick={ handleSignOut }
+                onClick={ logout }
             >
                 Sign Out
             </button>

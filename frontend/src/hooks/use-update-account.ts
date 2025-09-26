@@ -1,10 +1,8 @@
-import { useNavigate } from 'react-router-dom'
 import { useToast } from '@context/toast-context'
 import { useAuth } from '@context/auth-context'
 
 export const useUpdateAccount = () => {
-    const { user } = useAuth()
-    const navigate = useNavigate()
+    const { user, logout } = useAuth()
     const { addToast } = useToast()
 
     const handleDelete = async () => {
@@ -20,7 +18,7 @@ export const useUpdateAccount = () => {
             throw new Error(`Request failed with status ${ response.status } | ${ response.statusText }`)
         }
 
-        navigate('/login', { replace: true })
+        logout()
         addToast('Account Deleted Successfully.')
     }
 
