@@ -91,5 +91,3 @@ export type PasswordInfo = {
     new: string;
     confirm: string;
 }
-
-export type AccountData = AccountInfo & PasswordInfo;

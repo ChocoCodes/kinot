@@ -1,26 +1,54 @@
-import { useState } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { Header } from "@components/layouts/_components"
 import { useUpdateAccount } from '@hooks/use-update-account'
-import { FormInput, ActionButton, ConfirmDelete } from '@components/account-page/_components'
-import type { AccountData } from '@type/types'
-
-const defaultAccountData: AccountData = {
-    username: "",
-    fullname: "",
-    imgPath: "",
-    current: "",
-    new: "",
-    confirm: ""
-}
+import type { AccountInfo, PasswordInfo } from '@type/types'
+import { 
+    FormInput, 
+    ActionButton, 
+    ConfirmDelete 
+} from '@components/account-page/_components'
 
 function AccountPage() {
+    const { handleDelete, fetchAccount } = useUpdateAccount()
+    const fileInputRef = useRef<HTMLInputElement | null>(null)
     const [isVisible, setIsVisible] = useState<"passwordChange" | "deleteModal" | null>(null)
-    const [formData, setFormData] = useState<AccountData>(defaultAccountData)
-    const { handleDelete } = useUpdateAccount()
+    const [selectedImage, setSelectedImage] = useState<File | null>(null)
+    const [accountData, setAccountData] = useState<AccountInfo>({
+        username: "",
+        fullname: "",
+        imgPath: "",
+    })
+    const [passwordChange, setPasswordChange] = useState<PasswordInfo>({
+        current: "",
+        new: "",
+        confirm: "",
+    })
     
-    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    useEffect(() => {
+        const loadAccountInfo = async () => {
+            const data = await fetchAccount()
+            setAccountData(data)
+        }
+        loadAccountInfo()
+    }, [])
+
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement>, target: "info" | "password") => {
        const { name, value } = e.target
-       setFormData(prev => ({ ...prev, [name]: value }))
+       if (target === "info") {
+           setAccountData(prev => ({ ...prev, [name]: value }))
+           return
+       }
+       if (target === "password") {
+           setPasswordChange(prev => ({ ...prev, [name]: value }))
+           return
+       }
+    }
+
+    const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        if (!e.target.files) return 
+
+        const file = e.target.files[0]
+        setSelectedImage(file)
     }
 
     return (
@@ -31,16 +59,33 @@ function AccountPage() {
                 {/* Personal Information */}
                 <form className='flex flex-col gap-6'>
                     <div className="flex gap-6">
-                        <img src="" alt="" className="rounded-md bg-red-300 w-48 h-48" />
+                        <img 
+                            src={ selectedImage ? URL.createObjectURL(selectedImage) : accountData.imgPath } 
+                            alt={`Image of ${ accountData.username }`} 
+                            className="rounded-md bg-red-300 w-48 h-48 object-fit" 
+                        />
                         <div className='flex flex-col gap-3'>
-                            <p className='text-3xl font-semibold'>Username</p>
-                            <button className='px-4 py-2 text-lg bg-black text-white rounded-sm'>Change Image</button>
+                            <p className='text-3xl font-semibold'>{ accountData.username }</p>
+                            <input 
+                                type="file" 
+                                name="image" 
+                                id="image" 
+                                className="hidden" 
+                                ref={ fileInputRef }
+                                accept="image/png, image/jpg"
+                                onChange={ handleImageChange }
+                            />
+                            <ActionButton
+                                onClick={ () => fileInputRef.current?.click() }
+                            >
+                                Change Image
+                            </ActionButton>
                         </div>
                     </div>
-                    <FormInput id={"username"} label={"Username"} value={ formData.username } placeholder={ formData.username } onChange={ handleChange }/>
-                    <FormInput id={"fullname"} label={"Full Name"} value={ formData.fullname } placeholder={ formData.fullname } onChange={ handleChange }/>
+                    <FormInput id={"username"} label={"Username"} value={ accountData.username } placeholder={ accountData.username } onChange={ (e) => handleChange(e, "info") }/>
+                    <FormInput id={"fullname"} label={"Full Name"} value={ accountData.fullname } placeholder={ accountData.fullname } onChange={ (e) => handleChange(e, "info") }/>
                     <div>
-                        <ActionButton onClick={() => {}} className={'w-1/10'} >
+                        <ActionButton type="submit" onClick={() => {}} className={'w-1/10'} >
                             Save
                         </ActionButton>
                     </div>
@@ -60,9 +105,9 @@ function AccountPage() {
                         <form 
                             className="flex w-4/5 gap-5 justify-center items-end"
                         >
-                            <FormInput id={"current"} label={"Current"} type={"password"} placeholder={'********'} onChange={ handleChange } />
-                            <FormInput id={"new"} label={"Enter New"} type={"password"} placeholder={'********'} onChange={ handleChange } />
-                            <FormInput id={"confirm"} label={"Confirm New"} type={"password"} placeholder={'********'} onChange={ handleChange } />
+                            <FormInput id={"current"} label={"Current"} type={"password"} placeholder={'********'} onChange={ (e) => handleChange(e, "password") } />
+                            <FormInput id={"new"} label={"Enter New"} type={"password"} placeholder={'********'} onChange={ (e) => handleChange(e, "password") } />
+                            <FormInput id={"confirm"} label={"Confirm New"} type={"password"} placeholder={'********'} onChange={ (e) => handleChange(e, "password") } />
                             <ActionButton 
                                 type="submit" 
                                 className='w-1/3 h-10'
