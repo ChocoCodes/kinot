@@ -5,6 +5,7 @@ interface FormInputProps {
     value?: string;
     placeholder: string;
     onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+    pattern?: string;
 }
 
 const FormInput = ({
@@ -13,7 +14,8 @@ const FormInput = ({
     type = "text",
     value,
     placeholder,
-    onChange
+    onChange,
+    pattern
 }: FormInputProps) => {
     return (
         <div className='flex flex-col gap-1 w-1/2'>
@@ -25,7 +27,9 @@ const FormInput = ({
                 value={ value || "" }
                 placeholder={ placeholder }    
                 onChange={ onChange }
-                className="h-10 px-2 border-1 border-gray-400 focus:border-black rounded-md placeholder-ph-gray" 
+                className="h-10 px-2 border-1 border-gray-400 focus:border-black rounded-md placeholder-ph-gray"
+                pattern={ type === "password" ? pattern : undefined }
+                required={ type === "password" ? true : undefined }
             />
         </div>
     )

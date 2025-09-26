@@ -2,6 +2,8 @@ import { useState, useEffect, useRef } from 'react'
 import { Header } from "@components/layouts/_components"
 import { useUpdateAccount } from '@hooks/use-update-account'
 import type { AccountInfo, PasswordInfo } from '@type/types'
+import { passRegexp } from '@utils/helpers'
+import { useToast } from '@context/toast-context'
 import { 
     FormInput, 
     ActionButton, 
@@ -9,7 +11,8 @@ import {
 } from '@components/account-page/_components'
 
 function AccountPage() {
-    const { handleDelete, fetchAccount, handleSaveInfo, accountData } = useUpdateAccount()
+    const { deleteAccount, fetchAccount, updateAccount, accountData } = useUpdateAccount()
+    const { addToast } = useToast()
     const fileInputRef = useRef<HTMLInputElement | null>(null)
     const [isVisible, setIsVisible] = useState<"passwordChange" | "deleteModal" | null>(null)
     const [selectedImage, setSelectedImage] = useState<File | null>(null)
@@ -64,11 +67,20 @@ function AccountPage() {
                 payload.append('image', selectedImage)
             }
             
-            handleSaveInfo(payload)
+            updateAccount(payload)
             fetchAccount()
             setSelectedImage(null)
         } catch (error: unknown) {
             console.error(`[UPDATE_ACCOUNT_ERROR]: ${ error instanceof Error ? error.message : 'Unknown error occured. '}`)
+        }
+    }
+
+    const handlePasswordSubmit = async (e: React.FormEvent) => {
+        e.preventDefault()
+        
+        if (passwordChange.new !== passwordChange.confirm) {
+            addToast('Passwords dont match!', "danger")
+            return;
         }
     }
 
@@ -102,6 +114,7 @@ function AccountPage() {
                             <ActionButton
                                 type="button"
                                 onClick={ () => fileInputRef.current?.click() }
+                                className='w-[150px]'
                             >
                                 Change Image
                             </ActionButton>
@@ -128,17 +141,39 @@ function AccountPage() {
                     </ActionButton>
                     { isVisible === "passwordChange" && (
                         <form 
+                            onSubmit={ handlePasswordSubmit }
                             className="flex w-4/5 gap-5 justify-center items-end"
                         >
-                            <FormInput id={"current"} label={"Enter Current"} type={"password"} placeholder={'********'} onChange={ (e) => handleChange(e, "password") } />
-                            <FormInput id={"new"} label={"Enter New"} type={"password"} placeholder={'********'} onChange={ (e) => handleChange(e, "password") } />
-                            <FormInput id={"confirm"} label={"Confirm New"} type={"password"} placeholder={'********'} onChange={ (e) => handleChange(e, "password") } />
+                            <FormInput
+                                id={"current"} 
+                                label={"Enter Current"} 
+                                type={"password"} 
+                                placeholder={'********'} 
+                                value={ passwordChange.current }
+                                onChange={ (e) => handleChange(e, "password") } 
+                            />
+                            <FormInput 
+                                id={"new"} 
+                                label={"Enter New"} 
+                                type={"password"} 
+                                placeholder={'********'} 
+                                value={ passwordChange.new }
+                                onChange={ (e) => handleChange(e, "password") } 
+                                pattern={ passRegexp }
+                            />
+                            <FormInput 
+                                id={"confirm"} 
+                                label={"Confirm New"} 
+                                type={"password"} 
+                                placeholder={'********'} 
+                                value={ passwordChange.confirm }
+                                onChange={ (e) => handleChange(e, "password") } 
+                            />
                             <ActionButton 
                                 type="submit" 
                                 className='w-1/3 h-10'
-                                onClick={() => {}}
                             >
-                                Save
+                                Update
                             </ActionButton>
                         </form> 
                     )}
@@ -167,7 +202,7 @@ function AccountPage() {
                             onClose={
                                 () => setIsVisible(null)
                             } 
-                            onSubmit={ handleDelete }
+                            onSubmit={ deleteAccount }
                         />
                     )}
                 </div>

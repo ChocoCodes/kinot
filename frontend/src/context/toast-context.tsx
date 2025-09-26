@@ -9,10 +9,11 @@ import {
 interface ToastProps {
     id: number;
     message: string;
+    variant: 'danger' | 'primary';
 }
 
 type ToastContextType = {
-    addToast: (message: string) => void;
+    addToast: (message: string, variant: 'danger' | 'primary') => void;
 }
 
 const ToastContext = createContext<ToastContextType>({
@@ -30,9 +31,9 @@ const TOAST_MS = 5000
 export function ToastProvider({ children }: ChildProps) {
     const [toasts, setToasts] = useState<ToastProps[]>([])
 
-    const addToast = (message: string) => {
+    const addToast = (message: string, variant: 'danger' | 'primary') => {
         const id = Date.now()
-        setToasts(prev => [...prev, { id, message }])
+        setToasts(prev => [...prev, { id, message, variant }])
         
         setTimeout(() => {
             setToasts((prev) => prev.filter(toast => toast.id !== id))
@@ -43,9 +44,9 @@ export function ToastProvider({ children }: ChildProps) {
         <ToastContext.Provider value={{ addToast }}>
             { children }
 
-            <div className="max-w-[400px] fixed bottom-0 right-0 space-y-2 z-50">
+            <div className="max-w-[400px] fixed bottom-0 right-0 space-y-2 z-50 shadow-md">
                 { toasts.map(toast => (
-                    <Toast key={ toast.id } message={ toast.message } ms={ TOAST_MS }/>
+                    <Toast key={ toast.id } message={ toast.message } ms={ TOAST_MS } variant={ toast.variant }/>
                 ))}
             </div>
         </ToastContext.Provider>

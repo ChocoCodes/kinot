@@ -12,7 +12,7 @@ export const useUpdateAccount = () => {
         imgPath: "",
     })
 
-    const handleDelete = async () => {
+    const deleteAccount = async () => {
         try {
             const response = await fetch('api/account', {
                 method: 'DELETE',
@@ -27,7 +27,7 @@ export const useUpdateAccount = () => {
             }
 
             logout()
-            addToast('Account Deleted Successfully.')
+            addToast('Account Deleted Successfully.', "primary")
         } catch (error: unknown) {
             console.error("[DELETE_ACCOUNT_ERROR] ExceptionCaught: ", error)
             throw new Error(`[DELETE_ACCOUNT_ERROR] ${ error instanceof Error ? error.message : 'Unknown error occured.'} `)
@@ -62,7 +62,7 @@ export const useUpdateAccount = () => {
     }
 
     // Accommodate images (BLOB) and normal input field saves
-    const handleSaveInfo = async (payload: FormData) => {
+    const updateAccount = async (payload: FormData) => {
         try {
             const response = await fetch('api/account', {
                 method: 'PUT',
@@ -88,8 +88,8 @@ export const useUpdateAccount = () => {
     return { 
         accountData,
         setAccountData,
-        handleDelete, 
+        deleteAccount, 
         fetchAccount,
-        handleSaveInfo
+        updateAccount
     }
 }

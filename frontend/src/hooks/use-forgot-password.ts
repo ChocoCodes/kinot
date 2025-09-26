@@ -55,11 +55,11 @@ export const useForgotPassword = () => {
                 console.log(data)
                 setNewPassword(prev => ({ ...prev, token }))
                 setStep(2)
-                addToast('Account validation is completed.')
+                addToast('Account validation is completed.', "primary")
             } catch(err: any) {
                 console.error('[ForgotPasswordSubmitError | Step 1]: ', err)
                 setUserCredential(defaultUserCreds)
-                addToast('An error occured. Failed to update password.')
+                addToast('An error occured. Failed to update password.', "danger")
             }
         }
 
