@@ -296,9 +296,8 @@ def delete_profile(user: User):
 @app_bp.route('/account', methods=['PUT'])
 @user_required
 def update_profile(user: User):
-    data = request.get_json()
-    user.username = data.get('username', user.username)
-    user.fullname = data.get('fullname', user.fullname)
+    user.username = request.form.get('username', user.username)
+    user.fullname = request.form.get('fullname', user.fullname)
 
     file = request.files.get('image')
     if file:
