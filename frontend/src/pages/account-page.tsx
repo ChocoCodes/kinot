@@ -9,11 +9,11 @@ import {
 } from '@components/account-page/_components'
 
 function AccountPage() {
-    const { handleDelete, fetchAccount } = useUpdateAccount()
+    const { handleDelete, fetchAccount, handleSaveInfo, accountData } = useUpdateAccount()
     const fileInputRef = useRef<HTMLInputElement | null>(null)
     const [isVisible, setIsVisible] = useState<"passwordChange" | "deleteModal" | null>(null)
     const [selectedImage, setSelectedImage] = useState<File | null>(null)
-    const [accountData, setAccountData] = useState<AccountInfo>({
+    const [formData, setFormData] = useState<AccountInfo>({
         username: "",
         fullname: "",
         imgPath: "",
@@ -23,19 +23,21 @@ function AccountPage() {
         new: "",
         confirm: "",
     })
-    
+
     useEffect(() => {
-        const loadAccountInfo = async () => {
-            const data = await fetchAccount()
-            setAccountData(data)
-        }
-        loadAccountInfo()
+        fetchAccount()
     }, [])
+
+    useEffect(() => {
+        if (accountData) {
+            setFormData(accountData)
+        }
+    }, [accountData])
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>, target: "info" | "password") => {
        const { name, value } = e.target
        if (target === "info") {
-           setAccountData(prev => ({ ...prev, [name]: value }))
+           setFormData(prev => ({ ...prev, [name]: value }))
            return
        }
        if (target === "password") {
@@ -51,18 +53,40 @@ function AccountPage() {
         setSelectedImage(file)
     }
 
+    const handleUpdate = async (e: React.FormEvent) => {
+        e.preventDefault()
+
+        try {
+            const payload = new FormData()
+            payload.append('username', formData.username)
+            payload.append('fullname', formData.fullname)
+            if (selectedImage) {
+                payload.append('image', selectedImage)
+            }
+            
+            handleSaveInfo(payload)
+            fetchAccount()
+            setSelectedImage(null)
+        } catch (error: unknown) {
+            console.error(`[UPDATE_ACCOUNT_ERROR]: ${ error instanceof Error ? error.message : 'Unknown error occured. '}`)
+        }
+    }
+
     return (
         <main className='flex flex-col gap-2 w-screen h-screen font-poppins overflow-x-hidden'>
             <Header />
             <section className="flex flex-col w-7/10 mx-auto gap-6 py-3">
                 <h1 className='text-4xl font-bold'>Account Management</h1>
                 {/* Personal Information */}
-                <form className='flex flex-col gap-6'>
+                <form 
+                    onSubmit={ handleUpdate }
+                    className='flex flex-col gap-6'
+                >
                     <div className="flex gap-6">
                         <img 
-                            src={ selectedImage ? URL.createObjectURL(selectedImage) : accountData.imgPath } 
-                            alt={`Image of ${ accountData.username }`} 
-                            className="rounded-md bg-red-300 w-48 h-48 object-fit" 
+                            src={ selectedImage ? URL.createObjectURL(selectedImage) : formData.imgPath } 
+                            alt={`Image of ${ accountData.fullname }`} 
+                            className="rounded-md bg-red-300 w-48 h-48 object-cover" 
                         />
                         <div className='flex flex-col gap-3'>
                             <p className='text-3xl font-semibold'>{ accountData.username }</p>
@@ -76,16 +100,17 @@ function AccountPage() {
                                 onChange={ handleImageChange }
                             />
                             <ActionButton
+                                type="button"
                                 onClick={ () => fileInputRef.current?.click() }
                             >
                                 Change Image
                             </ActionButton>
                         </div>
                     </div>
-                    <FormInput id={"username"} label={"Username"} value={ accountData.username } placeholder={ accountData.username } onChange={ (e) => handleChange(e, "info") }/>
-                    <FormInput id={"fullname"} label={"Full Name"} value={ accountData.fullname } placeholder={ accountData.fullname } onChange={ (e) => handleChange(e, "info") }/>
+                    <FormInput id={"username"} label={"Username"} value={ formData.username } placeholder={ accountData.username } onChange={ (e) => handleChange(e, "info") }/>
+                    <FormInput id={"fullname"} label={"Full Name"} value={ formData.fullname } placeholder={ accountData.fullname } onChange={ (e) => handleChange(e, "info") }/>
                     <div>
-                        <ActionButton type="submit" onClick={() => {}} className={'w-1/10'} >
+                        <ActionButton type="submit" className={'w-1/10'} >
                             Save
                         </ActionButton>
                     </div>
@@ -105,7 +130,7 @@ function AccountPage() {
                         <form 
                             className="flex w-4/5 gap-5 justify-center items-end"
                         >
-                            <FormInput id={"current"} label={"Current"} type={"password"} placeholder={'********'} onChange={ (e) => handleChange(e, "password") } />
+                            <FormInput id={"current"} label={"Enter Current"} type={"password"} placeholder={'********'} onChange={ (e) => handleChange(e, "password") } />
                             <FormInput id={"new"} label={"Enter New"} type={"password"} placeholder={'********'} onChange={ (e) => handleChange(e, "password") } />
                             <FormInput id={"confirm"} label={"Confirm New"} type={"password"} placeholder={'********'} onChange={ (e) => handleChange(e, "password") } />
                             <ActionButton 
