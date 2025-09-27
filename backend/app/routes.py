@@ -301,14 +301,31 @@ def update_profile(user: User):
 
     file = request.files.get('image')
     if file:
-        filename = secure_filename(file.filename)
+        formatted = f"{user.id}-{file.filename}"
+        filename = secure_filename(formatted)
 
         file_path = os.path.join("static/uploads/profiles", filename)
         file.save(file_path)
 
         user.profile_path = filename
 
-    print(user)
     db.session.commit()
 
     return jsonify(user.to_dict()), HTTPStatus.OK
+
+@app_bp.route('/password', methods=['PATCH'])
+@user_required
+def update_password(user: User):
+    data = request.get_json()
+    current_password = data['current']
+    new_password = data['new']
+
+    if not user.validate_password(current_password):
+        return jsonify({"message": "Invalid Password!"}), HTTPStatus.UNAUTHORIZED
+    if user.validate_password(new_password):
+        return jsonify({"message": "New password must be different from your current password!"}), HTTPStatus.BAD_REQUEST
+    
+    user.password_hashed = new_password
+    db.session.commit()
+
+    return jsonify({"message": "Password updated successfully."}), HTTPStatus.OK

@@ -65,7 +65,7 @@ class User(db.Model):
             "id": self.id,
             "username": self.username,
             "fullname": self.fullname,
-            "profile_path": format_image_path(self.profile_path, 'profiles')
+            "profile_path": format_image_path(self.profile_path if self.profile_path else 'default.jpg', 'profiles')
         }
     
     def validate_password(self, input_pass: str) -> bool:
