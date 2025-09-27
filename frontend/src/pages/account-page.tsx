@@ -101,14 +101,12 @@ function AccountPage() {
     
         try {
             const response = await updatePassword(payload)
-            if(response.ok) {
-                setPasswordChange(prev => ({
-                    ...prev,
-                    new: "",
-                    confirm: ""
-                }))
-            }
             const data = await response.json()
+            setPasswordChange({
+                current: "",
+                new: "",
+                confirm: ""
+            })
             addToast(data.message, response.ok ? "primary" : "danger")
         } catch (error: unknown) {
             addToast(error instanceof Error ? error.message :  'An unknown error occurred.', "danger")
