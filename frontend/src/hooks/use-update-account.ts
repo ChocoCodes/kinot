@@ -61,7 +61,7 @@ export const useUpdateAccount = () => {
         }
     }
 
-    // Accommodate images (BLOB) and normal input field saves
+    // Send info as 'multipart/form-data' for image uploads
     const updateAccount = async (payload: FormData) => {
         try {
             const response = await fetch('api/account', {
@@ -85,11 +85,31 @@ export const useUpdateAccount = () => {
         }
     }
 
+    const updatePassword = async <T extends unknown>(payload: T) => {
+        try {
+            const response = await fetch('api/password', {
+                method: 'PATCH',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${ user?.token }`
+                },
+                body: JSON.stringify(payload)
+            })
+
+            return response
+        } catch (error: unknown) {
+            console.error("[UPDATE_PASS_ERROR] ExceptionCaught: ", error)
+            throw new Error(`[UPDATE_PASS_ERROR] ${ error instanceof Error ? error.message : 'Unknown error occured.'} `)
+        }
+
+    }
+
     return { 
         accountData,
         setAccountData,
         deleteAccount, 
         fetchAccount,
-        updateAccount
+        updateAccount,
+        updatePassword
     }
 }

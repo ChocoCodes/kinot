@@ -11,7 +11,13 @@ import {
 } from '@components/account-page/_components'
 
 function AccountPage() {
-    const { deleteAccount, fetchAccount, updateAccount, accountData } = useUpdateAccount()
+    const { 
+        deleteAccount, 
+        fetchAccount, 
+        updateAccount, 
+        accountData,
+        updatePassword
+    } = useUpdateAccount()
     const { addToast } = useToast()
     const fileInputRef = useRef<HTMLInputElement | null>(null)
     const [isVisible, setIsVisible] = useState<"passwordChange" | "deleteModal" | null>(null)
@@ -79,8 +85,33 @@ function AccountPage() {
         e.preventDefault()
         
         if (passwordChange.new !== passwordChange.confirm) {
-            addToast('Passwords dont match!', "danger")
+            addToast('New password and confirmation do not match!', "danger")
+            setPasswordChange(prev => ({
+                ...prev,
+                new: "",
+                confirm: ""
+            }))
             return;
+        }
+
+        const payload: Omit<PasswordInfo, 'confirm'> =  {
+            current: passwordChange.current,
+            new: passwordChange.new
+        }
+    
+        try {
+            const response = await updatePassword(payload)
+            if(response.ok) {
+                setPasswordChange(prev => ({
+                    ...prev,
+                    new: "",
+                    confirm: ""
+                }))
+            }
+            const data = await response.json()
+            addToast(data.message, response.ok ? "primary" : "danger")
+        } catch (error: unknown) {
+            addToast(error instanceof Error ? error.message :  'An unknown error occurred.', "danger")
         }
     }
 
