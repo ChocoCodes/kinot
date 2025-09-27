@@ -272,7 +272,7 @@ server: {
 ## John Octavio  
 - GitHub: [ChocoCodes](https://github.com/ChocoCodes)  
 - Developed as part of **CS50x 2024 Final Project**  
-- Contact: [Email](johnrlnd1704@gmail.com)
+- Contact: johnrlnd1704@gmail.com
 ---
 
 ## 📜 License  
