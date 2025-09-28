@@ -10,7 +10,8 @@ import {
 import { 
     CriteriaDropdown, 
     CSVButton,
-    PaginationController 
+    PaginationController,
+    AddTransactionForm
 } from '@components/transaction-page/_components';
 
 const FILTERS = Object.keys(financeMeta)
@@ -25,6 +26,7 @@ function TransactionPage() {
     const [filterBy, setFilterBy] = useState("")
     const [sortBy, setSortBy] = useState("")
     const [query, setQuery] = useState("")
+    const [isFormVisible, setIsFormVisible] = useState(false)
     const { transactions, total } = useTransactions(tablePage, LIMIT)
     const totalPages = Math.ceil(total / LIMIT)
 
@@ -60,6 +62,7 @@ function TransactionPage() {
                     <h1 className='text-4xl font-bold'>Transaction Logs</h1>
                     <button 
                         className='inline-flex justify-between items-center gap-2 text-xl text-white bg-black rounded-md px-4 py-1 hover:cursor-pointer'
+                        onClick={ () => setIsFormVisible(true) }
                     >
                         <GoPlus />New
                     </button>
@@ -92,6 +95,9 @@ function TransactionPage() {
                     onPrev={ () => setTablePage(tablePage - 1) }
                     onNext={ () => setTablePage(tablePage + 1) }
                 />
+                { isFormVisible && (
+                    <AddTransactionForm onClose={ () => setIsFormVisible(false) } />
+                )}
             </section>
         </main>
     )

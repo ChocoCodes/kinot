@@ -4,8 +4,8 @@ import { useUpdateAccount } from '@hooks/use-update-account'
 import type { AccountInfo, PasswordInfo } from '@type/types'
 import { passRegexp } from '@utils/helpers'
 import { useToast } from '@context/toast-context'
-import { 
-    FormInput, 
+import { FormInput } from '@components/shared/_components'
+import {  
     ActionButton, 
     ConfirmDelete 
 } from '@components/account-page/_components'
@@ -149,8 +149,22 @@ function AccountPage() {
                             </ActionButton>
                         </div>
                     </div>
-                    <FormInput id={"username"} label={"Username"} value={ formData.username } placeholder={ accountData.username } onChange={ (e) => handleChange(e, "info") }/>
-                    <FormInput id={"fullname"} label={"Full Name"} value={ formData.fullname } placeholder={ accountData.fullname } onChange={ (e) => handleChange(e, "info") }/>
+                    <FormInput 
+                        id={"username"} 
+                        label={"Username"} 
+                        value={ formData.username } 
+                        placeholder={ accountData.username } 
+                        onChange={ (e) => handleChange(e, "info") }
+                        className='w-1/2'    
+                    />
+                    <FormInput 
+                        id={"fullname"} 
+                        label={"Full Name"} 
+                        value={ formData.fullname } 
+                        placeholder={ accountData.fullname } 
+                        onChange={ (e) => handleChange(e, "info") }
+                        className='w-1/2'  
+                    />
                     <div>
                         <ActionButton type="submit" className={'w-1/10'} >
                             Save
@@ -180,6 +194,7 @@ function AccountPage() {
                                 placeholder={'********'} 
                                 value={ passwordChange.current }
                                 onChange={ (e) => handleChange(e, "password") } 
+                                className='w-1/3'
                             />
                             <FormInput 
                                 id={"new"} 
@@ -189,6 +204,7 @@ function AccountPage() {
                                 value={ passwordChange.new }
                                 onChange={ (e) => handleChange(e, "password") } 
                                 pattern={ passRegexp }
+                                className='w-1/3'
                             />
                             <FormInput 
                                 id={"confirm"} 
@@ -197,10 +213,11 @@ function AccountPage() {
                                 placeholder={'********'} 
                                 value={ passwordChange.confirm }
                                 onChange={ (e) => handleChange(e, "password") } 
+                                className='w-1/3'
                             />
                             <ActionButton 
                                 type="submit" 
-                                className='w-1/3 h-10'
+                                className='w-1/5 h-10'
                             >
                                 Update
                             </ActionButton>

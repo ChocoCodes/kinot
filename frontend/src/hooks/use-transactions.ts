@@ -39,12 +39,37 @@ export const useTransactions = (page = 1, limit = 10) => {
         }
     }
 
+    const addTransaction = async <T extends unknown>(payload: T) => {
+        try {
+            const response = await fetch('api/transactions', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${ user?.token }`
+                },
+                body: JSON.stringify(payload)
+            })
+
+            if(!response.ok) {
+                console.error("[ADD_TRANSACTION_ERROR] ResponseNotOK: Failed to add transactions")
+                addToast("ResponseNotOK: Failed to add transactions", "danger")
+            }
+            
+            await fetchTransactions()
+        } catch (error: unknown) {
+            console.error("[ADD_TRANSACTION_ERROR] ExceptionCaught: ", error)
+            addToast(error instanceof Error ? error.message : 'Unknown error occured.', "danger")
+            throw new Error(`[ADD_TRANSACTION_ERROR] ${ error instanceof Error ? error.message : 'Unknown error occured.'} `)
+        }
+    }
+
     useEffect(() => {
         fetchTransactions()
     }, [user, page, limit])
 
     return { 
         transactions, 
-        total 
+        total,
+        addTransaction
     }
 }
