@@ -24,4 +24,4 @@ const ToastCountdown = ({ message, ms, variant = "primary" }: ToastProps) => {
     </div>
 }
 
-export default ToastCountdown
+export { ToastCountdown }

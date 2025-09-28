@@ -1,4 +1,4 @@
-import { Toast } from '@components/layouts/_components';
+import { ToastCountdown } from '@components/shared/_components';
 import type { ChildProps } from '@type/types'
 import {
     createContext,
@@ -46,7 +46,7 @@ export function ToastProvider({ children }: ChildProps) {
 
             <div className="max-w-[400px] fixed bottom-0 right-0 space-y-2 z-50 shadow-md">
                 { toasts.map(toast => (
-                    <Toast key={ toast.id } message={ toast.message } ms={ TOAST_MS } variant={ toast.variant }/>
+                    <ToastCountdown key={ toast.id } message={ toast.message } ms={ TOAST_MS } variant={ toast.variant }/>
                 ))}
             </div>
         </ToastContext.Provider>
