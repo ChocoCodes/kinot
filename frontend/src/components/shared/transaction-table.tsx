@@ -1,27 +1,19 @@
 import { toUpper, formatDate } from '@utils/helpers'
 import { CategoryTag } from '@components/home-page/_components'
 import { financeMeta } from '@pages/home-page';
-import type { TransactionData, Transaction } from '@type/types'
+import type { Transaction } from '@type/types'
 import type React from 'react';
 
 interface TransactionTableProps {
-  data: TransactionData[];
+  data: Transaction[];
 }
 
-const COLUMNS = [
-    'id',
-    'category',
-    'amount',
-    'method',
-    'description',
-    'date',
-]
+const COLUMNS = ['id', 'category', 'amount', 'method', 'description', 'created_at']
 
 const TransactionTable = ({ data }: TransactionTableProps) => {
-    const transactions: Transaction[] = data.map(({ user_id, ...rest }) => rest) 
 
     const getCellComponent = (col: string, row: Transaction): React.ReactNode => {
-        if (col === 'date') {
+        if (col === 'created_at') {
             return formatDate(row.created_at)
         }
         if (col === 'category') {
@@ -35,9 +27,9 @@ const TransactionTable = ({ data }: TransactionTableProps) => {
         return row[col as keyof Transaction] as React.ReactNode;
     }
 
-    console.log(transactions)
+    console.log(data)
     return (
-        <table className="w-full mx-auto text-center text-xl font-poppins rounded-xl border-separate bg-light-gray border-2 border-dark-gray drop-shadow-md">
+        <table className="w-full mx-auto text-center text-xl font-poppins rounded-lg border-separate bg-light-gray border-2 border-dark-gray drop-shadow-md">
             <thead>
                 <tr>
                     {COLUMNS.map(col => (
@@ -50,17 +42,17 @@ const TransactionTable = ({ data }: TransactionTableProps) => {
                 </tr>
             </thead>
             <tbody className='divide-x divide-dark-gray'>
-                { transactions.length > 0 ? transactions.map((row, index) => (
+                { data.length > 0 ? data.map((row, index) => (
                     <tr key={index}>
                         {COLUMNS.map(col => (
-                            <td key={col} className={`${col === 'id' ? 'w-[90px]' : ''} truncate text-ellipsis py-3 text-xl`}>
-                                {getCellComponent(col, row)}
+                            <td key={col} className={`${col === 'id' ? 'w-[90px]' : ''} truncate text-ellipsis py-3 text-lg`}>
+                                { getCellComponent(col, row) }
                             </td>
                         ))}
                     </tr>
                 )) : (                    
                     <tr>
-                        <td colSpan={ COLUMNS.length } className='py-2'>No transactions available.</td>
+                        <td colSpan={ COLUMNS.length } className='py-2 text-center text-lg'>No transactions available.</td>
                     </tr>
                 )}
             </tbody>

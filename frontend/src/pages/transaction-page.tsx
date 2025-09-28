@@ -1,34 +1,61 @@
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { GoPlus } from "react-icons/go";
 import { financeMeta } from './home-page';
-import { toUpper } from '@utils/helpers'
 import { Header } from "@components/layouts/_components"
-import { SearchBar } from "@components/shared/_components";
-import { CriteriaDropdown, CSVButton } from '@components/transaction-page/_components';
 import { useTransactions } from '@hooks/use-transactions'
+import { 
+    SearchBar, 
+    TransactionTable 
+} from "@components/shared/_components";
+import { 
+    CriteriaDropdown, 
+    CSVButton,
+    PaginationController 
+} from '@components/transaction-page/_components';
 
-const FILTERS = Object.keys(financeMeta).map(filter => toUpper(filter))
+const FILTERS = Object.keys(financeMeta)
 const SORT_OPTIONS = [
-    'category',
     'amount',
-    'method',
     'date'
-].map(options => toUpper(options))
+]
 
 function TransactionPage() {
-    const { transactions, fetchTransactions } = useTransactions()
+    const LIMIT = 10
+    const [tablePage, setTablePage] = useState(1)
     const [filterBy, setFilterBy] = useState("")
     const [sortBy, setSortBy] = useState("")
     const [query, setQuery] = useState("")
+    const { transactions, total } = useTransactions(tablePage, LIMIT)
+    const totalPages = Math.ceil(total / LIMIT)
 
-    useEffect(() => {
-        fetchTransactions()
-    }, [])
+    let filtered = transactions
+    // Filtering
+    if(filterBy) {
+        filtered = filtered.filter(
+            transaction => transaction.category.toLowerCase() === filterBy
+        )
+    }
+    // Searching
+    if(query) {
+        filtered = filtered.filter(
+            transaction => transaction.description.toLowerCase().includes(query.toLowerCase())
+        )
+    }
+    // Sorting
+    if(sortBy) {
+        if (sortBy === "amount") {
+            filtered = [...filtered].sort((a, b) => b.amount - a.amount)
+        } else if (sortBy === "date") {
+            filtered = [...filtered].sort(
+                (a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+            )
+        }
+    }
 
     return (
         <main className='flex flex-col w-screen h-screen mx-auto font-poppins gap-4'>
             <Header />
-            <section className='w-7/10 mx-auto flex flex-col gap-6'>
+            <section className='w-7/10 mx-auto flex flex-col gap-8'>
                 <div className="flex w-full justify-between items-center">
                     <h1 className='text-4xl font-bold'>Transaction Logs</h1>
                     <button 
@@ -58,6 +85,13 @@ function TransactionPage() {
                         <CSVButton transactions={ transactions }/>
                     </div>
                 </div>
+                <TransactionTable data={ filtered }/>
+                <PaginationController 
+                    tablePage={ tablePage } 
+                    totalPage={ totalPages } 
+                    onPrev={ () => setTablePage(tablePage - 1) }
+                    onNext={ () => setTablePage(tablePage + 1) }
+                />
             </section>
         </main>
     )

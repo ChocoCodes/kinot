@@ -10,7 +10,7 @@ const CSVButton = ({ transactions }: CSVButtonProps) => {
     const { addToast } = useToast()
     
     const handleCSVExport = () => {
-        // No need to extract CSV since there is no transactions
+        // No need to extract CSV since there are no transactions
         if(transactions.length === 0) {
             addToast("No transactions found for export!", "danger")
             return

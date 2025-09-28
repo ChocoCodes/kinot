@@ -1,4 +1,5 @@
 import { RiArrowDownSLine } from "react-icons/ri";
+import { toUpper } from "@utils/helpers";
 
 interface CriteriaDropdownProps {
     options: string[];
@@ -22,7 +23,7 @@ const CriteriaDropdown = ({
             >
                 <option value="">{ label }</option>
                 {options.map(option => (
-                    <option key={ option } value={ option } className="text-black">{ option }</option>                
+                    <option key={ option } value={ option } className="text-black">{ toUpper(option) }</option>                
                 ))}
             </select>
             <RiArrowDownSLine className='absolute right-2 top-1/2 -translate-y-1/2 text-ph-gray'/>

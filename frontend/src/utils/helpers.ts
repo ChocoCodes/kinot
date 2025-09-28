@@ -4,7 +4,18 @@ export const toUpper = (word: string) => {
 
 export const formatDate = (rawDate: string) => {
     const date = new Date(rawDate)
-    const formattedDate = `${date.getMonth()}/${date.getDate()}/${date.getFullYear()}`
+
+    const mm = date.getMonth()
+    const dd = date.getDate()
+    const yyyy = date.getFullYear()
+
+    let h = date.getHours()
+    const m = date.getMinutes()
+
+    const prepand = h < 12 ? 'AM' : 'PM'
+    h = h % 12
+    h = h ? h : 12
+    const formattedDate = `${ mm }-${ dd }-${ yyyy } ${ h }:${ m } ${ prepand }`
     return formattedDate
 }
 
