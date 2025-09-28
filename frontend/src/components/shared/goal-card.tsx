@@ -66,4 +66,4 @@ const GoalCard = ({
     )
 }
 
-export default GoalCard
+export { GoalCard }

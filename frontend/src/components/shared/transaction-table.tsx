@@ -68,4 +68,4 @@ const TransactionTable = ({ data }: TransactionTableProps) => {
     )
 }
 
-export default TransactionTable
+export { TransactionTable }

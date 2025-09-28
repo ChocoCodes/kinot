@@ -9,10 +9,12 @@ import { type FinanceMeta } from '@type/types'
 import { 
     FinanceCard, 
     Form, 
-    TransactionTable, 
     Section, 
-    GoalCard 
 } from '@components/home-page/_components'
+import {
+    GoalCard,
+    TransactionTable
+} from '@components/shared/_components'
 
 export const financeMeta = {
     savings: {
@@ -46,11 +48,6 @@ function HomePage() {
 
     const { finances, transactions = [], goals = [] } = userData || {}
     
-    //console.log("Goals: ", goals)
-    //console.log(finances);
-    //console.log(transactions);
-    //console.log(userData?.transactions[0].created_at)
-
     const handleClose = () => setIsVisible(false)
 
     return (
