@@ -1,10 +1,10 @@
 import { useAuth } from "@context/auth-context"
-import { useUserDashboard } from './use-user-dashboard'
+import { useDashboard } from './use-dashboard'
 import type { FinanceData, Payload } from "@type/types"
 
 export const useUpdateFinance = () => {
     const { user } = useAuth() 
-    const { userData, setUserData } = useUserDashboard()
+    const { userData, setUserData } = useDashboard()
 
     const updateFinance =  async (payload: Payload): Promise<void> => {
         // console.log("Json payload: " + JSON.stringify(payload))

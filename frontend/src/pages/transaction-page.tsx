@@ -1,10 +1,11 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { GoPlus } from "react-icons/go";
 import { financeMeta } from './home-page';
 import { toUpper } from '@utils/helpers'
 import { Header } from "@components/layouts/_components"
 import { SearchBar } from "@components/shared/_components";
 import { CriteriaDropdown, CSVButton } from '@components/transaction-page/_components';
+import { useTransactions } from '@hooks/use-transactions'
 
 const FILTERS = Object.keys(financeMeta).map(filter => toUpper(filter))
 const SORT_OPTIONS = [
@@ -15,9 +16,14 @@ const SORT_OPTIONS = [
 ].map(options => toUpper(options))
 
 function TransactionPage() {
+    const { transactions, fetchTransactions } = useTransactions()
     const [filterBy, setFilterBy] = useState("")
     const [sortBy, setSortBy] = useState("")
     const [query, setQuery] = useState("")
+
+    useEffect(() => {
+        fetchTransactions()
+    }, [])
 
     return (
         <main className='flex flex-col w-screen h-screen mx-auto font-poppins gap-4'>
@@ -49,7 +55,7 @@ function TransactionPage() {
                             value={ sortBy }
                             onChange={ setSortBy }
                         />
-                        <CSVButton />
+                        <CSVButton transactions={ transactions }/>
                     </div>
                 </div>
             </section>

@@ -1,11 +1,14 @@
 import { useState } from 'react'
 import { Header } from '@components/layouts/_components'
-import { useUserDashboard, useUpdateFinance } from '@hooks/_hooks'
 import { IoIosAdd }  from "react-icons/io"
 import { MdEdit } from "react-icons/md"
 import { FaArrowTrendUp, FaArrowTrendDown } from "react-icons/fa6"
 import { BsDashLg } from "react-icons/bs";
 import { type FinanceMeta } from '@type/types'
+import { 
+    useDashboard, 
+    useUpdateFinance 
+} from '@hooks/_hooks'
 import { 
     FinanceCard, 
     Form, 
@@ -43,7 +46,7 @@ export const financeMeta = {
 function HomePage() {
     const [activeForm, setActiveForm] = useState<FinanceMeta | null>(null)
     const [isVisible, setIsVisible] = useState<boolean>(false)
-    const { userData } = useUserDashboard()
+    const { userData } = useDashboard()
     const { updateFinance } = useUpdateFinance()
 
     const { finances, transactions = [], goals = [] } = userData || {}

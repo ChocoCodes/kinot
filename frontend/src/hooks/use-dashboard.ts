@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import { useAuth } from '@context/auth-context'
 import type { DashboardData } from '@type/types';
 
-export const useUserDashboard = () => {
+export const useDashboard = () => {
     const { user } = useAuth()
     const [userData, setUserData] = useState<DashboardData | null>(null);
 

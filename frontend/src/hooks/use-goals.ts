@@ -1,7 +1,7 @@
 import { useAuth } from '@context/auth-context'
 
 
-export const useUserGoals = () => {
+export const useGoals = () => {
     const { user } = useAuth()
 
     const updateGoalContribution = async (payload: any) => {

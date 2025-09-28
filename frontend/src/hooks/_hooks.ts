@@ -1,11 +1,15 @@
-import { useUserDashboard }  from './use-user-dashboard'
+import { useDashboard }  from './use-dashboard'
 import { useUpdateFinance } from './use-update-finance'
 import { useForgotPassword } from './use-forgot-password'
 import { useUpdateAccount } from './use-update-account'
+import { useGoals } from './use-goals'
+import { useTransactions } from './use-transactions'
 
 export { 
-    useUserDashboard, 
+    useDashboard, 
     useUpdateFinance,
     useForgotPassword,
-    useUpdateAccount
+    useUpdateAccount,
+    useGoals,
+    useTransactions
 }
