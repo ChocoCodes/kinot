@@ -36,6 +36,7 @@ export type GoalData = {
     created_at: string;
     title: string;
     image_path: string;
+    monthly_contribution: number;
 }
 
 export type DashboardData = {

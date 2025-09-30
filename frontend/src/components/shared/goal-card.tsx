@@ -7,6 +7,7 @@ interface GoalCardProps {
     required_amount: number;
     image_path: string;
     title: string;
+    monthly_contribution: number;
 }
 
 const GoalCard = ({ 
@@ -14,7 +15,8 @@ const GoalCard = ({
     current_amount,
     required_amount,
     image_path,
-    title
+    title,
+    monthly_contribution
 }: GoalCardProps) => {
     const [activeModal, setActiveModal] = useState<"contribute" | "delete" | null>(null)
     // handle contribute -> route to /update-goal/<id> 
@@ -34,7 +36,7 @@ const GoalCard = ({
                         </div>
                         <p className="text-sm">₱{ current_amount } out of ₱{ required_amount }</p>
                     </div>
-                    <p>You added ₱XX,XXX this month.</p>
+                    <p>You added ₱{ monthly_contribution } this month.</p>
                 </div>
                 <div className="flex w-full mx-auto items-center justify-between mt-4 text-white text-lg">
                     <button 

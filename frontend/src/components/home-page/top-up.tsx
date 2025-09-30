@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { IoIosClose } from 'react-icons/io';
+import { useToast } from '@context/toast-context'
 
 interface TopUpProps {
     goalName: string;
@@ -9,12 +10,13 @@ interface TopUpProps {
 
 const TopUp = ({ goalName, handleOnClose, goalId }: TopUpProps) => {
     const [amount, setAmount] = useState("")
-
+    const { addToast } = useToast()
+    
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault()
         
         if(amount === "" || isNaN(Number(amount))) {
-            alert('Please enter a valid amount.')
+            addToast('Invalid. Please enter a valid amount.', "danger")
             setAmount("")
             return
         }
