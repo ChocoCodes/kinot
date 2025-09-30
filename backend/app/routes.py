@@ -24,20 +24,13 @@ from .services import (
     get_all_transactions,
     get_goals,
     get_active_goals,
-    ActiveGoalDTO
 )
 
 app_bp = Blueprint('test', __name__)
 
 @app_bp.route('/test')
 def test_route():
-    user = query_user(1)
-    goals_db = get_active_goals(user)
-    print(f"DB Data: {goals_db}")
-    goals_dto = [ActiveGoalDTO(goals) for goals in goals_db] if goals_db else []
-    print(f"DTO Data: {goals_dto}")
-    goals_parsed = [goal.__dict__ for goal in goals_dto] if goals_dto else []
-    return jsonify(goals_parsed), HTTPStatus.OK
+    pass
 
 @app_bp.route('/register', methods=['POST'])
 def register():
@@ -219,13 +212,12 @@ def update_finance(user: User):
 def get_homepage_data(user: User):
     finances = get_user_finances(user)
     transactions = get_recent_transactions(user)
-    goals_raw = get_active_goals(user)
-    goals = [ActiveGoalDTO(goal) for goal in goals_raw] if goals_raw else []
+    goals = get_active_goals(user)
     print(goals)
     response = {
         'finances': finances,
         'transactions': transactions,
-        'goals': [goal.__dict__ for goal in goals]
+        'goals': goals
     }
     return jsonify(response), HTTPStatus.OK
 

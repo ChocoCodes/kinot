@@ -208,6 +208,7 @@ class Goal(db.Model):
         """
 
     def to_dict(self) -> dict:
+        from .utils import format_image_path
         return {
             "id": self.id,
             "title": self.title,
@@ -215,6 +216,7 @@ class Goal(db.Model):
             "created_at": f"{self.created_at.isoformat()}Z",
             "required_amount": self.required_amount,
             "current_amount": self.current_amount,
+            "image_path": format_image_path(self.image_path or 'default-goal.jpg', 'goals') 
         }
 
 
