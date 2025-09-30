@@ -29,7 +29,6 @@ export const useTransactions = (page = 1, limit = 10) => {
             }
 
             const data = await response.json()
-            data.transactions.created_at
             setTransactions(data.transactions)
             setTotal(data.total)
         } catch (error: unknown) {

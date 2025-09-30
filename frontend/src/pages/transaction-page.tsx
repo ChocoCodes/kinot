@@ -92,8 +92,8 @@ function TransactionPage() {
                 <PaginationController 
                     tablePage={ tablePage } 
                     totalPage={ totalPages } 
-                    onPrev={ () => setTablePage(tablePage - 1) }
-                    onNext={ () => setTablePage(tablePage + 1) }
+                    onPrev={ () => setTablePage(page => Math.max(1, page - 1)) }
+                    onNext={ () => setTablePage(page => Math.min(totalPages, page + 1)) }
                 />
                 { isFormVisible && (
                     <AddTransactionForm onClose={ () => setIsFormVisible(false) } />
