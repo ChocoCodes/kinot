@@ -221,7 +221,7 @@ def get_homepage_data(user: User):
     }
     return jsonify(response), HTTPStatus.OK
 
-@app_bp.route('/update-goal/<int:goal_id>', methods=['POST'])
+@app_bp.route('/goal/<int:goal_id>', methods=['PATCH'])
 @user_required
 def update_goal_contribution(user: User, goal_id: int):
     goal = user.goals.filter_by(id=goal_id).first()
@@ -244,9 +244,9 @@ def update_goal_contribution(user: User, goal_id: int):
     print(goal)
     db.session.commit()
     # Return updated Goal
-    return jsonify(goal.to_dict()), HTTPStatus.OK
+    return jsonify({"message": "Goal updated successfully"}), HTTPStatus.OK
 
-@app_bp.route('/delete-goal/<int:goal_id>', methods=['POST'])
+@app_bp.route('/goal/<int:goal_id>', methods=['DELETE'])
 @user_required
 def delete_goal(user: User, goal_id: int):
     goal = user.goals.filter_by(id=goal_id).first()
@@ -257,9 +257,8 @@ def delete_goal(user: User, goal_id: int):
     
     # TODO: Set is_deleted = True, commit db
     goal.is_deleted = True
-    #db.session.commit()
-    updated_goals = get_active_goals(user)
-    return jsonify([goal.to_dict() for goal in updated_goals]), HTTPStatus.OK
+    db.session.commit()
+    return jsonify({"message": "Goal deleted successfully"}), HTTPStatus.OK
 
 @app_bp.route('/goals', methods=['GET'])
 @user_required
