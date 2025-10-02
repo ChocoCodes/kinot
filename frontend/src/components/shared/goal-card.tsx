@@ -1,5 +1,6 @@
 import { useState } from 'react'
-import { TopUp, DeleteDialog } from '@components/home-page/_components'
+import { TopUp } from '@components/home-page/_components'
+import { DeleteGoal } from '@components/goal-page/_components'
 
 interface GoalCardProps {
     id: number;
@@ -19,8 +20,6 @@ const GoalCard = ({
     monthly_contribution
 }: GoalCardProps) => {
     const [activeModal, setActiveModal] = useState<"contribute" | "delete" | null>(null)
-    // handle contribute -> route to /update-goal/<id> 
-    // handle delete -> route to /delete-goal/<id>
 
     const handleClose = () => setActiveModal(null)
     
@@ -61,7 +60,7 @@ const GoalCard = ({
                 />
             )}
             { activeModal === "delete" && (
-                <DeleteDialog title={ title } />
+                <DeleteGoal onClose={ handleClose } name={ title } id={ id }/>
             )}
 
         </>

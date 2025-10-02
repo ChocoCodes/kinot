@@ -3,11 +3,18 @@ import { Header } from "@components/layouts/_components"
 import { GoPlus } from 'react-icons/go'
 import { SearchBar, GoalCard } from '@components/shared/_components'
 import { useGoals } from '@hooks/use-goals'
+import { AddGoalForm } from '@components/goal-page/_components'
 
 function GoalPage() {
     const { goals } = useGoals()
     const [isFormVisible, setIsFormVisible] = useState(false)
     const [query, setQuery] = useState("")
+    let filtered = goals;
+
+    // Search by title
+    if (query) {
+        filtered = filtered.filter(goal => goal.title.includes(query))
+    }
 
     return (
         <main className='flex flex-col w-screen h-screen gap-4'>
@@ -29,11 +36,14 @@ function GoalPage() {
                     />
                 </div>
                 <div className="flex justify-between gap-2">
-                    { goals.map(goal => (
+                    { filtered.map(goal => (
                         <GoalCard key={goal.id} {...goal} />
                     ))}
                 </div>
             </section>
+            { isFormVisible && (
+                <AddGoalForm onClose={ () => setIsFormVisible(false) }/>
+            )}
         </main>
     )
 }

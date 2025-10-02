@@ -35,8 +35,8 @@ export const useGoals = () => {
 
     const updateGoalContribution = async (payload: any) => {
         try {
-            const response = await fetch(`api/update-goal/${ payload.id }`, {
-                method: 'POST',
+            const response = await fetch(`api/goal/${ payload.id }`, {
+                method: 'PATCH',
                 headers: {
                     'Content-Type': 'application/json',
                     'Authorization': `Bearer ${ user?.token }`
@@ -57,6 +57,54 @@ export const useGoals = () => {
             throw error
         }
     }
+    
+    const addGoal = async (payload: FormData) => {
+        try {
+            const response = await fetch('api/goal', {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${ user?.token }`,
+                },
+                body: payload
+            })
+
+            if(!response.ok) {
+                console.error("[ADD_GOAL_ERROR] ResponseNotOK: Failed to add goal")
+                addToast("Unable to add goal.", "danger")
+                throw new Error(`Request failed with status ${ response.status } | ${ response.statusText }`)
+            }
+
+            fetchGoals()
+            addToast('Goal added successfully.', 'primary')
+        } catch (error: unknown) {
+            console.error("[ADD_GOAL_ERROR] ExceptionCaught: ", error)
+            throw new Error(`[ADD_GOAL_ERROR] ${ error instanceof Error ? error.message : 'Unknown error occured.'} `)
+        }
+    }
+
+    const deleteGoal = async (id: number) => {
+        try {
+            const response = await fetch(`api/goal/${ id }`, {
+                method: 'DELETE',
+                headers: {
+                    'Authorization': `Bearer ${ user?.token }`,
+                    'Content-Type': 'application/json'
+                }
+            })
+
+            if(!response.ok) {
+                console.error("[DELETE_GOAL_ERROR] ResponseNotOK: Failed to delete goal")
+                addToast("Unable to delete goal.", "danger")
+                throw new Error(`Request failed with status ${ response.status } | ${ response.statusText }`)
+            }
+
+            fetchGoals()
+            addToast('Goal deleted successfully.', 'primary')
+        } catch (error: unknown) {
+            console.error("[DELETE_GOAL_ERROR] ExceptionCaught: ", error)
+            throw new Error(`[DELETE_GOAL_ERROR] ${ error instanceof Error ? error.message : 'Unknown error occured.'} `)
+        }
+    }
 
     useEffect(() => {
         fetchGoals()
@@ -65,6 +113,8 @@ export const useGoals = () => {
     return { 
         goals,
         fetchGoals,
-        updateGoalContribution
+        updateGoalContribution,
+        deleteGoal,
+        addGoal
     }
 }

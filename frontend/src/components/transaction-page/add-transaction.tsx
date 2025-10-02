@@ -49,43 +49,43 @@ export const AddTransactionForm = ({ onClose }: AddTransactionProps) => {
                         <IoIosClose />
                     </button>
                 </div>
-                <FormInput 
-                    id="amount"
-                    label="Amount"
-                    value={ transactionEntry.amount }
-                    onChange={ handleChange }
-                    placeholder='Enter amount'
-                    className='w-9/10 mx-auto'
-                />
-                <FormInput 
-                    id="method"
-                    label="Method"
-                    value={ transactionEntry.method }
-                    onChange={ handleChange }
-                    placeholder='Enter cash method'
-                    className='w-9/10 mx-auto'
-                />
-                <FormInput 
-                    id="description"
-                    label="Description"
-                    value={ transactionEntry.description }
-                    onChange={ handleChange }
-                    placeholder='Enter description'
-                    className='w-9/10 mx-auto'
-                />
-                <label htmlFor="category" className='w-9/10 mx-auto text-2xl font-semibold'>Category</label>
-                <select
-                    name="category"
-                    id="category"
-                    value={ transactionEntry.category }
-                    onChange={ handleChange }
-                    className='w-9/10 mx-auto h-10 px-2 border-1 border-gray-400 text-ph-gray rounded-md'
-                >
-                    <option value="">Select Method</option>
-                    {CATEGORIES.map(category => (
-                        <option key={ category } value={ category }>{ toUpper(category) }</option>
-                    ))}
-                </select>
+                <div className="w-9/10 mx-auto flex flex-col gap-3">
+                
+                    <FormInput 
+                        id="amount"
+                        label="Amount"
+                        value={ transactionEntry.amount }
+                        onChange={ handleChange }
+                        placeholder='Enter amount'
+                    />
+                    <FormInput 
+                        id="method"
+                        label="Method"
+                        value={ transactionEntry.method }
+                        onChange={ handleChange }
+                        placeholder='Enter cash method'
+                    />
+                    <FormInput 
+                        id="description"
+                        label="Description"
+                        value={ transactionEntry.description }
+                        onChange={ handleChange }
+                        placeholder='Enter description'
+                    />
+                    <label htmlFor="category" className='text-2xl font-semibold'>Category</label>
+                    <select
+                        name="category"
+                        id="category"
+                        value={ transactionEntry.category }
+                        onChange={ handleChange }
+                        className='h-10 px-2 border-1 border-gray-400 text-ph-gray rounded-md'
+                    >
+                        <option value="">Select Method</option>
+                        {CATEGORIES.map(category => (
+                            <option key={ category } value={ category }>{ toUpper(category) }</option>
+                        ))}
+                    </select>
+                </div>
                 <button
                     type='submit'
                     className='bg-black text-white px-3 h-10 w-1/4 mx-auto rounded-sm mt-2'
