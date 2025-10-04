@@ -35,7 +35,7 @@ export const useGoals = () => {
 
     const updateGoalContribution = async (payload: any) => {
         try {
-            const response = await fetch(`api/goal/${ payload.id }`, {
+            const response = await fetch(`api/goal/${ payload.id }/contribute`, {
                 method: 'PATCH',
                 headers: {
                     'Content-Type': 'application/json',

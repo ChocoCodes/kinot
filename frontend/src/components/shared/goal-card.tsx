@@ -38,12 +38,14 @@ const GoalCard = ({
                     <p>You added ₱{ monthly_contribution } this month.</p>
                 </div>
                 <div className="flex w-full mx-auto items-center justify-between mt-4 text-white text-lg">
-                    <button 
-                        className="w-45/100 bg-black p-2 rounded-lg hover:scale-105 transition-transform duration-300 hover:cursor-pointer"
-                        onClick={ () => setActiveModal("contribute") }
-                    >
-                        Contribute
-                    </button>
+                    { current_amount !== required_amount && (
+                        <button 
+                            className="w-45/100 bg-black p-2 rounded-lg hover:scale-105 transition-transform duration-300 hover:cursor-pointer"
+                            onClick={ () => setActiveModal("contribute") }
+                        >
+                            Contribute
+                        </button>
+                    )}
                     <button 
                         className="w-45/100 bg-destructive p-2 rounded-lg hover:scale-105 transition-transform duration-300 hover:cursor-pointer"
                         onClick={ () => setActiveModal("delete") }
@@ -60,7 +62,7 @@ const GoalCard = ({
                 />
             )}
             { activeModal === "delete" && (
-                <DeleteGoal onClose={ handleClose } name={ title } id={ id }/>
+                <DeleteGoal onClose={ handleClose } name={ title } id={ id } />
             )}
 
         </>
