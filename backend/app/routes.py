@@ -12,6 +12,7 @@ from flask_jwt_extended import (
     get_jwt_identity
 )
 from .models import (
+    Goal,
     User, 
     GoalContribution, 
     MonthlyFinance, 
@@ -221,7 +222,7 @@ def get_homepage_data(user: User):
     }
     return jsonify(response), HTTPStatus.OK
 
-@app_bp.route('/goal/<int:goal_id>', methods=['PATCH'])
+@app_bp.route('/goal/<int:goal_id>/contribute', methods=['PATCH'])
 @user_required
 def update_goal_contribution(user: User, goal_id: int):
     goal = user.goals.filter_by(id=goal_id).first()
@@ -258,13 +259,68 @@ def delete_goal(user: User, goal_id: int):
     # TODO: Set is_deleted = True, commit db
     goal.is_deleted = True
     db.session.commit()
-    return jsonify({"message": "Goal deleted successfully"}), HTTPStatus.OK
+    return jsonify({"message": "Goal deleted successfully."}), HTTPStatus.OK
+
+@app_bp.route('/goal/<int:goal_id>', methods=['PATCH'])
+@user_required
+def edit_goal(user: User, goal_id: int):
+    goal = user.goals.filter_by(id=goal_id).first()
+    if goal is None:
+        return jsonify({
+            "error": "Goal not found."
+        }), HTTPStatus.BAD_REQUEST
+    
+    goal.title = request.form.get('title', goal.title)
+    goal.description = request.form.get('description', goal.description)
+    goal.required_amount = float(request.form.get('required_amount', goal.required_amount))
+
+    image_updated = request.files.get('image')
+    if image_updated:
+        formatted = f"{user.id}-{goal.title}-{image_updated.filename}"
+        filename = secure_filename(formatted)
+
+        file_path = os.path.join('static/uploads/goals', filename)
+        image_updated.save(file_path)
+
+        goal.image_path = filename
+
+    db.session.commit()
+    return jsonify({"message": "goal updated successfully."}), HTTPStatus.OK
 
 @app_bp.route('/goals', methods=['GET'])
 @user_required
 def fetch_all_goals(user: User):
     all_goals = get_goals(user)
     return jsonify(all_goals), HTTPStatus.OK
+
+@app_bp.route('/goal', methods=['POST'])
+@user_required
+def add_goal(user: User):
+    title = request.form.get('title')
+    description = request.form.get('description')
+    required_amount = request.form.get('required_amount')
+    image = request.files.get('image')
+    image_path = None
+
+    if image:
+        formatted = f"{user.id}-{title}-{image.filename}"
+        filename = secure_filename(formatted)
+
+        file_path = os.path.join('static/uploads/goals', filename)
+        image.save(file_path)
+        image_path = filename
+
+    new_goal = Goal(
+        user_id=user.id,
+        title=title,
+        description=description,
+        required_amount=float(required_amount),
+        image_path=image_path
+    )
+
+    db.session.add(new_goal)
+    # db.session.commit()
+    return jsonify({"message": "goal added successfully."}), HTTPStatus.OK
 
 @app_bp.route('/transactions', methods=['GET'])
 @user_required
