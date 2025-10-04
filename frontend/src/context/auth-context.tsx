@@ -1,6 +1,7 @@
 import { Loading } from '@components/layouts/_components'
 import type { ChildProps, User } from '@type/types'
 import { useNavigate } from 'react-router-dom';
+import { useTokenRefresh } from '@hooks/use-token-refresh';
 import { 
     createContext, 
     useContext, 
@@ -27,6 +28,15 @@ export function AuthProvider({ children }: ChildProps) {
     const [loading, setLoading] = useState(true)
     const navigate = useNavigate()
     
+    // Refresh access_token every 55 mins
+    useTokenRefresh(user?.token ?? null, (newToken: string) => {
+        if (!user) return
+        // update user info in both states and cache
+        const updated = { ...user, token: newToken }
+        setUser(updated)
+        localStorage.setItem('user', JSON.stringify(updated))
+    })
+
     useEffect(() => {
         const cachedUser = localStorage.getItem('user')
         if(cachedUser) {

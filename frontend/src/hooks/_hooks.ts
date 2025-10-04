@@ -4,6 +4,7 @@ import { useForgotPassword } from './use-forgot-password'
 import { useUpdateAccount } from './use-update-account'
 import { useGoals } from './use-goals'
 import { useTransactions } from './use-transactions'
+import { useTokenRefresh } from './use-token-refresh'
 
 export { 
     useDashboard, 
@@ -11,5 +12,6 @@ export {
     useForgotPassword,
     useUpdateAccount,
     useGoals,
-    useTransactions
+    useTransactions,
+    useTokenRefresh
 }

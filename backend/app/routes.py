@@ -6,7 +6,8 @@ from http import HTTPStatus
 from app import db
 from datetime import timedelta
 from flask_jwt_extended import (
-    create_access_token, 
+    create_access_token,
+    create_refresh_token,
     jwt_required, 
     get_jwt,
     get_jwt_identity
@@ -29,9 +30,12 @@ from .services import (
 
 app_bp = Blueprint('test', __name__)
 
-@app_bp.route('/test')
-def test_route():
-    pass
+@app_bp.route('/refresh', methods=['POST'])
+@jwt_required(refresh=True)
+def refresh_access_token():
+    user_id = get_jwt_identity()
+    new_token = create_access_token(identity=str(user_id))
+    return jsonify({'token': new_token}), HTTPStatus.OK
 
 @app_bp.route('/register', methods=['POST'])
 def register():
@@ -78,12 +82,29 @@ def login():
         return jsonify({'error': 'No username found.'}), HTTPStatus.NOT_FOUND
     if not user.validate_password(password):
         return jsonify({'error': 'Incorrect password'}), HTTPStatus.UNAUTHORIZED
-    return jsonify({
+    
+    # Create access and refresh tokens
+    access_token = create_access_token(identity=str(user.id))
+    refresh_token = create_refresh_token(identity=str(user.id))
+
+    response = jsonify({
         'id': user.id,
         'user': user.username,
-        'token': create_access_token(identity=str(user.id)),
+        'token': access_token,
         'profile_path': format_image_path(user.profile_path, 'profiles')
-    }), HTTPStatus.OK
+    })
+
+    # Send refresh_token via HTTP-only cookie
+    response.set_cookie(
+        'refresh_token',
+        refresh_token,
+        httponly=True,
+        secure=True,
+        samesite='Strict',
+        max_age=timedelta(days=7)
+    )
+
+    return response, HTTPStatus.OK
 
 @app_bp.route('/finances', methods=['GET'])
 @user_required
