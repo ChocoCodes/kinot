@@ -1,13 +1,12 @@
 import os
 from flask import Blueprint, jsonify, request
-from .utils import format_image_path, user_required
+from .utils import user_required, create_auth_response
 from werkzeug.utils import secure_filename
 from http import HTTPStatus
 from app import db
 from datetime import timedelta
 from flask_jwt_extended import (
     create_access_token,
-    create_refresh_token,
     jwt_required, 
     get_jwt,
     get_jwt_identity
@@ -63,12 +62,9 @@ def register():
     db.session.add(user)
     db.session.commit()
     # Return username and JWT token
-    return jsonify({
-        'id': user.id,
-        'user': user.username,
-        'token': create_access_token(identity=str(user.id)),
-        'profile_path': format_image_path(user.profile_path, 'profiles')
-    }), HTTPStatus.OK
+    response = create_auth_response(user)
+
+    return response, HTTPStatus.OK
 
 @app_bp.route('/login', methods=['POST'])
 def login():
@@ -83,26 +79,7 @@ def login():
     if not user.validate_password(password):
         return jsonify({'error': 'Incorrect password'}), HTTPStatus.UNAUTHORIZED
     
-    # Create access and refresh tokens
-    access_token = create_access_token(identity=str(user.id))
-    refresh_token = create_refresh_token(identity=str(user.id))
-
-    response = jsonify({
-        'id': user.id,
-        'user': user.username,
-        'token': access_token,
-        'profile_path': format_image_path(user.profile_path, 'profiles')
-    })
-
-    # Send refresh_token via HTTP-only cookie
-    response.set_cookie(
-        'refresh_token',
-        refresh_token,
-        httponly=True,
-        secure=True,
-        samesite='Strict',
-        max_age=timedelta(days=7)
-    )
+    response = create_auth_response(user)
 
     return response, HTTPStatus.OK
 

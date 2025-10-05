@@ -1,10 +1,46 @@
 import os
-from datetime import datetime, timezone
+from datetime import datetime, timezone, timedelta
 import hashlib as hash
 from flask import url_for, jsonify
 from functools import wraps
-from flask_jwt_extended import verify_jwt_in_request, get_jwt_identity
 from http import HTTPStatus
+from .models import User
+from flask_jwt_extended import (
+    verify_jwt_in_request, 
+    get_jwt_identity,
+    create_access_token,
+    create_refresh_token
+)
+
+def create_auth_response(user: User):
+    """ 
+        Utility function that creates refresh and access tokens,
+        Construct response from User object, and sends the refresh_token
+        via HTTP-only cookie.
+    """
+    access_token = create_access_token(identity=str(user.id))
+    refresh_token = create_refresh_token(identity=str(user.id))
+
+    user_dto = {
+        'id': user.id,
+        'user': user.username,
+        'token': access_token,
+        'profile_path': format_image_path(user.profile_path, 'profiles')
+    }
+
+    response = jsonify(user_dto)
+
+    # Send refresh_token via HTTP-only cookie
+    response.set_cookie(
+        'refresh_token',
+        refresh_token,
+        httponly=True,
+        secure=True,
+        samesite='Strict',
+        max_age=timedelta(days=7)
+    )
+
+    return response
 
 def user_required(fn):
     from .models import User
