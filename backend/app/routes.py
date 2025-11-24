@@ -194,7 +194,7 @@ def update_finance(user: User):
         description=description
     )
     user.transactions.append(transaction_log)
-    #db.session.commit()
+    db.session.commit()
     
     # TODO: Query updated finances & transaction log
     updated_transactions = get_recent_transactions(user)

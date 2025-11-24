@@ -245,10 +245,9 @@ function AccountPage() {
                     </ActionButton>
                     { isVisible === "deleteModal" && (
                         <ConfirmDelete 
-                            onClose={
-                                () => setIsVisible(null)
-                            } 
+                            onClose={ () => setIsVisible(null) } 
                             onSubmit={ deleteAccount }
+                            username={ accountData.username }
                         />
                     )}
                 </div>

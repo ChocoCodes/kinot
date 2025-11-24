@@ -4,6 +4,7 @@ interface ActionButtonProps {
     variant?: "primary" | "danger";
     className?: string;
     type?: "button" | "submit";
+    disabled?: boolean;
 }
 
 const ActionButton = ({
@@ -11,7 +12,8 @@ const ActionButton = ({
     onClick,
     variant = "primary",
     className = "",
-    type = "button"
+    type = "button",
+    disabled = false
 }: ActionButtonProps) => {
     const base = 'px-4 py-2 rounded-sm transition-colors hover:cursor-pointer'
     const scheme = {
@@ -23,6 +25,7 @@ const ActionButton = ({
             type={ type }
             onClick={ onClick }
             className={`${ base } ${ scheme[variant] } ${ className }`}
+            disabled={ disabled }
         >
             { children }
         </button>

@@ -4,7 +4,6 @@ import hashlib as hash
 from flask import url_for, jsonify
 from functools import wraps
 from http import HTTPStatus
-from .models import User
 from flask_jwt_extended import (
     verify_jwt_in_request, 
     get_jwt_identity,
@@ -12,7 +11,7 @@ from flask_jwt_extended import (
     create_refresh_token
 )
 
-def create_auth_response(user: User):
+def create_auth_response(user):
     """ 
         Utility function that creates refresh and access tokens,
         Construct response from User object, and sends the refresh_token
