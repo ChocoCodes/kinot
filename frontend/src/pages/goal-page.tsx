@@ -36,9 +36,11 @@ function GoalPage() {
                     />
                 </div>
                 <div className="flex justify-between gap-2">
-                    { filtered.map(goal => (
+                    {goals.length !== 0 ? filtered.map(goal => (
                         <GoalCard key={goal.id} {...goal} />
-                    ))}
+                    )) : (
+                        <p className="text-center w-full text-xl">No Goals for now. Add a new one!</p>
+                    )}
                 </div>
             </section>
             { isFormVisible && (
