@@ -21,14 +21,14 @@ const SORT_OPTIONS = [
 ]
 
 function TransactionPage() {
-    const LIMIT = 10
-    const [tablePage, setTablePage] = useState(1)
-    const [filterBy, setFilterBy] = useState("")
-    const [sortBy, setSortBy] = useState("")
-    const [query, setQuery] = useState("")
-    const [isFormVisible, setIsFormVisible] = useState(false)
-    const { transactions, total } = useTransactions(tablePage, LIMIT)
-    const totalPages = Math.ceil(total / LIMIT)
+    const LIMIT = 10;
+    const [tablePage, setTablePage] = useState(1);
+    const [filterBy, setFilterBy] = useState("");
+    const [sortBy, setSortBy] = useState("");
+    const [query, setQuery] = useState("");
+    const [isFormVisible, setIsFormVisible] = useState(false);
+    const { transactions, total } = useTransactions(tablePage, LIMIT);
+    const totalPages = Math.ceil(total / LIMIT);
 
     let filtered = transactions
     // Filtering
@@ -89,12 +89,14 @@ function TransactionPage() {
                     </div>
                 </div>
                 <TransactionTable data={ filtered }/>
-                <PaginationController 
-                    tablePage={ tablePage } 
-                    totalPage={ totalPages } 
-                    onPrev={ () => setTablePage(page => Math.max(1, page - 1)) }
-                    onNext={ () => setTablePage(page => Math.min(totalPages, page + 1)) }
-                />
+                {transactions.length !== 0 && (
+                    <PaginationController 
+                        tablePage={ tablePage } 
+                        totalPage={ totalPages } 
+                        onPrev={ () => setTablePage(page => Math.max(1, page - 1)) }
+                        onNext={ () => setTablePage(page => Math.min(totalPages, page + 1)) }
+                    />
+                )}
                 { isFormVisible && (
                     <AddTransactionForm onClose={ () => setIsFormVisible(false) } />
                 )}
