@@ -8,10 +8,11 @@ const NAV_ITEMS = {
 }
 
 const Header = () => {
-    const { user, logout } = useAuth()
-    const location = useLocation()
+    const { user, logout } = useAuth();
+    const location = useLocation();
 
-    const toUpper = (word: string) => word.charAt(0).toUpperCase() + word.slice(1)
+    console.log('User object at header: ' + JSON.stringify(user));
+    const toUpper = (word: string) => word.charAt(0).toUpperCase() + word.slice(1);
 
     return (
         <header className='flex w-7/10 h-15 justify-between items-center py-10 px-3 mx-auto text-lg'>

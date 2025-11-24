@@ -1,5 +1,4 @@
 import { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
 import { AccountForm } from './account-form'
 import { RecoveryForm } from './recovery-form'
 import { useAuth } from '@context/auth-context'
@@ -23,7 +22,6 @@ const defaultInfo: UserInfo = {
 
 const RegisterForm = () => {
     const { login } = useAuth()
-    const navigate = useNavigate()
     const [step, setStep] = useState(1)
     const [formData, setFormData] = useState<UserInfo>(defaultInfo)
 
@@ -70,7 +68,6 @@ const RegisterForm = () => {
             // Set the user logged-in in AuthProvider
             login(result)
             console.log('Data from Flask: ', result)
-            navigate('/home')
         } catch (error: unknown) {
             console.error('Error: ', (error as Error).message)
         }

@@ -1,9 +1,25 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Tabs, LoginForm, RegisterForm } from '@components/login/_components'
-import { Footer } from '@components/layouts/_components'
+import { Footer, Loading } from '@components/layouts/_components'
+import { useAuth } from '@context/auth-context';
+import { useNavigate, useLocation } from 'react-router-dom';
 
 function LoginPage() {
+  const { user } = useAuth();
   const [formDisplayed, setFormDisplayed] = useState<'login' | 'register'>('login');
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  const previousPage = location.state?.from?.pathname || '/home';
+
+  useEffect(() => {
+    if (user) {
+      navigate(previousPage, { replace: true });
+    }
+  }, [user, navigate, location]);
+  
+  if (user) return <Loading />;
+
   return (
     <>
       <main className='w-screen h-screen flex items-center justify-center overflow-x-hidden'>
