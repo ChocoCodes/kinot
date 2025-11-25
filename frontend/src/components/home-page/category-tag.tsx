@@ -1,4 +1,5 @@
-import { financeMeta } from "@pages/home-page"
+import { financeMeta } from "@pages/home-page";
+import { toTitle } from '@utils/helpers';
 
 type CategoryTagProps = {
     category: string;
@@ -12,9 +13,8 @@ const colorSettings: Record<keyof typeof financeMeta, string> =  {
 }
 
 const CategoryTag: React.FC<CategoryTagProps> = ({ category, tagKey }) => {
-    console.log(`Category ${category}, TagKey ${tagKey}`)
     return (
-        <p className={`py-3 ${colorSettings[tagKey]} rounded-full `}>{ category ?? "N/A" }</p>
+        <p className={`py-3 ${colorSettings[tagKey]} rounded-full `}>{ toTitle(category) ?? "N/A" }</p>
     )
 }
 

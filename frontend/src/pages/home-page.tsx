@@ -46,7 +46,7 @@ export const financeMeta = {
 function HomePage() {
     const [activeForm, setActiveForm] = useState<FinanceMeta | null>(null)
     const [isVisible, setIsVisible] = useState<boolean>(false)
-    const { userData } = useDashboard()
+    const { userData, fetchData } = useDashboard()
     const { updateFinance } = useUpdateFinance()
 
     const { finances, transactions = [], goals = [] } = userData || {}
@@ -114,6 +114,7 @@ function HomePage() {
                     formTitle={ activeForm } 
                     handleOnClose={ handleClose } 
                     handleSubmit={ updateFinance }
+                    refetch={ fetchData }
                 />
             }
         </main>

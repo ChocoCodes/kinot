@@ -11,7 +11,6 @@ const Header = () => {
     const { user, logout } = useAuth();
     const location = useLocation();
 
-    console.log('User object at header: ' + JSON.stringify(user));
     const toUpper = (word: string) => word.charAt(0).toUpperCase() + word.slice(1);
 
     return (

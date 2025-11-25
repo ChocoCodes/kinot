@@ -201,15 +201,10 @@ def update_finance(user: User):
     )
     user.transactions.append(transaction_log)
     db.session.commit()
-    
-    # TODO: Query updated finances & transaction log
-    updated_transactions = get_recent_transactions(user)
-    updated_finances = get_user_finances(user)
 
     # TODO: return updated as JSON 
     return jsonify({
-        "finances": updated_finances,
-        "transactions": updated_transactions
+        "message": f"Successfully edited user finance on field: {field}"
     }), HTTPStatus.OK
 
 @app_bp.route('/home', methods=['GET'])

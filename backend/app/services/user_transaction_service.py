@@ -14,7 +14,7 @@ def get_recent_transactions(user: User):
             extract("month", Transaction.created_at) == current_month,
             extract("year", Transaction.created_at) == current_year
         )
-        .order_by(Transaction.created_at.desc())
+        .order_by(Transaction.created_at.desc(), Transaction.id.desc())
         .limit(5)
         .all()
     )

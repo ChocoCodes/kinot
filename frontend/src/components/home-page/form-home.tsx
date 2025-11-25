@@ -6,9 +6,10 @@ interface FormProps {
     handleOnClose: () => void
     formTitle: string
     handleSubmit: (payload: Payload) => Promise<void>
+    refetch: () => Promise<void>;
 }
 
-const Form = ({ handleOnClose, formTitle, handleSubmit }: FormProps ) => {
+const Form = ({ handleOnClose, formTitle, handleSubmit, refetch }: FormProps ) => {
     const [amount, setAmount] = useState("")
     const [method, setMethod] = useState("")
     const [description, setDescription] = useState("")
@@ -33,11 +34,11 @@ const Form = ({ handleOnClose, formTitle, handleSubmit }: FormProps ) => {
         }
         
         try {
-            const res = await handleSubmit(payload)
-            console.log("Success: ", res)
-            handleOnClose()
+            await handleSubmit(payload);
+            await refetch();
+            handleOnClose();
         } catch (err) {
-            console.error("SubmitError: ", err)
+            console.error("SubmitError: ", err);
         }
     }
 
