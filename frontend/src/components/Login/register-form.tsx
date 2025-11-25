@@ -64,9 +64,9 @@ const RegisterForm = () => {
                 return;
             }
 
-            const result: User = await response.json()
-            // Set the user logged-in in AuthProvider
-            login(result)
+            const result = await response.json()
+            // Convert result to the expected frontend format and set the user logged-in in AuthProvider
+            login({ ...result, username: result.user, profilePath: result.profile_path } as User)
             console.log('Data from Flask: ', result)
         } catch (error: unknown) {
             console.error('Error: ', (error as Error).message)

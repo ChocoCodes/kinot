@@ -17,20 +17,20 @@ export const useUpdateAccount = () => {
             const response = await fetch('api/account', {
                 method: 'DELETE',
                 headers: {
-                    'Authorization': `Bearer ${ user?.token }`
-                }
-            })
+                    'Authorization': `Bearer ${ user?.token }`,
+                },
+            });
 
             if(!response.ok) {
-                console.error("[DELETE_ACCOUNT_ERROR] ResponseNotOK: Failed to delete account")
-                throw new Error(`Request failed with status ${ response.status } | ${ response.statusText }`)
+                console.error("[DELETE_ACCOUNT_ERROR] ResponseNotOK: Failed to delete account");
+                throw new Error(`Request failed with status ${ response.status } | ${ response.statusText }`);
             }
 
-            logout()
-            addToast('Account Deleted Successfully.', "primary")
+            logout();
+            addToast('Account deleted successfully.', "primary");
         } catch (error: unknown) {
             console.error("[DELETE_ACCOUNT_ERROR] ExceptionCaught: ", error)
-            throw new Error(`[DELETE_ACCOUNT_ERROR] ${ error instanceof Error ? error.message : 'Unknown error occured.'} `)
+            throw new Error(`[DELETE_ACCOUNT_ERROR] ${ error instanceof Error ? error.message : 'Unknown error occured.'} `);
         }
     }
 

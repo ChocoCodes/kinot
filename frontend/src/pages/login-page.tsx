@@ -2,21 +2,18 @@ import { useState, useEffect } from 'react'
 import { Tabs, LoginForm, RegisterForm } from '@components/login/_components'
 import { Footer, Loading } from '@components/layouts/_components'
 import { useAuth } from '@context/auth-context';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 function LoginPage() {
   const { user } = useAuth();
   const [formDisplayed, setFormDisplayed] = useState<'login' | 'register'>('login');
   const navigate = useNavigate();
-  const location = useLocation();
-
-  const previousPage = location.state?.from?.pathname || '/home';
 
   useEffect(() => {
     if (user) {
-      navigate(previousPage, { replace: true });
+      navigate('/home', { replace: true });
     }
-  }, [user, navigate, location]);
+  }, [user]);
   
   if (user) return <Loading />;
 

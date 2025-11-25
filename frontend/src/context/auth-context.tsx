@@ -61,7 +61,7 @@ export function AuthProvider({ children }: ChildProps) {
     const logout = () => {
         setUser(null);
         localStorage.removeItem('user');
-        navigate('/login', { replace: true });
+        navigate('/', { replace: true });
     }
 
     if (loading) return <Loading />
