@@ -1,7 +1,8 @@
 import { Loading } from '@components/layouts/_components'
 import type { ChildProps, User } from '@type/types'
 import { useNavigate } from 'react-router-dom';
-import { useTokenRefresh } from '@hooks/use-token-refresh';
+import { useTokenRefresh, useVerifyToken } from '@hooks/use-token-refresh';
+import { useToast } from '@context/toast-context';
 import { 
     createContext, 
     useContext, 
@@ -27,28 +28,55 @@ export function AuthProvider({ children }: ChildProps) {
     const [user, setUser] = useState<User | null>(null)
     const [loading, setLoading] = useState(true)
     const navigate = useNavigate()
-    
+    const { verifyToken } = useVerifyToken();
+    const { addToast } = useToast();
+
     // Refresh access_token every 55 mins
     useTokenRefresh(user?.token ?? null, (newToken: string) => {
-        if (!user) return
         // update user info in both states and cache
-        const updated = { ...user, token: newToken }
-        setUser(updated)
-        localStorage.setItem('user', JSON.stringify(updated))
+        setUser(prev => {
+            if(!prev) return null;
+            const updated = { ...user, token: newToken } as User;
+            localStorage.setItem('user', JSON.stringify(updated))
+            return updated;
+        })
     })
 
     useEffect(() => {
-        const cachedUser = localStorage.getItem('user')
-        if(cachedUser) {
+        const parseAndVerifyCache = async () => {
+            setLoading(true);
+            const cachedUser = localStorage.getItem('user')
+            if(!cachedUser) {
+                setLoading(false);
+                return;
+            }
+
             try {
-                const parsed = JSON.parse(cachedUser)
-                setUser(parsed)
+                const parsed = JSON.parse(cachedUser);
+                if (!parsed || !parsed.token) {
+                    addToast("Cache data is corrupted.", "danger");
+                    logout();
+                    setLoading(false);
+                    return;
+                }
+
+                const { ok, expired } = await verifyToken(parsed.token);
+                if (ok) {
+                    setUser(parsed);
+                } else {
+                    const toastMessage = expired ? 'Token has expired. Redirecting to login...' : 'Invalid cache token. Redirecting to login...';
+                    addToast(toastMessage, 'danger');
+                    logout();
+                }
+                setLoading(false);
             } catch (err) {
-                console.error('CacheError: ', err)
-                localStorage.removeItem('user')
+                console.error('CacheError: ', err);
+                logout();
+                setLoading(false);
             }
         }
-        setLoading(false)
+
+        parseAndVerifyCache();
     }, [])
     
     const login = (user: User) => {

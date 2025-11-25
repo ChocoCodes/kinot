@@ -1,4 +1,5 @@
-import { useEffect } from 'react'
+import { useEffect, useCallback } from 'react';
+import { useToast } from '@context/toast-context';
 
 export const useTokenRefresh = (
     userToken: string | null, 
@@ -27,4 +28,41 @@ export const useTokenRefresh = (
         // Clear on re-run or unmount
         return () => clearInterval(refreshInterval)
     }, [userToken, setToken])
+}
+
+export const useVerifyToken = () => {
+    const { addToast } = useToast();
+
+    const verifyToken = useCallback(async (token: string) => {
+        if (!token) {
+            addToast("Token not found.", "danger");
+            return { ok: false, expired: false };
+        }
+
+        try {
+            const response = await fetch('api/verify-token', {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json'
+                },
+            });
+            
+            if (response.ok) return { ok: true, expired: false };
+
+            const body = await response.json();
+            if(!body) return { ok: false, expired: false };
+
+            if (response.status === 404 && body.expired) return { ok: false, expired: true };
+
+            return { ok: false, expired: false };
+        } catch (err: unknown) {
+            const errorMsg = err instanceof Error ? err.message : 'An unknown error occured in verifying access token.';
+            addToast(errorMsg, 'danger');
+            console.error(errorMsg);
+            return { ok: false, expired: false };
+        }
+    }, [])
+
+    return { verifyToken };
 }

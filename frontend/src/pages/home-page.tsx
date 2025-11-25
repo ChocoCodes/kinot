@@ -102,7 +102,7 @@ function HomePage() {
                 route={ "/transactions" } 
             >
                 {goals.length === 0 ? (
-                    <p className="text-xl text-center">No Goals Found. Add your first goal!</p>
+                    <p className="text-xl text-center">No goals found. Add your first goal!</p>
                 ) : (
                     goals.map(goal => {
                         return <GoalCard key={goal.id} {...goal} />

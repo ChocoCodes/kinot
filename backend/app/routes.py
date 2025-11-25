@@ -29,6 +29,12 @@ from .services import (
 
 app_bp = Blueprint('test', __name__)
 
+
+@app_bp.route('/verify-token', methods=['POST'])
+@jwt_required()
+def verify_access_token():
+    return jsonify({'valid': True}), HTTPStatus.OK
+
 @app_bp.route('/refresh', methods=['POST'])
 @jwt_required(refresh=True)
 def refresh_access_token():
