@@ -14,6 +14,7 @@ type AuthContextType = {
     user: User | null;
     login: (user: User) => void;
     logout: () => void;
+    updateAccessToken: (token: string) => void;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined)
@@ -28,18 +29,22 @@ export function AuthProvider({ children }: ChildProps) {
     const [user, setUser] = useState<User | null>(null)
     const [loading, setLoading] = useState(true)
     const navigate = useNavigate()
-    const { verifyToken } = useVerifyToken();
     const { addToast } = useToast();
+    
+    const updateAccessToken = (token: string) => {
+        setUser(prev => {
+            if (!prev) return null;
+            const updated = { ...prev, token };
+            localStorage.setItem('user', JSON.stringify(updated));
+            return updated;
+        });
+    }
+
+    const { verifyToken } = useVerifyToken(updateAccessToken);
 
     // Refresh access_token every 55 mins
     useTokenRefresh(user?.token ?? null, (newToken: string) => {
-        // update user info in both states and cache
-        setUser(prev => {
-            if(!prev) return null;
-            const updated = { ...user, token: newToken } as User;
-            localStorage.setItem('user', JSON.stringify(updated))
-            return updated;
-        })
+        updateAccessToken(newToken);
     })
 
     useEffect(() => {
@@ -56,7 +61,6 @@ export function AuthProvider({ children }: ChildProps) {
                 if (!parsed || !parsed.token) {
                     addToast("Cache data is corrupted.", "danger");
                     logout();
-                    setLoading(false);
                     return;
                 }
 
@@ -68,10 +72,10 @@ export function AuthProvider({ children }: ChildProps) {
                     addToast(toastMessage, 'danger');
                     logout();
                 }
-                setLoading(false);
             } catch (err) {
                 console.error('CacheError: ', err);
                 logout();
+            } finally {
                 setLoading(false);
             }
         }
@@ -79,6 +83,7 @@ export function AuthProvider({ children }: ChildProps) {
         parseAndVerifyCache();
     }, [])
     
+
     const login = (user: User) => {
         console.log(user);
         setUser(user);
@@ -95,7 +100,7 @@ export function AuthProvider({ children }: ChildProps) {
     if (loading) return <Loading />
     
     return (
-        <AuthContext.Provider value={{ user, login, logout }}>
+        <AuthContext.Provider value={{ user, login, logout, updateAccessToken }}>
             { children }
         </AuthContext.Provider>
     )

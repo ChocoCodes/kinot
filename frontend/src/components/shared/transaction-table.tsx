@@ -24,6 +24,7 @@ const TransactionTable = ({ data }: TransactionTableProps) => {
                 />
             )
         }
+        if (col === 'description') return row.description || "-";
         return row[col as keyof Transaction] as React.ReactNode;
     }
 
@@ -35,7 +36,7 @@ const TransactionTable = ({ data }: TransactionTableProps) => {
                     {COLUMNS.map(col => (
                         <th 
                             key={ col } 
-                            className={`font-normal py-2 ${col === 'id' ? 'w-[90px]' : 'w-[150px]'} text-xl py-2`}>
+                            className={`font-normal py-2 ${col === 'id' ? 'w-[90px]' : 'w-[150px]'} text-xl py-2 font-semibold`}>
                                 { toUpper(col) }
                         </th>
                     ))}
