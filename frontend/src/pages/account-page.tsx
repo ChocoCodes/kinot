@@ -1,10 +1,10 @@
-import { useState, useEffect, useRef } from 'react'
-import { Header } from "@components/layouts/_components"
-import { useUpdateAccount } from '@hooks/use-update-account'
-import type { AccountInfo, PasswordInfo } from '@type/types'
-import { passRegexp } from '@utils/helpers'
-import { useToast } from '@context/toast-context'
-import { FormInput } from '@components/shared/_components'
+import { useState, useEffect, useRef } from 'react';
+import { Header } from "@components/layouts/_components";
+import { useUpdateAccount } from '@hooks/use-update-account';
+import type { AccountInfo, PasswordInfo } from '@type/types';
+import { passRegexp } from '@utils/helpers';
+import { useToast } from '@context/toast-context';
+import { FormInput } from '@components/shared/_components';
 import {  
     ActionButton, 
     ConfirmDelete 
@@ -17,21 +17,22 @@ function AccountPage() {
         updateAccount, 
         accountData,
         updatePassword
-    } = useUpdateAccount()
-    const { addToast } = useToast()
-    const fileInputRef = useRef<HTMLInputElement | null>(null)
-    const [isVisible, setIsVisible] = useState<"passwordChange" | "deleteModal" | null>(null)
-    const [selectedImage, setSelectedImage] = useState<File | null>(null)
+    } = useUpdateAccount();
+    const { addToast } = useToast();
+    const fileInputRef = useRef<HTMLInputElement | null>(null);
+    const [isVisible, setIsVisible] = useState<"passwordChange" | "deleteModal" | null>(null);
+    const [selectedImage, setSelectedImage] = useState<File | null>(null);
+    const [imagePreviewUrl, setImagePreviewUrl] = useState<string | null>(null);
     const [formData, setFormData] = useState<AccountInfo>({
         username: "",
         fullname: "",
         imgPath: "",
-    })
+    });
     const [passwordChange, setPasswordChange] = useState<PasswordInfo>({
         current: "",
         new: "",
         confirm: "",
-    })
+    });
 
     useEffect(() => {
         fetchAccount()
@@ -55,27 +56,41 @@ function AccountPage() {
        }
     }
 
-    const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        if (!e.target.files) return 
+    console.log(JSON.stringify(accountData));
 
-        const file = e.target.files[0]
-        setSelectedImage(file)
+    const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        if (!e.target.files) return;
+
+        const file = e.target.files[0];
+        setSelectedImage(file);
+
+        if (imagePreviewUrl) {
+            URL.revokeObjectURL(imagePreviewUrl);
+        }
+
+        setImagePreviewUrl(URL.createObjectURL(file));
     }
 
     const handleUpdate = async (e: React.FormEvent) => {
-        e.preventDefault()
-
+        e.preventDefault();
+        console.log('Submit button clicked!');
         try {
-            const payload = new FormData()
-            payload.append('username', formData.username)
-            payload.append('fullname', formData.fullname)
+            const payload = new FormData();
+            payload.append('username', formData.username);
+            payload.append('fullname', formData.fullname);
             if (selectedImage) {
-                payload.append('image', selectedImage)
+                payload.append('image', selectedImage);
             }
             
-            updateAccount(payload)
-            fetchAccount()
-            setSelectedImage(null)
+            await updateAccount(payload);
+            await fetchAccount();
+
+            setSelectedImage(null);
+            if (imagePreviewUrl) {
+                 URL.revokeObjectURL(imagePreviewUrl);
+                 setImagePreviewUrl(null);
+            }
+
         } catch (error: unknown) {
             console.error(`[UPDATE_ACCOUNT_ERROR]: ${ error instanceof Error ? error.message : 'Unknown error occured. '}`)
         }
@@ -113,6 +128,15 @@ function AccountPage() {
         }
     }
 
+    useEffect(() => {
+        // Revoke the old URL when the component unmounts or when the URL changes
+        return () => {
+            if (imagePreviewUrl) {
+                URL.revokeObjectURL(imagePreviewUrl);
+            }
+        };
+    }, [imagePreviewUrl]);
+
     return (
         <main className='flex flex-col gap-2 w-screen h-screen font-poppins overflow-x-hidden'>
             <Header />
@@ -125,7 +149,7 @@ function AccountPage() {
                 >
                     <div className="flex gap-6">
                         <img 
-                            src={ selectedImage ? URL.createObjectURL(selectedImage) : formData.imgPath } 
+                            src={ imagePreviewUrl ?? accountData.imgPath } 
                             alt={`Image of ${ accountData.fullname }`} 
                             className="rounded-md bg-red-300 w-48 h-48 object-cover" 
                         />

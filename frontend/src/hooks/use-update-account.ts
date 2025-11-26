@@ -4,7 +4,7 @@ import type { AccountInfo } from '@type/types'
 import { useState } from 'react'
 
 export const useUpdateAccount = () => {
-    const { user, logout } = useAuth()
+    const { user, logout, updateProfile } = useAuth()
     const { addToast } = useToast()
     const [accountData, setAccountData] = useState<AccountInfo>({
         username: "",
@@ -42,11 +42,11 @@ export const useUpdateAccount = () => {
                     'Content-Type': 'application/json',
                     'Authorization': `Bearer ${ user?.token }`
                 },
-            })
+            });
 
             if (!response.ok) {
-                console.error("[FETCH_ACCOUNT_ERROR] ResponseNotOK: Failed to fetch account data.")
-                throw new Error(`Request failed with status ${ response.status } | ${ response.statusText }`)
+                console.error("[FETCH_ACCOUNT_ERROR] ResponseNotOK: Failed to fetch account data.");
+                throw new Error(`Request failed with status ${ response.status } | ${ response.statusText }`);
             }
 
             const raw = await response.json()
@@ -54,10 +54,10 @@ export const useUpdateAccount = () => {
                 username: raw.username,
                 fullname: raw.fullname,
                 imgPath: raw.profile_path
-            } as AccountInfo)
+            } as AccountInfo);
         } catch (error: unknown) {
-            console.error("[FETCH_ACCOUNT_ERROR] ExceptionCaught: ", error)
-            throw new Error(`[FETCH_ACCOUNT_ERROR] ${ error instanceof Error ? error.message : 'Unknown error occured.'} `)
+            console.error("[FETCH_ACCOUNT_ERROR] ExceptionCaught: ", error);
+            throw new Error(`[FETCH_ACCOUNT_ERROR] ${ error instanceof Error ? error.message : 'Unknown error occured.'} `);
         }
     }
 
@@ -70,15 +70,19 @@ export const useUpdateAccount = () => {
                     'Authorization': `Bearer ${ user?.token }`
                 },
                 body: payload
-            })
+            });
 
             if (!response.ok) {
-                console.error("[SAVE_INFO_ERROR] ResponseNotOK: Failed to fetch account data.")
-                throw new Error(`Request failed with status ${ response.status } | ${ response.statusText }`)
+                console.error("[SAVE_INFO_ERROR] ResponseNotOK: Failed to fetch account data.");
+                throw new Error(`Request failed with status ${ response.status } | ${ response.statusText }`);
             }
 
-            const data = await response.json()
-            setAccountData(data as AccountInfo)
+            const data = await response.json();
+            setAccountData(data as AccountInfo);
+            updateProfile({ 
+                username: data.username,
+                profilePath: data.profile_path
+            });
         } catch (error: unknown) {
             console.error("[SAVE_INFO_ERROR] ExceptionCaught: ", error)
             throw new Error(`[SAVE_INFO_ERROR] ${ error instanceof Error ? error.message : 'Unknown error occured.'} `)

@@ -7,7 +7,8 @@ import {
     useContext, 
     useEffect, 
     useState, 
-    useMemo
+    useMemo,
+    useCallback
 } from 'react'
 
 type AuthContextType = {
@@ -16,6 +17,7 @@ type AuthContextType = {
     logout: () => void;
     loading: boolean
     updateAccessToken: (token: string) => void;
+    updateProfile: (updated: Partial<User>) => void;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined)
@@ -98,13 +100,23 @@ export function AuthProvider({ children }: ChildProps) {
         navigate('/', { replace: true });
     }
     
+    const updateProfile = useCallback((updated: Partial<User>) => {
+        setUser(prev => {
+            if (!prev) return null;
+            const updatedUser = { ...prev, ...updated };
+            localStorage.setItem('user', JSON.stringify(updatedUser));
+            return updatedUser;
+        });
+    }, [])
+
     const contextValue = useMemo(() => ({
         user, 
         login, 
         logout, 
         updateAccessToken,
-        loading
-    }), [user, login, logout, updateAccessToken, loading]);
+        loading,
+        updateProfile
+    }), [user, login, logout, updateAccessToken, loading, updateProfile]);
 
     return (
         <AuthContext.Provider value={ contextValue }>

@@ -16,23 +16,23 @@ const defaultUserCreds : UserCredentials = {
 }
 
 export const useForgotPassword = () => {
-    const [step, setStep] = useState<1 | 2>(1)
-    const [userCredential, setUserCredential] = useState<UserCredentials>(defaultUserCreds)
-    const [newPassword, setNewPassword] = useState<NewPassword>(defaultNewPass)
-    const { addToast } = useToast()
-    const navigate = useNavigate()
+    const [step, setStep] = useState<1 | 2>(1);
+    const [userCredential, setUserCredential] = useState<UserCredentials>(defaultUserCreds);
+    const [newPassword, setNewPassword] = useState<NewPassword>(defaultNewPass);
+    const { addToast } = useToast();
+    const navigate = useNavigate();
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-        const { name, value } = e.target
+        const { name, value } = e.target;
         if (step == 1) {
-            setUserCredential(prev => ({ ...prev, [name]: value }))
+            setUserCredential(prev => ({ ...prev, [name]: value }));
         } else {
-            setNewPassword(prev => ({ ...prev, [name]: value }))
+            setNewPassword(prev => ({ ...prev, [name]: value }));
         }
     }
 
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-        e.preventDefault()
+        e.preventDefault();
         if(step === 1) {
             console.log(userCredential)
             try {
@@ -42,24 +42,24 @@ export const useForgotPassword = () => {
                         'Content-Type': 'application/json'
                     },
                     body: JSON.stringify(userCredential)
-                })
+                });
                 
                 if (!response.ok) {
-                    console.error('[ForgotPasswordSubmitError | Step 1] ResponseNotOk: Failed to fetch data.') 
-                    setUserCredential(defaultUserCreds)   
-                    return
+                    console.error('[ForgotPasswordSubmitError | Step 1] ResponseNotOk: Failed to fetch data.'); 
+                    setUserCredential(defaultUserCreds);
+                    return;
                 }
 
-                const data = await response.json()
-                const token = data.reset_token
-                console.log(data)
-                setNewPassword(prev => ({ ...prev, token }))
-                setStep(2)
-                addToast('Account validation is completed.', "primary")
+                const data = await response.json();
+                const token = data.reset_token;
+                console.log(data);
+                setNewPassword(prev => ({ ...prev, token }));
+                setStep(2);
+                addToast('Account validation is completed.', "primary");
             } catch(err: any) {
-                console.error('[ForgotPasswordSubmitError | Step 1]: ', err)
-                setUserCredential(defaultUserCreds)
-                addToast('An error occured. Failed to update password.', "danger")
+                console.error('[ForgotPasswordSubmitError | Step 1]: ', err);
+                setUserCredential(defaultUserCreds);
+                addToast('An error occured. Failed to update password.', "danger");
             }
         }
 
@@ -73,19 +73,20 @@ export const useForgotPassword = () => {
                         'Content-Type': 'application/json'
                     },
                     body: JSON.stringify({ "new_password": newPassword.password })
-                })
+                });
                 
                 if (!response.ok) {
-                    console.error('[ForgotPasswordSubmitError | Step 2] ResponseNotOk: Failed to fetch data.') 
-                    setNewPassword(defaultNewPass)   
-                    return
+                    console.error('[ForgotPasswordSubmitError | Step 2] ResponseNotOk: Failed to fetch data.');
+                    setNewPassword(defaultNewPass);
+                    return;
                 }
 
                 // Redirect to login page
-                navigate('/', { replace: true })
+                addToast('Password changed successfully!', "primary");
+                navigate('/', { replace: true });
             } catch(err: any) {
-                console.error('[ForgotPasswordSubmitError | Step 2]: ', err)
-                setNewPassword(defaultNewPass)   
+                console.error('[ForgotPasswordSubmitError | Step 2]: ', err);
+                setNewPassword(defaultNewPass);
             }
         }
     }
