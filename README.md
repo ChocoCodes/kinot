@@ -1,7 +1,7 @@
 # Kinot: Expense Tracking System  
 _A CS50x 2024 Final Project_
 
-#### Video Demo: 
+#### Video Demo: [Youtube Link](https://www.youtube.com/watch?v=rR93CpdobmA)
 #### 📌 Description 
 Kinot is a **full-stack CRUD expense tracking system** built as a final project for **Harvard’s CS50x 2024: Introduction to CS**. It allows students to manage personal finances, log expenses and income and set saving goals.  
 
