@@ -367,7 +367,7 @@ def fetch_profile_information(user: User):
 def delete_profile(user: User):
     db.session.delete(user)
     db.session.commit()
-    return HTTPStatus.NO_CONTENT
+    return jsonify({"message": "Goal deleted successfully."}), HTTPStatus.NO_CONTENT
 
 @app_bp.route('/account', methods=['PUT'])
 @user_required

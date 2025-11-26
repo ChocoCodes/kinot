@@ -25,7 +25,7 @@ const GoalCard = ({
     const [activeModal, setActiveModal] = useState<"contribute" | "delete" | null>(null)
     
     const { userData } = useDashboard();
-    const currentAllowance = userData?.finances.current.allowance ?? 0;
+    const currentAllowance = userData?.finances?.current?.allowance ?? 0;
 
     const handleClose = async () => {
         setActiveModal(null);

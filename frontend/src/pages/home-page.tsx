@@ -51,6 +51,7 @@ function HomePage() {
 
     const { finances, transactions = [], goals = [] } = userData || {}
     
+    console.log(userData);
     const handleClose = () => setIsVisible(false)
 
     return (
@@ -117,7 +118,7 @@ function HomePage() {
                     handleOnClose={ handleClose } 
                     handleSubmit={ updateFinance }
                     refetch={ fetchData }
-                    currentAllowance={ userData?.finances.current.allowance }
+                    currentAllowance={ userData?.finances?.current?.allowance ?? 0.0 }
                 />
             }
         </main>

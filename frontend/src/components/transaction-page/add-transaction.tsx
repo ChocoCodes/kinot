@@ -19,7 +19,7 @@ export const AddTransactionForm = ({ onClose }: AddTransactionProps) => {
     const { addToast } = useToast(); 
     const { userData } = useDashboard();
     const { addTransaction } = useTransactions();
-    const currentAllowance = userData?.finances.current.allowance;
+    const currentAllowance = userData?.finances?.current?.allowance ?? 0.0;
     const [transactionEntry, setTransactionEntry] = useState<TransactionEntry>({
         amount: 0,
         category: "",
@@ -78,7 +78,7 @@ export const AddTransactionForm = ({ onClose }: AddTransactionProps) => {
                 className="w-[500px] p-6 bg-white/90 rounded-md flex flex-col gap-3"
             >
                 <div className="flex w-9/10 justify-between mx-auto items-center text-xl font-semibold pb-2 border-b-2 border-gray-400">
-                    <p>New Transaction</p>
+                    <p className='text-2xl'>New Transaction</p>
                     <button className="text-3xl hover:cursor-pointer" type="button" onClick={ onClose }>
                         <IoIosClose />
                     </button>

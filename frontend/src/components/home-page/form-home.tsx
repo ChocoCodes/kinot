@@ -21,7 +21,7 @@ const Form = ({ handleOnClose, formTitle, handleSubmit, refetch, currentAllowanc
         e.preventDefault();
         
         if (amount === "" || isNaN(Number(amount))) {
-            alert("Please enter a valid amount");
+            addToast("Please enter a valid amount", 'danger');
             setAmount("");
             return;
         }
@@ -31,7 +31,7 @@ const Form = ({ handleOnClose, formTitle, handleSubmit, refetch, currentAllowanc
 
         if (requireAllowanceCheck) {
             // userData was not loaded
-            if (currentAllowance == null) {
+            if (currentAllowance === undefined) {
                 addToast('Current allowance data not available.', 'danger');
                 return;
             }

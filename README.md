@@ -1,10 +1,9 @@
 # Kinot: Expense Tracking System  
 _A CS50x 2024 Final Project_
 
----
-
-## 📌 Overview  
-Kinot is a **full-stack CRUD expense tracking system** built as a final project for Harvard’s CS50x 2024. It allows users to manage personal finances, log expenses and income, set saving goals, and visualize monthly financial health.  
+#### Video Demo: 
+#### 📌 Description 
+Kinot is a **full-stack CRUD expense tracking system** built as a final project for **Harvard’s CS50x 2024: Introduction to CS**. It allows students to manage personal finances, log expenses and income and set saving goals.  
 
 The project emphasizes **secure authentication, database-driven persistence, and interactive UI/UX**. With a Flask backend and React + Vite frontend, Kinot demonstrates modern web development practices while remaining approachable for students and self-learners.
 
@@ -136,6 +135,17 @@ Kinot is relational, normalized around the **User** entity.
 - Secret Q&A recovery with reset token  
 - Profile image upload (secured with `werkzeug`)  
 
+### Why JWT (not session-based)
+Kinot uses JSON Web Tokens (JWTs) for authentication rather than server-side session storage because JWTs align with the project's goals of being API-first, easily scalable, and client-agnostic:
+
+- **Stateless**: JWTs are self-contained tokens that eliminate the need for the server to keep a session record per user.
+- **API-first**: The app exposes REST endpoints consumed by a React SPA. Bearer tokens in the Authorization header are standard and portable across clients.
+- **Clear lifecycle control**: Combining short-lived access tokens with refresh tokens provides a good balance between security and usability.
+
+Trade-offs:
+- **Revocation**: Because access JWTs are stateless, immediate revocation is non-trivial. Kinot mitigates this by issuing short-lived access tokens (default 1 hour) and relying on refresh token controls for longer sessions. Additional strategies can include refresh-token rotation, server-side tracking of refresh tokens, or a revocation blacklist for critical cases.
+- **Token exposure**: Tokens must be handled securely on clients (in-memory where possible, Secure HttpOnly cookies for refresh tokens in browser flows, Keychain/Keystore for mobile). All API traffic must use HTTPS.
+
 ### **Finance Tracking**
 - Track **monthly savings, spendings, allowance**  
 - Compare current vs previous month with percentage changes  
@@ -156,7 +166,6 @@ Kinot is relational, normalized around the **User** entity.
 - Searchable goals in `/goals` page
 
 ### **UI/UX**
-- Responsive React frontend  
 - Protected routes (auth-required)  
 - Toast notifications for errors/success  
 - Modals for confirmations and forms   
