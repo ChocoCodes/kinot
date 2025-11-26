@@ -6,7 +6,6 @@ export const useDashboard = () => {
     const { user } = useAuth()
     const [userData, setUserData] = useState<DashboardData | null>(null);
 
-    console.log('userData in useDashboard hook: ' + JSON.stringify(userData?.finances.current));
     const fetchData = useCallback(async () => {
         try {
             const response = await fetch('api/home', {

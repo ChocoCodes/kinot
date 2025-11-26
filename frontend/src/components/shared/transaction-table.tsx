@@ -29,7 +29,6 @@ const TransactionTable = ({ data }: TransactionTableProps) => {
             return row[col as keyof Transaction] as React.ReactNode;
     }
 
-    // console.log(data)
     return (
         <table className="w-full mx-auto text-center text-xl font-poppins rounded-lg border-separate bg-light-gray border-2 border-dark-gray drop-shadow-md">
             <thead>

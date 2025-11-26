@@ -25,7 +25,6 @@ export const useGoals = () => {
             }
 
             const data: GoalData[] = await response.json()
-            console.log(data)
             setGoals(data)
         } catch (error: unknown) {
             console.error("[FETCH_GOALS_ERROR] ExceptionCaught: ", error)

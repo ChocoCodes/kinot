@@ -7,8 +7,6 @@ export const useUpdateFinance = () => {
     const { addToast } = useToast();
 
     const updateFinance =  async (payload: Payload): Promise<void> => {
-        // console.log("Json payload: " + JSON.stringify(payload))
-        // console.log(user?.token)
         if (!user?.token) return;
     
         try {

@@ -88,7 +88,6 @@ export function AuthProvider({ children }: ChildProps) {
     
 
     const login = (user: User) => {
-        console.log(user);
         setUser(user);
         localStorage.setItem('user', JSON.stringify(user));
         navigate('/home', { replace: true });

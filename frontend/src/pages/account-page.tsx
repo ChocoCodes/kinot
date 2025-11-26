@@ -56,8 +56,6 @@ function AccountPage() {
        }
     }
 
-    console.log(JSON.stringify(accountData));
-
     const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         if (!e.target.files) return;
 
@@ -73,7 +71,7 @@ function AccountPage() {
 
     const handleUpdate = async (e: React.FormEvent) => {
         e.preventDefault();
-        console.log('Submit button clicked!');
+        
         try {
             const payload = new FormData();
             payload.append('username', formData.username);

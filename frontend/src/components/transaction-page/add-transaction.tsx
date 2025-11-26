@@ -66,7 +66,6 @@ export const AddTransactionForm = ({ onClose }: AddTransactionProps) => {
         };
 
         delete (payload as any).category;
-        console.log(payload);
         await addTransaction(payload);
         onClose();
     }

@@ -34,7 +34,6 @@ export const useForgotPassword = () => {
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         if(step === 1) {
-            console.log(userCredential)
             try {
                 const response = await fetch('api/forgot/validate', {
                     method: 'POST',
@@ -52,7 +51,6 @@ export const useForgotPassword = () => {
 
                 const data = await response.json();
                 const token = data.reset_token;
-                console.log(data);
                 setNewPassword(prev => ({ ...prev, token }));
                 setStep(2);
                 addToast('Account validation is completed.', "primary");
@@ -64,7 +62,6 @@ export const useForgotPassword = () => {
         }
 
         if(step === 2) {
-            console.log(newPassword)
             try {
                 const response = await fetch('api/forgot/reset-password', {
                     method: 'POST',

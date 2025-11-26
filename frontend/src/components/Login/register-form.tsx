@@ -27,7 +27,6 @@ const RegisterForm = () => {
 
     const handleBack = () => {
         setStep(step - 1)
-        console.log(formData);
     }
 
     const handleNext = (next: Partial<UserInfo>) => {
@@ -38,7 +37,6 @@ const RegisterForm = () => {
     const handleFullSubmit = async (updatedData: Partial<UserInfo>, e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault()
         const final = { ...formData, ...updatedData }
-        // console.log(final);
         try {
             const response = await fetch('api/register', {
                 method: 'POST',
@@ -67,7 +65,6 @@ const RegisterForm = () => {
             const result = await response.json()
             // Convert result to the expected frontend format and set the user logged-in in AuthProvider
             login({ ...result, username: result.user, profilePath: result.profile_path } as User)
-            console.log('Data from Flask: ', result)
         } catch (error: unknown) {
             console.error('Error: ', (error as Error).message)
         }

@@ -58,7 +58,6 @@ const LoginForm = () => {
             }
 
             const result = await response.json()
-            console.log('Login Data from Flask: ', result)
             // Convert to frontend format
             const user: User = {
                 id: result.id,

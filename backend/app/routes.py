@@ -77,7 +77,6 @@ def login():
     data = request.get_json()
     username = data['username']
     password = data['password']
-    print(data)
     # Check credentials in DB and return w/ access token
     user = User.query.filter_by(username=username).first()
     if not user:
@@ -93,7 +92,6 @@ def login():
 @user_required
 def get_finances(user: User):
     response = get_user_finances(user)
-    print(response)
     return jsonify(response), HTTPStatus.OK
 
 @app_bp.route('/forgot/validate',  methods=['POST'])
@@ -103,22 +101,22 @@ def validate_user_credentials():
     question = req['question']
     answer = req['answer']
     user_check = User.query.filter_by(username=username).first()
-    # TODO: check if user exists
+    # check if user exists
     if user_check is None:
         return jsonify({
             "error": "Username not found."
         }), HTTPStatus.BAD_REQUEST
-    # TODO: check if secret question is correct
+    # check if secret question is correct
     if user_check.secret_question != question:
         return jsonify({
             "error": "Secret question does not match."
         }), HTTPStatus.BAD_REQUEST 
-    # TODO: check if hashed_answer is correct
+    # check if hashed_answer is correct
     if not user_check.validate_secret_answer(answer):
         return jsonify({
             "error": "Secret answer does not match."    
         }), HTTPStatus.BAD_REQUEST
-    # TODO: return token, status ok
+    # return token, status ok
     reset_token = create_access_token(
         identity=str(user_check.id),
         additional_claims={"purpose": "password_reset"},
@@ -135,7 +133,7 @@ def change_password():
     data = request.get_json()
     raw_new_password = data['new_password']
 
-    # TODO: Check if token purpose is 'password_reset'
+    # Check if token purpose is 'password_reset'
     claims = get_jwt()
     if claims.get("purpose") != "password_reset":
         return jsonify({
@@ -156,15 +154,13 @@ def change_password():
 @user_required
 def fetch_recent_transactions(user: User):
     transaction_records = get_recent_transactions(user)
-    print(transaction_records)
     return jsonify(transaction_records), HTTPStatus.OK
 
 @app_bp.route('/finance-update', methods=['POST'])
 @user_required
 def update_finance(user: User):
-    # TODO: Parse Data (Finance and Transaction Log)
+    # Parse Data (Finance and Transaction Log)
     data = request.get_json()
-    print(data)
     
     field = 'spendings' if data['field'] == 'expenses' else data['field']
     method = data['method']
@@ -172,7 +168,7 @@ def update_finance(user: User):
     year = int(data['year'])
     month = int(data['month'])
     description = data['description']
-    # TODO: Update MonthlyFinances
+    # Update MonthlyFinances
     monthly_finance = MonthlyFinance.query.filter_by(
         user_id=user.id,
         year=year,
@@ -199,7 +195,7 @@ def update_finance(user: User):
         prev_allowance = getattr(monthly_finance, 'allowance') or 0.0
         setattr(monthly_finance, 'allowance', prev_allowance - amount)
     
-    # TODO: Update Transactions
+    # Update Transactions
     transaction_log = Transaction(
         category=field,
         amount=amount,
@@ -210,7 +206,7 @@ def update_finance(user: User):
     user.transactions.append(transaction_log)
     db.session.commit()
 
-    # TODO: return updated as JSON 
+    # return updated as JSON 
     return jsonify({
         "message": f"Successfully edited user finance on field: {field}"
     }), HTTPStatus.OK
@@ -284,7 +280,7 @@ def delete_goal(user: User, goal_id: int):
             "error": "Goal not found."
         }), HTTPStatus.BAD_REQUEST
     
-    # TODO: Set is_deleted = True, commit db
+    # Set is_deleted = True, commit db
     goal.is_deleted = True
     db.session.commit()
     return jsonify({"message": "Goal deleted successfully."}), HTTPStatus.OK
