@@ -1,4 +1,3 @@
-import { Loading } from '@components/layouts/_components'
 import type { ChildProps, User } from '@type/types'
 import { useNavigate } from 'react-router-dom';
 import { useTokenRefresh, useVerifyToken } from '@hooks/use-token-refresh';
@@ -14,6 +13,7 @@ type AuthContextType = {
     user: User | null;
     login: (user: User) => void;
     logout: () => void;
+    loading: boolean
     updateAccessToken: (token: string) => void;
 }
 
@@ -96,11 +96,9 @@ export function AuthProvider({ children }: ChildProps) {
         localStorage.removeItem('user');
         navigate('/', { replace: true });
     }
-
-    if (loading) return <Loading />
     
     return (
-        <AuthContext.Provider value={{ user, login, logout, updateAccessToken }}>
+        <AuthContext.Provider value={{ user, login, logout, loading, updateAccessToken }}>
             { children }
         </AuthContext.Provider>
     )

@@ -22,7 +22,8 @@ def get_goals(user: User):
     """ Fetch user goals and append total monthly contributions. """
     all_goals = [
         append_monthly_contribution(goal)
-        for goal in user.goals
+        for goal in user.goals 
+        if not goal.is_deleted 
     ]
     #all_goals = [goal.to_dict() for goal in user.goals] if user.goals else []
     return all_goals
@@ -47,6 +48,7 @@ def get_active_goals(user: User):
     active = [
         append_monthly_contribution(goal)
         for goal in active_goals_db
+        if not goal.is_deleted
     ]
     
     return active

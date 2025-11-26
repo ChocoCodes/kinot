@@ -7,7 +7,7 @@ import {
   TransactionPage, 
   AccountPage 
 } from '@pages/_pages'
-import { ProtectedRoute } from '@components/layouts/_components'
+import ProtectedRoute from '@components/layouts/protected-route'
 
 function App() {
   return (

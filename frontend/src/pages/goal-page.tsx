@@ -16,6 +16,11 @@ function GoalPage() {
         filtered = filtered.filter(goal => goal.title.includes(query))
     }
 
+    const handleClose = async () => {
+        setIsFormVisible(false);
+        await fetchGoals();
+    }
+
     return (
         <main className='flex flex-col w-screen h-screen gap-4'>
             <Header />
@@ -35,16 +40,16 @@ function GoalPage() {
                         onChange={ setQuery } 
                     />
                 </div>
-                <div className="flex justify-between gap-2">
+                <div className="flex gap-10 flex-wrap justify-center">
                     {goals.length !== 0 ? filtered.map(goal => (
-                        <GoalCard key={goal.id} {...goal} refetch={ fetchGoals }/>
+                        <GoalCard key={ goal.id } { ...goal } refetch={ fetchGoals }/>
                     )) : (
                         <p className="text-center w-full text-xl">No Goals for now. Add a new one!</p>
                     )}
                 </div>
             </section>
             { isFormVisible && (
-                <AddGoalForm onClose={ () => setIsFormVisible(false) }/>
+                <AddGoalForm onClose={ handleClose }/>
             )}
         </main>
     )

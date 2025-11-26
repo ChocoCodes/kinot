@@ -48,7 +48,7 @@ export const AddGoalForm = ({ onClose }: AddGoalFormProps) => {
         }))
     }
 
-    const handleSubmit = (e: React.FormEvent) => {
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault()
         
         try {
@@ -60,7 +60,8 @@ export const AddGoalForm = ({ onClose }: AddGoalFormProps) => {
                 payload.append('image', image.blob)
             }
 
-            addGoal(payload)
+            await addGoal(payload);
+            onClose();
         } catch (error: unknown) {
             console.error(`[ADD_GOAL_ERROR]: ${ error instanceof Error ? error.message : 'Unknown error occured. '}`)
         }

@@ -34,10 +34,12 @@ const GoalCard = ({
     
     return (
         <>
-            <div className="max-w-2/5 mx-auto bg-light-gray flex flex-col gap-3 justify-center items-center p-4 rounded-lg border-2 border-dark-gray drop-shadow-md">
-                <img src={ image_path } alt={ title } className="rounded-md h-64 w-full object-cover border-2 border-dark-gray"/>
+            <div className="w-[300px] bg-light-gray flex flex-col gap-3 justify-between items-center p-4 rounded-lg border-2 border-dark-gray drop-shadow-md">
+                <div className="w-full">
+                    <img src={ image_path } alt={ title } className="rounded-md h-64 w-full max-w-full object-cover border-2 border-dark-gray"/>
+                </div>
                 <div className="w-full flex flex-col gap-2 text-left">
-                    <h3 className="text-2xl font-bold">{ title }</h3>
+                    <h3 className="text-xl font-bold">{ title }</h3>
                     <div className="flex flex-col gap-1">
                         <div className="w-full h-2 rounded-full bg-bg-input">
                             <div className="h-2 rounded-full bg-outl-green" style={{ width: `${(current_amount / required_amount ) * 100}%`}}></div>
@@ -59,7 +61,7 @@ const GoalCard = ({
                         className="w-45/100 bg-destructive p-2 rounded-lg hover:scale-105 transition-transform duration-300 hover:cursor-pointer"
                         onClick={ () => setActiveModal("delete") }
                     >
-                        Delete
+                        Deletes
                     </button>
                 </div>
             </div>

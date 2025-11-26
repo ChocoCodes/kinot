@@ -101,13 +101,15 @@ function HomePage() {
                 title={ "My Goals" } 
                 route={ "/transactions" } 
             >
-                {goals.length === 0 ? (
-                    <p className="text-xl text-center">No goals found. Add your first goal!</p>
-                ) : (
-                    goals.map(goal => {
-                        return <GoalCard key={goal.id} {...goal} refetch={ fetchData } />
-                    })
-                )}
+                <div className="flex w-full gap-4 flex-wrap justify-center">
+                    {goals.length === 0 ? (
+                        <p className="text-xl text-center">No goals found. Add your first goal!</p>
+                    ) : (
+                        goals.map(goal => {
+                            return <GoalCard key={goal.id} {...goal} refetch={ fetchData } />
+                        })
+                    )}
+                </div>
             </Section> 
             {(activeForm && isVisible) && 
                 <Form 

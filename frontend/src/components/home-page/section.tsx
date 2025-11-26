@@ -8,7 +8,7 @@ interface SectionProps {
 
 const Section = ({ title, route, children }: SectionProps) => {
     return (
-        <section className="w-7/10 mx-auto flex flex-col gap-4 text-black p-6">
+        <section className='w-7/10 mx-auto flex flex-col gap-4 text-black p-6'>
             { (title && route) && (
                 <div className="w-full flex justify-between items-center mx-auto">
                     <p className="font-bold text-3xl">{ title }</p>

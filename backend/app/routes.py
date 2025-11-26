@@ -146,7 +146,7 @@ def change_password():
     user = query_user(user_id)
 
     user.password_hashed = raw_new_password
-    # db.session.commit()
+    db.session.commit()
     return jsonify({
         "message": "Password successfully changed.",
         "user": user.to_dict()
@@ -347,7 +347,7 @@ def add_goal(user: User):
     )
 
     db.session.add(new_goal)
-    # db.session.commit()
+    db.session.commit()
     return jsonify({"message": "goal added successfully."}), HTTPStatus.OK
 
 @app_bp.route('/transactions', methods=['GET'])

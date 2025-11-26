@@ -42,18 +42,18 @@ export const useGoals = () => {
                     'Authorization': `Bearer ${ user?.token }`
                 },
                 body: JSON.stringify(payload)
-            })
+            });
 
             if (!response.ok) {
-                console.error("[UPDATE_GOAL_ERROR] ResponseNotOK: Failed to update goal")
-                addToast("ResponseNotOK: Failed to update goal.", "danger")
-                throw new Error(`Request failed with status ${ response.status } | ${ response.statusText }`)
+                console.error("[UPDATE_GOAL_ERROR] ResponseNotOK: Failed to update goal");
+                addToast("ResponseNotOK: Failed to update goal.", "danger");
+                throw new Error(`Request failed with status ${ response.status } | ${ response.statusText }`);
             }
-            
-            addToast('Goal updated successfully.', 'primary')
+
+            addToast('Goal updated successfully.', 'primary');
         } catch (error) {
-            console.error("PostRequestError[GOAL_UPDATE]: ", error)
-            throw error
+            console.error("PostRequestError[GOAL_UPDATE]: ", error);
+            throw error;
         }
     }
     
@@ -65,19 +65,18 @@ export const useGoals = () => {
                     'Authorization': `Bearer ${ user?.token }`,
                 },
                 body: payload
-            })
+            });
 
             if(!response.ok) {
-                console.error("[ADD_GOAL_ERROR] ResponseNotOK: Failed to add goal")
-                addToast("Unable to add goal.", "danger")
-                throw new Error(`Request failed with status ${ response.status } | ${ response.statusText }`)
+                console.error("[ADD_GOAL_ERROR] ResponseNotOK: Failed to add goal");
+                addToast("Unable to add goal.", "danger");
+                throw new Error(`Request failed with status ${ response.status } | ${ response.statusText }`);
             }
 
-            fetchGoals()
-            addToast('Goal added successfully.', 'primary')
+            addToast('Goal added successfully.', 'primary');
         } catch (error: unknown) {
-            console.error("[ADD_GOAL_ERROR] ExceptionCaught: ", error)
-            throw new Error(`[ADD_GOAL_ERROR] ${ error instanceof Error ? error.message : 'Unknown error occured.'} `)
+            console.error("[ADD_GOAL_ERROR] ExceptionCaught: ", error);
+            throw new Error(`[ADD_GOAL_ERROR] ${ error instanceof Error ? error.message : 'Unknown error occured.'} `);
         }
     }
 
@@ -97,8 +96,8 @@ export const useGoals = () => {
                 throw new Error(`Request failed with status ${ response.status } | ${ response.statusText }`)
             }
 
-            fetchGoals()
-            addToast('Goal deleted successfully.', 'primary')
+            await fetchGoals();
+            addToast('Goal deleted successfully.', 'primary');
         } catch (error: unknown) {
             console.error("[DELETE_GOAL_ERROR] ExceptionCaught: ", error)
             throw new Error(`[DELETE_GOAL_ERROR] ${ error instanceof Error ? error.message : 'Unknown error occured.'} `)
