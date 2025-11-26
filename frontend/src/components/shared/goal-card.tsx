@@ -61,7 +61,7 @@ const GoalCard = ({
                         className="w-45/100 bg-destructive p-2 rounded-lg hover:scale-105 transition-transform duration-300 hover:cursor-pointer"
                         onClick={ () => setActiveModal("delete") }
                     >
-                        Deletes
+                        Delete
                     </button>
                 </div>
             </div>

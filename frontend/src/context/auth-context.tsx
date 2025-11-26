@@ -7,6 +7,7 @@ import {
     useContext, 
     useEffect, 
     useState, 
+    useMemo
 } from 'react'
 
 type AuthContextType = {
@@ -97,8 +98,16 @@ export function AuthProvider({ children }: ChildProps) {
         navigate('/', { replace: true });
     }
     
+    const contextValue = useMemo(() => ({
+        user, 
+        login, 
+        logout, 
+        updateAccessToken,
+        loading
+    }), [user, login, logout, updateAccessToken, loading]);
+
     return (
-        <AuthContext.Provider value={{ user, login, logout, loading, updateAccessToken }}>
+        <AuthContext.Provider value={ contextValue }>
             { children }
         </AuthContext.Provider>
     )

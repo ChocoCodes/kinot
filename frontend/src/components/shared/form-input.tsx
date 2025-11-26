@@ -21,7 +21,7 @@ const FormInput = ({
 }: FormInputProps) => {
     return (
         <div className={`flex flex-col gap-1 ${ className }`}>
-            <label htmlFor={ id } className="text-2xl font-semibold">{ label }</label>
+            <label htmlFor={ id } className="text-xl font-semibold">{ label }</label>
             <input 
                 type={ type } 
                 name={ id } 

@@ -71,7 +71,7 @@ export const AddGoalForm = ({ onClose }: AddGoalFormProps) => {
         <div className="fixed inset-0 backdrop-blur-xs bg-black/10 flex items-center justify-center z-50">
             <form 
                 action="submit"
-                className="w-[500px] p-6 bg-white/90 rounded-md flex flex-col gap-3"
+                className="w-[500px] p-6 bg-white/90 rounded-md flex flex-col gap-2"
                 onSubmit={ handleSubmit }
             >
                 <div className="flex w-9/10 justify-between mx-auto items-center text-xl font-semibold pb-2 border-b-2 border-gray-400">
@@ -81,31 +81,13 @@ export const AddGoalForm = ({ onClose }: AddGoalFormProps) => {
                     </button>
                 </div>
                 <div className="flex flex-col gap-4 w-9/10 mx-auto"> 
-                    <FormInput 
-                        id={"title"}
-                        label={"Title"}
-                        placeholder='Enter goal title'
-                        value={ goalEntry.title }
-                        onChange={ handleChange }
-                    />
-                    <FormInput 
-                        id={"required"}
-                        label={"Required Amount"}
-                        placeholder='Enter required amount'
-                        value={ goalEntry.required }
-                        onChange={ handleChange }
-                    />
-                    <FormInput 
-                        id={"description"}
-                        label={"Description"}
-                        placeholder='Enter goal description'
-                        value={ goalEntry.description }
-                        onChange={ handleChange }
-                    />
-                    <div className="flex w-full justify-between items-center">
+                    { image && (
+                        <img src={ image.url } alt="preview" className='w-32 h-32 rounded-md object-cover mx-auto'/>
+                    )}
+                    <div className="flex w-full justify-between items-center mt-2">
                         <p>Add Goal Image</p>
                         <div>
-                            <label htmlFor="image" className='hover:cursor-pointer inline-block px-4 py-2 bg-black text-white rounded-md border hover:bg-white hover:text-black hover:border-black transition-colors'>Upload Image</label>
+                            <label htmlFor="image" className='hover:cursor-pointer inline-block px-3 py-1 bg-black text-white text-sm rounded-sm border hover:bg-white hover:text-black hover:border-black transition-colors'>Upload Image</label>
                             <input 
                                 type="file" 
                                 name="image" 
@@ -116,16 +98,38 @@ export const AddGoalForm = ({ onClose }: AddGoalFormProps) => {
                             />
                         </div>
                     </div>
-                    { image && (
-                        <img src={ image.url } alt="preview" className='w-32 h-32 rounded-md object-cover mx-auto'/>
-                    )}
+                    <div className="flex gap-4">
+                        <FormInput 
+                            id={"title"}
+                            label={"Title"}
+                            placeholder='Enter goal title'
+                            value={ goalEntry.title }
+                            onChange={ handleChange }
+                        />
+                        <FormInput 
+                            id={"required"}
+                            label={"Required Amount"}
+                            placeholder='Enter required amount'
+                            value={ goalEntry.required }
+                            onChange={ handleChange }
+                        />
+                    </div>
+                    <FormInput 
+                        id={"description"}
+                        label={"Description"}
+                        placeholder='Enter goal description'
+                        value={ goalEntry.description }
+                        onChange={ handleChange }
+                    />
                 </div>
-                <button
-                    type='submit'
-                    className='hover:cursor-pointer bg-black text-white px-2 h-10 w-1/4 mx-auto rounded-sm mt-2 border hover:bg-white hover:text-black hover:border-black transition-colors'
-                >
-                    Create
-                </button>
+                <div className="w-9/10 mx-auto flex justify-end mt-4">
+                    <button
+                        type='submit'
+                        className='hover:cursor-pointer bg-black text-white px-2 h-10 w-1/4 rounded-sm border hover:bg-white hover:text-black hover:border-black transition-colors'
+                    >
+                        Create
+                    </button>
+                </div>
             </form>
         </div>
     )
