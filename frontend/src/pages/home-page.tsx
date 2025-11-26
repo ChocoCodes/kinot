@@ -105,7 +105,7 @@ function HomePage() {
                     <p className="text-xl text-center">No goals found. Add your first goal!</p>
                 ) : (
                     goals.map(goal => {
-                        return <GoalCard key={goal.id} {...goal} />
+                        return <GoalCard key={goal.id} {...goal} refetch={ fetchData } />
                     })
                 )}
             </Section> 
@@ -115,6 +115,7 @@ function HomePage() {
                     handleOnClose={ handleClose } 
                     handleSubmit={ updateFinance }
                     refetch={ fetchData }
+                    currentAllowance={ userData?.finances.current.allowance }
                 />
             }
         </main>

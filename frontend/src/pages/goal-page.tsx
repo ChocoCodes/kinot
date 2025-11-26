@@ -6,7 +6,7 @@ import { useGoals } from '@hooks/use-goals'
 import { AddGoalForm } from '@components/goal-page/_components'
 
 function GoalPage() {
-    const { goals } = useGoals()
+    const { goals, fetchGoals } = useGoals()
     const [isFormVisible, setIsFormVisible] = useState(false)
     const [query, setQuery] = useState("")
     let filtered = goals;
@@ -37,7 +37,7 @@ function GoalPage() {
                 </div>
                 <div className="flex justify-between gap-2">
                     {goals.length !== 0 ? filtered.map(goal => (
-                        <GoalCard key={goal.id} {...goal} />
+                        <GoalCard key={goal.id} {...goal} refetch={ fetchGoals }/>
                     )) : (
                         <p className="text-center w-full text-xl">No Goals for now. Add a new one!</p>
                     )}

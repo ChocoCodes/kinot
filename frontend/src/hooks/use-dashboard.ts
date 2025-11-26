@@ -6,7 +6,7 @@ export const useDashboard = () => {
     const { user } = useAuth()
     const [userData, setUserData] = useState<DashboardData | null>(null);
 
-    console.log('userData in useDashboard hook: ' + JSON.stringify(userData?.transactions));
+    console.log('userData in useDashboard hook: ' + JSON.stringify(userData?.finances.current));
     const fetchData = useCallback(async () => {
         try {
             const response = await fetch('api/home', {
@@ -24,6 +24,7 @@ export const useDashboard = () => {
 
             const data = await response.json();
             setUserData(data);
+
         } catch (err: any) {
             console.error('[InternalError]: ', err);
             setUserData(null);

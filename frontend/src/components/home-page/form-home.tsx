@@ -1,32 +1,56 @@
 import { type Payload } from '@type/types';
 import { useState } from 'react'
 import { IoIosClose } from "react-icons/io";
+import { useToast } from '@context/toast-context';
 
 interface FormProps {
     handleOnClose: () => void
     formTitle: string
     handleSubmit: (payload: Payload) => Promise<void>
-    refetch: () => Promise<void>;
+    refetch: () => Promise<void>
+    currentAllowance?: number
 }
 
-const Form = ({ handleOnClose, formTitle, handleSubmit, refetch }: FormProps ) => {
-    const [amount, setAmount] = useState("")
-    const [method, setMethod] = useState("")
-    const [description, setDescription] = useState("")
+const Form = ({ handleOnClose, formTitle, handleSubmit, refetch, currentAllowance }: FormProps ) => {
+    const [amount, setAmount] = useState("");
+    const [method, setMethod] = useState("");
+    const [description, setDescription] = useState("");
+    const { addToast } = useToast();
 
     const onSubmit = async (e: React.FormEvent) => {
-        e.preventDefault()
+        e.preventDefault();
         
         if (amount === "" || isNaN(Number(amount))) {
             alert("Please enter a valid amount");
-            setAmount("")
+            setAmount("");
             return;
+        }
+
+        const requireAllowanceCheck = ['savings', 'expenses'].includes(formTitle);
+        const numericAmount = Number(amount);
+
+        if (requireAllowanceCheck) {
+            // userData was not loaded
+            if (currentAllowance == null) {
+                addToast('Current allowance data not available.', 'danger');
+                return;
+            }
+            // allowance is 0
+            if (currentAllowance === 0) {
+                addToast('Allowance is 0. Kindly increase your allowance.', 'danger');
+                return;
+            }
+            // intended amount exceeds the current allowance
+            if (numericAmount > currentAllowance) {
+                addToast(`Amount cannot exceed ${ currentAllowance }.`, 'danger');
+                return;
+            }
         }
 
         const now = new Date()
         const payload: Payload = {
             field: formTitle,
-            amount: parseFloat(amount),
+            amount: numericAmount,
             method,
             year: now.getUTCFullYear(),
             month: now.getUTCMonth() + 1,

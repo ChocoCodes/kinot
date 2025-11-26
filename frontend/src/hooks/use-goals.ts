@@ -49,8 +49,7 @@ export const useGoals = () => {
                 addToast("ResponseNotOK: Failed to update goal.", "danger")
                 throw new Error(`Request failed with status ${ response.status } | ${ response.statusText }`)
             }
-
-            fetchGoals()
+            
             addToast('Goal updated successfully.', 'primary')
         } catch (error) {
             console.error("PostRequestError[GOAL_UPDATE]: ", error)

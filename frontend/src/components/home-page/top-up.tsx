@@ -1,34 +1,46 @@
-import { useState } from 'react'
+import { useState } from 'react';
 import { IoIosClose } from 'react-icons/io';
-import { useToast } from '@context/toast-context'
-import { useGoals } from '@hooks/use-goals';
+import { useToast } from '@context/toast-context';
+import { useGoals } from '@hooks/_hooks';
 
 interface TopUpProps {
     goalName: string;
     handleOnClose: () => void;
     goalId: number;
+    currentAllowance: number;
 }
 
-const TopUp = ({ goalName, handleOnClose, goalId }: TopUpProps) => {
-    const [amount, setAmount] = useState("")
-    const { addToast } = useToast()
-    const { updateGoalContribution } = useGoals()
-
+const TopUp = ({ goalName, handleOnClose, goalId, currentAllowance }: TopUpProps) => {
+    const [amount, setAmount] = useState("");
+    const { addToast } = useToast();
+    const { updateGoalContribution } = useGoals();
+    
     const handleSubmit = async (e: React.FormEvent) => {
-        e.preventDefault()
+        e.preventDefault();
         
+        if (currentAllowance == null) {
+            addToast("Current allowance data not found.", 'danger');
+            handleOnClose();
+            return;
+        }
+
         if (amount === "" || isNaN(Number(amount))) {
-            addToast('Invalid. Please enter a valid amount.', "danger")
-            setAmount("")
-            return
+            addToast('Invalid. Please enter a valid amount.', "danger");
+            setAmount("");
+            return;
         }
         
+        const numericAmount = Number(amount);
+        if (numericAmount > currentAllowance) {
+            addToast(`Amount cannot be greater than ${ currentAllowance }.`, "danger");
+        }
         const payload = {
             id: goalId,
             amount: Number(amount)
-        }
+        };
         
-        updateGoalContribution(payload)   
+        await updateGoalContribution(payload);
+        handleOnClose();
     }
 
     return (

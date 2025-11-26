@@ -1,6 +1,7 @@
-import { useState } from 'react'
-import { TopUp } from '@components/home-page/_components'
-import { DeleteGoal } from '@components/goal-page/_components'
+import { useState } from 'react';
+import { TopUp } from '@components/home-page/_components';
+import { DeleteGoal } from '@components/goal-page/_components';
+import { useDashboard } from '@hooks/use-dashboard';
 
 interface GoalCardProps {
     id: number;
@@ -9,6 +10,7 @@ interface GoalCardProps {
     image_path: string;
     title: string;
     monthly_contribution: number;
+    refetch: () => Promise<void>;
 }
 
 const GoalCard = ({ 
@@ -17,11 +19,18 @@ const GoalCard = ({
     required_amount,
     image_path,
     title,
-    monthly_contribution
+    monthly_contribution,
+    refetch
 }: GoalCardProps) => {
     const [activeModal, setActiveModal] = useState<"contribute" | "delete" | null>(null)
+    
+    const { userData } = useDashboard();
+    const currentAllowance = userData?.finances.current.allowance ?? 0;
 
-    const handleClose = () => setActiveModal(null)
+    const handleClose = async () => {
+        setActiveModal(null);
+        await refetch();
+    }
     
     return (
         <>
@@ -59,6 +68,7 @@ const GoalCard = ({
                     goalName={ title }
                     handleOnClose={ handleClose }
                     goalId={ id }
+                    currentAllowance={ currentAllowance }
                 />
             )}
             { activeModal === "delete" && (

@@ -4,7 +4,7 @@ from .utils import user_required, create_auth_response
 from werkzeug.utils import secure_filename
 from http import HTTPStatus
 from app import db
-from datetime import timedelta
+from datetime import datetime, timedelta, timezone
 from flask_jwt_extended import (
     create_access_token,
     jwt_required, 
@@ -187,17 +187,25 @@ def update_finance(user: User):
         )
         db.session.add(monthly_finance)
     # Check if the field sent is an attribute of the model, extract the previous amount and update with the new amount
-    if hasattr(monthly_finance, field):
-        prev = getattr(monthly_finance, field) or 0.0
-        setattr(monthly_finance, field, prev + amount)
-    else:
-        return jsonify({"error": f"Invalid field: {field}"}), HTTPStatus.BAD_REQUEST
+    if not hasattr(monthly_finance, field):
+        return jsonify({
+            "message": f"Invalid field: {field}"
+        }), HTTPStatus.BAD_REQUEST
+    
+    prev = getattr(monthly_finance, field) or 0.0
+    setattr(monthly_finance, field, prev + amount)
+
+    if field in ('savings', 'spendings'):
+        prev_allowance = getattr(monthly_finance, 'allowance') or 0.0
+        setattr(monthly_finance, 'allowance', prev_allowance - amount)
+    
     # TODO: Update Transactions
     transaction_log = Transaction(
         category=field,
         amount=amount,
         method=method,
-        description=description
+        description=description,
+        user_id=user.id
     )
     user.transactions.append(transaction_log)
     db.session.commit()
@@ -224,6 +232,9 @@ def get_homepage_data(user: User):
 @app_bp.route('/goal/<int:goal_id>/contribute', methods=['PATCH'])
 @user_required
 def update_goal_contribution(user: User, goal_id: int):
+    now = datetime.now(timezone.utc)
+    current_finance = MonthlyFinance.query.filter_by(user_id=user.id, year=now.year, month=now.month).first()
+    
     goal = user.goals.filter_by(id=goal_id).first()
     if goal is None:
         return jsonify({
@@ -231,17 +242,35 @@ def update_goal_contribution(user: User, goal_id: int):
         }), HTTPStatus.BAD_REQUEST
     # Add log to the user's GoalContribution
     req = request.get_json()
-    print(f"{user} | {goal_id}, {req}")
+    
     amount = float(req['amount'])
+    if amount > current_finance.allowance:
+        return jsonify({
+            "error": "Amount should not be greater than the current allowance."
+        }), HTTPStatus.BAD_REQUEST
+    
+    # Deduct to allowance
+    current_finance.allowance -= amount
+
+    # Add transaction
+    goal_transaction = Transaction(
+        category='goals',
+        amount=amount,
+        method='System Top-up',
+        description=goal.title,
+        user_id=user.id
+    )
+
+    user.transactions.append(goal_transaction)
+    # Update Goals
+    goal.update_current_amount(amount)
+
     goal_contribution = GoalContribution(
         goal_id=goal_id, 
         amount=amount
     )
-    print(goal_contribution)
     db.session.add(goal_contribution)
-    # Update Goals
-    goal.update_current_amount(amount)
-    print(goal)
+
     db.session.commit()
     # Return updated Goal
     return jsonify({"message": "Goal updated successfully"}), HTTPStatus.OK

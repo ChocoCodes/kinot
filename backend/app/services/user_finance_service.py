@@ -21,15 +21,25 @@ def get_user_finances(user: User) -> dict:
         MonthlyFinance.month == previous_month
     ).first()
     
+
     savings_pct = spendings_pct = 0
     if current and previous:
         savings_pct = calculate_percentage(previous['savings'], current['savings'])
         spendings_pct = calculate_percentage(previous['spendings'], current['spendings'])
 
     print(f"Savings Percentage: {savings_pct}%\nSpendings Percentage: {spendings_pct}")
+    
+    current_response = current.to_dict() if current else None
+    if current_response:
+        current_response['expenses'] = current_response.pop('spendings', 0.0)
+
+    previous_response = current.to_dict() if previous else None
+    if previous_response:
+        previous_response['expenses'] = previous_response.pop('spendings', 0.0)
+    
     response = {
-        'current': current.to_dict() if current else None,
-        'previous': previous.to_dict() if previous else None,
+        'current': current_response,
+        'previous': previous_response,
         'savings_pct': savings_pct,
         'spendings_pct': spendings_pct
     }

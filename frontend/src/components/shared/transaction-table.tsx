@@ -3,6 +3,7 @@ import { CategoryTag } from '@components/home-page/_components'
 import { financeMeta } from '@pages/home-page';
 import type { Transaction } from '@type/types'
 import type React from 'react';
+import { toTitle } from '@utils/helpers'
 
 interface TransactionTableProps {
   data: Transaction[];
@@ -13,19 +14,19 @@ const COLUMNS = ['id', 'category', 'amount', 'method', 'description', 'created_a
 const TransactionTable = ({ data }: TransactionTableProps) => {
 
     const getCellComponent = (col: string, row: Transaction): React.ReactNode => {
-        if (col === 'created_at') {
-            return formatDate(row.created_at)
-        }
+        if (col === 'created_at') return formatDate(row.created_at);
+        if (col === 'description') return row.description || "-";
+        if (col === 'method') return toTitle(row.method);
         if (col === 'category') {
+            const display = row.category === 'spendings' ? 'expenses' : row.category;
             return (
                 <CategoryTag 
-                    category={ row.category }
-                    tagKey={ row.category.toLowerCase() as keyof typeof financeMeta }
+                    category={ display }
+                    tagKey={ display.toLowerCase() as keyof typeof financeMeta }
                 />
-            )
+            );
         }
-        if (col === 'description') return row.description || "-";
-        return row[col as keyof Transaction] as React.ReactNode;
+            return row[col as keyof Transaction] as React.ReactNode;
     }
 
     // console.log(data)
@@ -46,7 +47,10 @@ const TransactionTable = ({ data }: TransactionTableProps) => {
                 { data.length > 0 ? data.map((row, index) => (
                     <tr key={index}>
                         {COLUMNS.map(col => (
-                            <td key={col} className={`${col === 'id' ? 'w-[90px]' : ''} truncate text-ellipsis py-3 text-lg`}>
+                            <td 
+                                key={col} 
+                                className={`${col === 'id' ? 'w-[90px]' : 'max-w-[150px]'} truncate px-2 py-3 text-sm`}
+                            >
                                 { getCellComponent(col, row) }
                             </td>
                         ))}
