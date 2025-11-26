@@ -3,16 +3,15 @@ import type { TransactionData } from '@type/types'
 import { useAuth } from '@context/auth-context'
 import { useToast } from '@context/toast-context'
 
-export const useTransactions = (page = 1, limit = 10) => {
+export const useTransactions = () => {
     const { user } = useAuth()
     const { addToast } = useToast()
     const [transactions, setTransactions] = useState<TransactionData[]>([])
     const [total, setTotal] = useState(0)
 
     const fetchTransactions = async () => {
-        const offset = (page - 1) * limit
         try {
-            const response = await fetch(`/api/transactions?limit=${ limit }&offset=${ offset }`, {
+            const response = await fetch(`/api/transactions`, {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
@@ -40,7 +39,7 @@ export const useTransactions = (page = 1, limit = 10) => {
 
     const addTransaction = async <T extends unknown>(payload: T) => {
         try {
-            const response = await fetch('api/transactions', {
+            const response = await fetch('api/finance-update', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -64,11 +63,12 @@ export const useTransactions = (page = 1, limit = 10) => {
 
     useEffect(() => {
         fetchTransactions()
-    }, [user, page, limit])
+    }, [user])
 
     return { 
         transactions, 
         total,
-        addTransaction
+        addTransaction,
+        fetchTransactions
     }
 }

@@ -353,11 +353,7 @@ def add_goal(user: User):
 @app_bp.route('/transactions', methods=['GET'])
 @user_required
 def fetch_all_transactions(user: User):
-    """ Pagination-ready transaction query route. """
-    limit = int(request.args.get('limit', 10))
-    offset = int(request.args.get('offset', 0))
-
-    transactions = get_all_transactions(user, limit=limit, offset=offset)
+    transactions = get_all_transactions(user)
     total = user.transactions.filter_by(is_deleted = False).count()
     
     return jsonify({

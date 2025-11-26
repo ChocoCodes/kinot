@@ -35,14 +35,10 @@ const Form = ({ handleOnClose, formTitle, handleSubmit, refetch, currentAllowanc
                 addToast('Current allowance data not available.', 'danger');
                 return;
             }
-            // allowance is 0
-            if (currentAllowance === 0) {
-                addToast('Allowance is 0. Kindly increase your allowance.', 'danger');
-                return;
-            }
+
             // intended amount exceeds the current allowance
             if (numericAmount > currentAllowance) {
-                addToast(`Amount cannot exceed ${ currentAllowance }.`, 'danger');
+                addToast(`Amount cannot exceed allowance: ${ currentAllowance }.`, 'danger');
                 return;
             }
         }

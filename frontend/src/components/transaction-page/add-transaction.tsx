@@ -4,7 +4,9 @@ import type { Transaction } from '@type/types'
 import { IoIosClose } from 'react-icons/io';
 import { financeMeta } from '@pages/home-page';
 import { toUpper } from '@utils/helpers';
-import { useTransactions } from '@hooks/use-transactions';
+import { useToast } from '@context/toast-context';
+import { useDashboard, useTransactions } from '@hooks/_hooks';
+
 interface AddTransactionProps {
     onClose: () => void;
 }
@@ -14,26 +16,59 @@ type TransactionEntry = Omit<Transaction, "id" | "created_at">
 const CATEGORIES = Object.keys(financeMeta)
 
 export const AddTransactionForm = ({ onClose }: AddTransactionProps) => {
-    const { addTransaction } = useTransactions()
+    const { addToast } = useToast(); 
+    const { userData } = useDashboard();
+    const { addTransaction } = useTransactions();
+    const currentAllowance = userData?.finances.current.allowance;
     const [transactionEntry, setTransactionEntry] = useState<TransactionEntry>({
         amount: 0,
         category: "",
         method: "",
         description: "",
-    })
+    });
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-        const { name, value } = e.target
+        const { name, value } = e.target;
         setTransactionEntry(prev => ({
             ...prev,
             [name]: value
-        }))
+        }));
     }
-    const handleSubmit = async (e: React.FormEvent) => {
-        e.preventDefault()
 
-        const payload: TransactionEntry = { ...transactionEntry }
-        await addTransaction(payload)
+    const handleSubmit = async (e: React.FormEvent) => {
+        e.preventDefault();
+        const now = new Date();
+
+        const requireAllowanceCheck = ['savings', 'expenses'].includes(transactionEntry.category);
+        if (requireAllowanceCheck) {
+            if (currentAllowance == null) {
+                addToast("Allowance data not available.", 'danger');
+                return;
+            }
+    
+            if (transactionEntry.amount > currentAllowance) {
+                addToast(`Amount cannot exceed allowance: ${currentAllowance}.`, 'danger');
+                return;
+            }
+        }
+
+        if (transactionEntry.amount < 1) {
+            addToast("Amount cannot be 0 or less.", 'danger');
+            return;
+        }
+
+
+        const payload = { 
+            ...transactionEntry,
+            field: transactionEntry.category,
+            year: now.getUTCFullYear(),
+            month: now.getUTCMonth() + 1,
+        };
+
+        delete (payload as any).category;
+        console.log(payload);
+        await addTransaction(payload);
+        onClose();
     }
 
     return (
@@ -50,7 +85,6 @@ export const AddTransactionForm = ({ onClose }: AddTransactionProps) => {
                     </button>
                 </div>
                 <div className="w-9/10 mx-auto flex flex-col gap-3">
-                
                     <FormInput 
                         id="amount"
                         label="Amount"

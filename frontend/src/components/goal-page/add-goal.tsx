@@ -110,7 +110,7 @@ export const AddGoalForm = ({ onClose }: AddGoalFormProps) => {
                                 name="image" 
                                 id="image" 
                                 className="hidden" 
-                                accept="image/png, image/jpg"
+                                accept="image/png, image/jpg, image/jpeg"
                                 onChange={ handleImageChange }
                             />
                         </div>

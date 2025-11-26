@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { GoPlus } from "react-icons/go";
 import { financeMeta } from './home-page';
 import { Header } from "@components/layouts/_components"
@@ -14,11 +14,11 @@ import {
     AddTransactionForm
 } from '@components/transaction-page/_components';
 
-const FILTERS = Object.keys(financeMeta)
+const FILTERS = [...Object.keys(financeMeta), 'goals'];
 const SORT_OPTIONS = [
     'amount',
     'date'
-]
+];
 
 function TransactionPage() {
     const LIMIT = 10;
@@ -27,37 +27,44 @@ function TransactionPage() {
     const [sortBy, setSortBy] = useState("");
     const [query, setQuery] = useState("");
     const [isFormVisible, setIsFormVisible] = useState(false);
-    const { transactions, total } = useTransactions(tablePage, LIMIT);
-    const totalPages = Math.ceil(total / LIMIT);
+    const { transactions, fetchTransactions } = useTransactions();
+    let filtered = transactions;
 
-    let filtered = transactions
+    const handleClose = async () => {
+        setIsFormVisible(false);
+        await fetchTransactions();
+    }
+    
     // Filtering
     if(filterBy) {
-        filtered = filtered.filter(
-            transaction => transaction.category.toLowerCase() === filterBy
-        )
+        filtered = filtered.filter(transaction => transaction.category.toLowerCase() === filterBy);
     }
     // Searching
     if(query) {
-        filtered = filtered.filter(
-            transaction => transaction.description.toLowerCase().includes(query.toLowerCase())
-        )
+        filtered = filtered.filter(transaction => transaction.description.toLowerCase().includes(query.toLowerCase()));
     }
     // Sorting
     if(sortBy) {
         if (sortBy === "amount") {
-            filtered = [...filtered].sort((a, b) => b.amount - a.amount)
+            filtered = [...filtered].sort((a, b) => b.amount - a.amount);
         } else if (sortBy === "date") {
-            filtered = [...filtered].sort(
-                (a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
-            )
+            filtered = [...filtered].sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
         }
     }
 
+    const totalPages = Math.ceil(filtered.length / LIMIT);
+    const startIndex = (tablePage - 1) * LIMIT;
+    const endIndex = startIndex + LIMIT;
+    const paginated = filtered.slice(startIndex, endIndex);
+
+    useEffect(() => {
+        setTablePage(1);
+    }, [filterBy, query, sortBy]);
+
     return (
-        <main className='flex flex-col w-screen h-screen mx-auto font-poppins gap-4'>
+        <main className='flex flex-col w-screen h-screen mx-auto font-poppins gap-4 overflow-x-hidden'>
             <Header />
-            <section className='w-7/10 mx-auto flex flex-col gap-8'>
+            <section className='w-7/10 mx-auto flex flex-col gap-8 py-6'>
                 <div className="flex w-full justify-between items-center">
                     <h1 className='text-4xl font-bold'>Transaction Logs</h1>
                     <button 
@@ -77,7 +84,7 @@ function TransactionPage() {
                             options={ FILTERS }
                             label={"Filter By"}
                             value={ filterBy }
-                            onChange={ setFilterBy }
+                            onChange={ (val: string) => setFilterBy(val === 'expenses' ? 'spendings' : val) }
                         />
                         <CriteriaDropdown 
                             options={ SORT_OPTIONS }
@@ -88,8 +95,8 @@ function TransactionPage() {
                         <CSVButton transactions={ transactions }/>
                     </div>
                 </div>
-                <TransactionTable data={ filtered }/>
-                {transactions.length !== 0 && (
+                <TransactionTable data={ paginated }/>
+                { filtered.length !== 0 && (
                     <PaginationController 
                         tablePage={ tablePage } 
                         totalPage={ totalPages } 
@@ -98,7 +105,7 @@ function TransactionPage() {
                     />
                 )}
                 { isFormVisible && (
-                    <AddTransactionForm onClose={ () => setIsFormVisible(false) } />
+                    <AddTransactionForm onClose={ handleClose } />
                 )}
             </section>
         </main>
